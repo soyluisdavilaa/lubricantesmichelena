@@ -2,6 +2,7 @@
 
 /* Hero principal — animación palabra x palabra, shimmer buttons, partículas flotantes */
 
+import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, MessageCircle, ChevronDown } from "lucide-react";
 import Link from "next/link";
@@ -55,6 +56,7 @@ export function HeroSection() {
   const { hero, site } = config;
   const shouldReduce = useReducedMotion();
   const words = hero.titulo.split(" ");
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   return (
     <section className="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden">
@@ -63,21 +65,25 @@ export function HeroSection() {
 
       {/* Hero background image, if configured */}
       {hero.imagen && (
-        <div className="absolute inset-0 pointer-events-none -z-10">
+        <motion.div 
+          initial={{ opacity: 0, scale: 1.05 }}
+          animate={{ opacity: imgLoaded ? 1 : 0, scale: imgLoaded ? 1 : 1.05 }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+          className="absolute inset-0 pointer-events-none -z-10"
+        >
           <Image
             src={hero.imagen}
             alt="Hero Background"
             fill
             priority
+            onLoad={() => setImgLoaded(true)}
             className="object-cover object-center"
             sizes="100vw"
           />
           {/* Capa oscura (50-60%) sobre la foto para que el texto resalte */}
           <div className="absolute inset-0 bg-black/60" />
-        </div>
+        </motion.div>
       )}
-
-      {/* Radial glow top-right */}
       <div
         className="absolute top-0 right-0 w-[600px] h-[600px] opacity-30 pointer-events-none"
         style={{
