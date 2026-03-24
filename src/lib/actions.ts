@@ -37,6 +37,8 @@ export async function getSiteData(key: string) {
   return data.data;
 }
 
+import { revalidatePath } from "next/cache";
+
 /**
  * Guarda data en Supabase (Solo Admin)
  */
@@ -52,6 +54,9 @@ export async function saveSiteData(key: string, data: any, adminHash: string) {
     console.error("Error guardando site_data:", error.message);
     throw new Error("Fallo al guardar en base de datos");
   }
+
+  // Limpiar caché global en todas partes (Vercel Cache)
+  revalidatePath("/", "layout");
 
   return true;
 }
