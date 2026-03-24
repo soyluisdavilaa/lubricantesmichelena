@@ -5,6 +5,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, MessageCircle, ChevronDown } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 import { openWhatsApp } from "@/lib/utils";
 
@@ -63,12 +64,18 @@ export function HeroSection() {
       {/* Hero background image, if configured */}
       {hero.imagen && (
         <>
-          <div 
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none" 
-            style={{ backgroundImage: `url(${hero.imagen})` }} 
-          />
+          <div className="absolute inset-0 pointer-events-none -z-10">
+            <Image
+              src={hero.imagen}
+              alt="Hero Background"
+              fill
+              priority
+              className="object-cover object-center"
+              sizes="100vw"
+            />
+          </div>
           {/* Capa negra al 50% sobre la foto */}
-          <div className="absolute inset-0 bg-black/50 pointer-events-none" />
+          <div className="absolute inset-0 bg-black/50 pointer-events-none -z-[5]" />
         </>
       )}
 
