@@ -27,15 +27,22 @@ export async function uploadImage(
       return null;
     }
 
-    // Comprimir si es muy grande
+    // Comprimir si es muy grande y no es SVG
     let processedFile: File | Blob = file;
-    if (file.size > maxSizeKB * 1024 && file.type.startsWith("image/")) {
+    let finalName = file.name;
+
+    if (file.size > maxSizeKB * 1024 && file.type.startsWith("image/") && !file.type.includes("svg")) {
       processedFile = await compressImage(file, maxSizeKB);
+      // compressImage fuerza la conversión a image/webp (excepto en fallbacks), 
+      // así que actualizamos la extensión para evitar romper Safari/iOS
+      if (processedFile.type === "image/webp") {
+        finalName = file.name.replace(/\.[^/.]+$/, "") + ".webp";
+      }
     }
 
     const formData = new FormData();
-    // Wrap con el nombre original o uno fallback por si acaso
-    formData.append("file", processedFile, file.name);
+    // Wrap con el nombre original procesado
+    formData.append("file", processedFile, finalName);
 
     return await uploadSecureImage(formData, folder, hash);
   } catch (err) {
