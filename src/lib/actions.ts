@@ -69,13 +69,23 @@ export async function uploadSecureImage(formData: FormData, folder: string, admi
   const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
   const safeName = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
+  // Fix para iOS/Safari: Asegurar que el contentType no sea application/octet-stream o vacío
+  let mimeType = file.type;
+  if (!mimeType || mimeType === "application/octet-stream") {
+    if (ext === "jpg" || ext === "jpeg") mimeType = "image/jpeg";
+    else if (ext === "png") mimeType = "image/png";
+    else if (ext === "webp") mimeType = "image/webp";
+    else if (ext === "svg") mimeType = "image/svg+xml";
+    else mimeType = "image/jpeg";
+  }
+
   // Usar admin para saltarse el RLS y subir la foto
   const { data, error } = await supabaseAdmin.storage
     .from("lm-assets")
     .upload(safeName, file, {
       cacheControl: "3600",
       upsert: false,
-      contentType: file.type,
+      contentType: mimeType,
     });
 
   if (error) {
