@@ -12,6 +12,7 @@ import Link from "next/link";
 
 export function FeaturedProducts() {
   const { products, isLoading, config } = useSiteConfig();
+  const { addToCart } = useCart();
 
   const featured = products.filter((p) => p.disponible).slice(0, 4);
 
@@ -88,14 +89,14 @@ export function FeaturedProducts() {
                   </p>
                   <div className="flex items-center justify-end pt-2">
                     <button
-                      onClick={() => {
-                        const msg = getProductWaMessage(config.waProductMessage, product);
-                        openWhatsApp(config.site.waNumber, msg);
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addToCart(product);
                       }}
-                      className="px-3 sm:px-4 py-2 rounded-lg bg-brand/10 text-brand text-[10px] sm:text-xs font-medium
+                      className="flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg bg-brand/10 text-brand text-[10px] sm:text-xs font-medium
                                  hover:bg-brand hover:text-white transition-colors duration-200"
                     >
-                      Consultar
+                      <ShoppingCart className="w-3.5 h-3.5" /> Añadir
                     </button>
                   </div>
                 </div>

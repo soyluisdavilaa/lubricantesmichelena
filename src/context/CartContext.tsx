@@ -1,109 +1,115 @@
 "use client";
 
-/* ═══════════════════════════════════════════════
-   CART CONTEXT — Carrito de cotización
-   ═══════════════════════════════════════════════ */
-
 import {
   createContext,
   useContext,
   useState,
   useEffect,
-  useRef,
   useCallback,
   type ReactNode,
 } from "react";
-import type { CartItem } from "@/lib/types";
-import { getSavedCart, saveCart } from "@/lib/storage";
-import { openWhatsApp } from "@/lib/utils";
-import { defaultConfig } from "@/lib/defaults";
-
-type ToastType = "success" | "warning" | null;
+import type { CartItem, Product } from "@/lib/types";
+import { getSavedCart, saveCart as persistCart } from "@/lib/storage";
+import { useToast } from "@/context/ToastContext";
 
 interface CartContextType {
   items: CartItem[];
-  addToCart: (item: CartItem) => void;
-  removeFromCart: (id: string) => void;
+  isOpen: boolean;
+  itemCount: number;
+  openCart: () => void;
+  closeCart: () => void;
+  addToCart: (product: Product, quantity?: number) => void;
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, delta: number) => void;
   clearCart: () => void;
-  sendWhatsApp: () => void;
-  toast: { message: string; type: ToastType };
-  isDrawerOpen: boolean;
-  setDrawerOpen: (open: boolean) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
-  const [toast, setToast] = useState<{ message: string; type: ToastType }>({
-    message: "",
-    type: null,
-  });
-  const [isDrawerOpen, setDrawerOpen] = useState(false);
-  // Evita sobrescribir storage antes de que termine la carga inicial
-  const loadedRef = useRef(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const { toast } = useToast();
 
-  // Cargar carrito guardado al montar
+  // Cargar carrito desde IndexedDB al iniciar
   useEffect(() => {
-    getSavedCart().then((saved) => {
-      if (saved) setItems(saved);
-      loadedRef.current = true;
-    });
+    async function loadCart() {
+      const saved = await getSavedCart();
+      if (saved && saved.length > 0) {
+        setItems(saved);
+      }
+    }
+    loadCart();
   }, []);
 
-  // Persistir en cada cambio (incluyendo vaciado)
+  // Guardar carrito en IndexedDB cada vez que cambia
   useEffect(() => {
-    if (!loadedRef.current) return;
-    saveCart(items);
+    persistCart(items).catch(console.error);
   }, [items]);
 
-  const showToast = useCallback((message: string, type: ToastType) => {
-    setToast({ message, type });
-    setTimeout(() => setToast({ message: "", type: null }), 3000);
+  const itemCount = items.reduce((total, item) => total + item.cantidad, 0);
+
+  const openCart = useCallback(() => setIsOpen(true), []);
+  const closeCart = useCallback(() => setIsOpen(false), []);
+
+  const addToCart = useCallback((product: Product, quantity = 1) => {
+    setItems((currentItems) => {
+      const existing = currentItems.find((item) => item.id === product.id);
+      if (existing) {
+        return currentItems.map((item) =>
+          item.id === product.id
+            ? { ...item, cantidad: item.cantidad + quantity }
+            : item
+        );
+      }
+      return [
+        ...currentItems,
+        {
+          id: product.id,
+          nombre: product.nombre,
+          marca: product.marca,
+          presentacion: product.presentacion,
+          imagen: product.imagen,
+          cantidad: quantity,
+        },
+      ];
+    });
+    toast(`Has añadido ${product.nombre} a tu cotización`, "success");
+    setIsOpen(true); // Abrir el carrito automáticamente al añadir
+  }, [toast]);
+
+  const removeFromCart = useCallback((productId: string) => {
+    setItems((currentItems) => currentItems.filter((item) => item.id !== productId));
   }, []);
 
-  const addToCart = useCallback(
-    (item: CartItem) => {
-      setItems((prev) => {
-        if (prev.some((i) => i.id === item.id)) {
-          showToast("⚠️ Ya está en la cotización", "warning");
-          return prev;
+  const updateQuantity = useCallback((productId: string, delta: number) => {
+    setItems((currentItems) =>
+      currentItems.map((item) => {
+        if (item.id === productId) {
+          const newQuantity = Math.max(1, item.cantidad + delta);
+          return { ...item, cantidad: newQuantity };
         }
-        showToast("✅ Agregado a la cotización", "success");
-        return [...prev, item];
-      });
-    },
-    [showToast]
-  );
-
-  const removeFromCart = useCallback((id: string) => {
-    setItems((prev) => prev.filter((i) => i.id !== id));
+        return item;
+      })
+    );
   }, []);
 
   const clearCart = useCallback(() => {
     setItems([]);
   }, []);
 
-  const sendWhatsApp = useCallback(() => {
-    if (items.length === 0) return;
-    const lines = items.map(
-      (i, idx) => `${idx + 1}. ${i.nombre} (${i.marca}) — ${i.presentacion}`
-    );
-    const message = `¡Hola! 👋 Me gustaría cotizar los siguientes productos:\n\n${lines.join("\n")}\n\n¿Podrían indicarme disponibilidad y precio total? Gracias.`;
-    openWhatsApp(defaultConfig.site.waNumber, message);
-  }, [items]);
-
   return (
     <CartContext.Provider
       value={{
         items,
+        isOpen,
+        itemCount,
+        openCart,
+        closeCart,
         addToCart,
         removeFromCart,
+        updateQuantity,
         clearCart,
-        sendWhatsApp,
-        toast,
-        isDrawerOpen,
-        setDrawerOpen,
       }}
     >
       {children}
@@ -112,7 +118,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
 }
 
 export function useCart() {
-  const ctx = useContext(CartContext);
-  if (!ctx) throw new Error("useCart debe usarse dentro de CartProvider");
-  return ctx;
+  const context = useContext(CartContext);
+  if (context === undefined) {
+    throw new Error("useCart debe usarse dentro de un CartProvider");
+  }
+  return context;
 }

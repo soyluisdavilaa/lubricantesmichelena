@@ -3,10 +3,10 @@
 /* Modal de detalle de producto */
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X, MessageCircle } from "lucide-react";
+import { X, MessageCircle, ShoppingCart } from "lucide-react";
 import type { Product } from "@/lib/types";
 import { useSiteConfig } from "@/context/SiteConfigContext";
-import { openWhatsApp, getProductWaMessage } from "@/lib/utils";
+import { useCart } from "@/context/CartContext";
 
 interface ProductModalProps {
   product: Product | null;
@@ -15,6 +15,7 @@ interface ProductModalProps {
 
 export function ProductModal({ product, onClose }: ProductModalProps) {
   const { config } = useSiteConfig();
+  const { addToCart } = useCart();
 
   return (
     <AnimatePresence>
@@ -106,17 +107,25 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                     </div>
                   </div>
 
-                  {/* Consultar */}
+                  {/* Añadir al Carrito */}
                   <button
                     onClick={() => {
-                      const msg = getProductWaMessage(config.waProductMessage, product);
-                      openWhatsApp(config.site.waNumber, msg);
+                      addToCart(product);
+                      onClose(); // Cierra el modal para que el usuario pueda ver el drawer del carrito
                     }}
+                    disabled={!product.disponible}
                     className="w-full flex items-center justify-center gap-2 px-4 py-3
-                               rounded-xl bg-whatsapp/10 text-whatsapp font-medium
-                               hover:bg-whatsapp hover:text-white transition-colors"
+                               rounded-xl bg-brand text-white font-bold
+                               hover:bg-brand/90 hover:scale-[1.02] active:scale-95 transition-all
+                               disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-brand/20"
                   >
-                    <MessageCircle className="w-4 h-4" /> Consultar por WhatsApp
+                    {product.disponible ? (
+                      <>
+                        <ShoppingCart className="w-5 h-5" /> Añadir a Cotización
+                      </>
+                    ) : (
+                      "Agotado"
+                    )}
                   </button>
                 </div>
               </div>

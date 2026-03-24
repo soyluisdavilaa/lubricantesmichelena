@@ -12,6 +12,7 @@ import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 import { usePathname } from "next/navigation";
 import { Wrench } from "lucide-react";
+import { FloatingCart } from "@/components/layout/FloatingCart";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { config, isLoading } = useSiteConfig();
@@ -42,6 +43,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <Header />
       <main className="flex-1 pt-16"><PageTransition>{children}</PageTransition></main>
       <Footer />
+      <FloatingCart />
       <FloatingWhatsApp />
       <BackToTop />
     </>

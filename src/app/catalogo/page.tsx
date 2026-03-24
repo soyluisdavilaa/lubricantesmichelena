@@ -92,6 +92,7 @@ export default function CatalogoPage() {
   const [search, setSearch] = useState("");
   const [selectedCat, setSelectedCat] = useState("");
   const [selectedSub, setSelectedSub] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState("");
   const [sortBy, setSortBy] = useState("default");
   const [page, setPage] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -111,12 +112,13 @@ export default function CatalogoPage() {
     }
     if (selectedCat) result = result.filter((p) => p.categoria === selectedCat);
     if (selectedSub) result = result.filter((p) => p.subcategoria === selectedSub);
+    if (selectedBrand) result = result.filter((p) => p.marca === selectedBrand);
     switch (sortBy) {
       case "name-asc":   result.sort((a, b) => a.nombre.localeCompare(b.nombre)); break;
       case "name-desc":  result.sort((a, b) => b.nombre.localeCompare(a.nombre)); break;
     }
     return result;
-  }, [products, search, selectedCat, selectedSub, sortBy]);
+  }, [products, search, selectedCat, selectedSub, selectedBrand, sortBy]);
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
@@ -128,10 +130,10 @@ export default function CatalogoPage() {
       <section className="py-12 border-b border-border bg-card/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealOnScroll>
-            <span className="text-brand font-semibold text-sm uppercase tracking-wider">Catálogo</span>
-            <h1 className="text-3xl sm:text-4xl font-bold mt-2 mb-2">Nuestros Productos</h1>
+            <span className="text-brand font-semibold text-sm uppercase tracking-wider">Catálogo Avanzado</span>
+            <h1 className="text-3xl sm:text-4xl font-bold mt-2 mb-2">Búsqueda Inteligente</h1>
             <p className="text-muted-foreground">
-              {filtered.length} producto{filtered.length !== 1 ? "s" : ""} disponible{filtered.length !== 1 ? "s" : ""}
+              {filtered.length} producto{filtered.length !== 1 ? "s" : ""} coinciden con tus filtros
             </p>
           </RevealOnScroll>
         </div>
@@ -140,22 +142,23 @@ export default function CatalogoPage() {
       <section className="py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Filter bar + view toggle */}
-          <div className="flex items-start gap-3 mb-8">
-            <div className="flex-1">
-              <FilterBar
-                search={search}
-                onSearchChange={reset(setSearch)}
-                selectedCat={selectedCat}
-                onCatChange={reset(setSelectedCat)}
-                selectedSub={selectedSub}
-                onSubChange={reset(setSelectedSub)}
-                sortBy={sortBy}
-                onSortChange={reset(setSortBy)}
-              />
-            </div>
+          <div className="flex flex-col mb-8 gap-4">
+            <FilterBar
+              search={search}
+              onSearchChange={reset(setSearch)}
+              selectedCat={selectedCat}
+              onCatChange={reset(setSelectedCat)}
+              selectedSub={selectedSub}
+              onSubChange={reset(setSelectedSub)}
+              selectedBrand={selectedBrand}
+              onBrandChange={reset(setSelectedBrand)}
+              sortBy={sortBy}
+              onSortChange={reset(setSortBy)}
+            />
 
             {/* View toggle */}
-            <div className="flex items-center gap-1 p-1 rounded-lg bg-secondary border border-border shrink-0">
+            <div className="flex items-center justify-end">
+              <div className="flex items-center gap-1 p-1 rounded-lg bg-secondary border border-border shrink-0">
               <button
                 onClick={() => setViewMode("grid")}
                 className={cn(
@@ -180,6 +183,7 @@ export default function CatalogoPage() {
               >
                 <List className="w-4 h-4" />
               </button>
+              </div>
             </div>
           </div>
 

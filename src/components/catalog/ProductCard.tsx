@@ -120,9 +120,9 @@ export function ProductCard({ product, onViewDetail, index }: ProductCardProps) 
 
         <div className="flex items-center justify-end pt-2">
           <button
-            onClick={() => {
-              const msg = getProductWaMessage(config.waProductMessage, product);
-              openWhatsApp(config.site.waNumber, msg);
+            onClick={(e) => {
+              e.stopPropagation();
+              addToCart(product);
             }}
             disabled={!product.disponible}
             className="relative px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 overflow-hidden
@@ -136,7 +136,7 @@ export function ProductCard({ product, onViewDetail, index }: ProductCardProps) 
             />
             {product.disponible ? (
               <>
-                <MessageCircle className="w-3.5 h-3.5" /> Consultar
+                <ShoppingCart className="w-3.5 h-3.5" /> Añadir
               </>
             ) : (
               "Agotado"

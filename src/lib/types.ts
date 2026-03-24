@@ -93,6 +93,7 @@ export interface CartItem {
   marca: string;
   presentacion: string;
   imagen: string;
+  cantidad: number;
 }
 
 // ─── Reseñas ───
