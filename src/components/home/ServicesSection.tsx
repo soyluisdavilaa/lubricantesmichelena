@@ -49,7 +49,7 @@ export function ServicesSection() {
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   className="group p-6 rounded-2xl bg-card border border-border relative overflow-hidden
                              hover:border-brand/30 hover:shadow-xl hover:shadow-brand/8
-                             transition-colors duration-300 cursor-default"
+                             transition-colors duration-300 cursor-default flex flex-col h-full"
                 >
                   {/* Gradient bg on hover */}
                   <div
@@ -90,11 +90,11 @@ export function ServicesSection() {
                   </div>
 
                   <h3 className="text-lg font-semibold mb-2 relative">{service.nombre}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-4 relative">
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4 relative flex-1">
                     {service.descripcion}
                   </p>
 
-                  <div className="flex items-center justify-between relative">
+                  <div className="flex items-center justify-between relative mt-auto">
                     <span
                       className="text-lg font-bold"
                       style={{
