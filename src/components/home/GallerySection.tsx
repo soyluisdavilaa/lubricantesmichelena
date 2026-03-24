@@ -8,10 +8,9 @@ import { RevealOnScroll } from "@/components/shared/RevealOnScroll";
 import { Image as ImageIcon } from "lucide-react";
 
 export function GallerySection() {
-  const { config } = useSiteConfig();
-  const gallery = config.nosotros?.imagenes || [];
+  const { gallery } = useSiteConfig();
 
-  if (gallery.length === 0) return null;
+  if (!gallery || gallery.length === 0) return null;
 
   return (
     <section className="py-24 bg-background overflow-hidden relative">
@@ -59,24 +58,24 @@ export function GallerySection() {
                 whileHover={{ scale: 1.02 }}
                 className={`relative rounded-2xl overflow-hidden group bg-card border border-white/5 cursor-pointer shadow-lg ${spanClass}`}
               >
-                {img.url && !img.url.startsWith("/img/") ? (
+                {img.imagen && !img.imagen.startsWith("/img/") ? (
                   <>
                     <img
-                      src={img.url}
-                      alt={img.alt}
+                      src={img.imagen}
+                      alt={img.caption || "Imagen de galer\u00eda"}
                       className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                     />
                     {/* Hover overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
                       <span className="text-white font-medium text-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                        {img.alt}
+                        {img.caption}
                       </span>
                     </div>
                   </>
                 ) : (
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground/30 gap-2">
                     <ImageIcon className="w-12 h-12" />
-                    <span className="text-xs font-medium px-4 text-center">Falta subir {img.url}</span>
+                    <span className="text-xs font-medium px-4 text-center">Falta subir foto</span>
                   </div>
                 )}
               </motion.div>

@@ -62,10 +62,14 @@ export function HeroSection() {
 
       {/* Hero background image, if configured */}
       {hero.imagen && (
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40 mix-blend-overlay pointer-events-none" 
-          style={{ backgroundImage: `url(${hero.imagen})` }} 
-        />
+        <>
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none" 
+            style={{ backgroundImage: `url(${hero.imagen})` }} 
+          />
+          {/* Capa negra al 50% sobre la foto */}
+          <div className="absolute inset-0 bg-black/50 pointer-events-none" />
+        </>
       )}
 
       {/* Radial glow top-right */}

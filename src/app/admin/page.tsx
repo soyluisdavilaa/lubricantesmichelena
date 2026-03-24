@@ -30,8 +30,8 @@ const labelCls = "block text-xs font-medium text-muted-foreground mb-1";
 
 export default function AdminPage() {
   const {
-    products, services, config, categorias,
-    saveProducts, saveServices, saveConfig, saveCategories,
+    products, services, config, categorias, gallery,
+    saveProducts, saveServices, saveConfig, saveCategories, saveGallery,
   } = useSiteConfig();
 
   const [isAuth, setIsAuth] = useState(false);
@@ -49,6 +49,7 @@ export default function AdminPage() {
 
   // local config draft (for Config tab)
   const [cfgDraft, setCfgDraft] = useState(config);
+  const [galleryDraft, setGalleryDraft] = useState(gallery);
   const [cfgSaved, setCfgSaved] = useState(false);
 
   // ─── LOGIN ───
@@ -74,6 +75,7 @@ export default function AdminPage() {
         setFailedAttempts(0);
         setLockedUntil(null);
         setCfgDraft(config);
+        setGalleryDraft(gallery);
       } else {
         const next = failedAttempts + 1;
         setFailedAttempts(next);
@@ -92,7 +94,7 @@ export default function AdminPage() {
   // ─── EXPORT ───
   const handleExport = () => {
     const data = {
-      config, products, services,
+      config, products, services, categorias, gallery,
       exportDate: new Date().toISOString(),
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
@@ -174,6 +176,7 @@ export default function AdminPage() {
   // ─── CONFIG ───
   const handleSaveConfig = () => {
     saveConfig(cfgDraft);
+    saveGallery(galleryDraft);
     setCfgSaved(true);
     setTimeout(() => setCfgSaved(false), 2500);
   };
@@ -594,6 +597,56 @@ export default function AdminPage() {
                     className="flex items-center gap-2 px-4 py-2 text-sm bg-secondary rounded-lg hover:bg-secondary/80 focus:ring-2 focus:ring-brand/30"
                   >
                     <Plus className="w-4 h-4" /> Añadir Imagen
+                  </button>
+                </div>
+              </div>
+            </section>
+
+          {/* Instalaciones / Galería */}
+            <section className="space-y-3">
+              <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Instalaciones (Galería)</h3>
+              <div className="p-4 rounded-xl bg-card border border-border space-y-3">
+                <div className="space-y-4">
+                  <label className={labelCls}>Imágenes de las instalaciones</label>
+                  {galleryDraft.map((img, idx) => (
+                    <div key={idx} className="flex gap-4 p-4 border border-border rounded-lg bg-secondary/20">
+                      <div className="flex-1 space-y-2">
+                        <ImageUploader
+                          value={img.imagen || ""}
+                          onChange={(url) => {
+                            const newImgs = [...galleryDraft];
+                            newImgs[idx].imagen = url;
+                            setGalleryDraft(newImgs);
+                          }}
+                          folder="gallery"
+                        />
+                        <input
+                          value={img.caption || ""}
+                          onChange={(e) => {
+                            const newImgs = [...galleryDraft];
+                            newImgs[idx].caption = e.target.value;
+                            setGalleryDraft(newImgs);
+                          }}
+                          className={`w-full ${inputCls}`}
+                          placeholder="Texto descriptivo de la imagen"
+                        />
+                      </div>
+                      <button
+                        onClick={() => {
+                          const newImgs = galleryDraft.filter((_, i) => i !== idx);
+                          setGalleryDraft(newImgs);
+                        }}
+                        className="text-muted-foreground hover:text-destructive transition-colors shrink-0 flex items-start"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => setGalleryDraft([...galleryDraft, { imagen: "", caption: "Nueva instalación" }])}
+                    className="flex items-center gap-2 px-4 py-2 text-sm bg-secondary rounded-lg hover:bg-secondary/80 focus:ring-2 focus:ring-brand/30"
+                  >
+                    <Plus className="w-4 h-4" /> Añadir Instalación
                   </button>
                 </div>
               </div>
