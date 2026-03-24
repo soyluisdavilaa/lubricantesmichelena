@@ -76,6 +76,7 @@ export function HeroSection() {
             alt="Hero Background"
             fill
             priority
+            unoptimized={true}
             onLoad={() => setImgLoaded(true)}
             className="object-cover object-center"
             sizes="100vw"
