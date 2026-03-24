@@ -5,12 +5,13 @@
    Bucket: lm-assets (public)
    ═══════════════════════════════════════════════ */
 
-import { createClient } from "@/lib/supabase/client";
+import { uploadSecureImage, deleteSecureImage } from "./actions";
+import { getAdminHash } from "./storage";
 
 const BUCKET = "lm-assets";
 
 /**
- * Sube una imagen al bucket de Supabase Storage.
+ * Sube una imagen al bucket de Supabase Storage pasando por Server Actions.
  * Comprime automáticamente si supera maxSizeKB.
  * Retorna la URL pública o null si falla.
  */
@@ -20,7 +21,11 @@ export async function uploadImage(
   maxSizeKB: number = 500
 ): Promise<string | null> {
   try {
-    const supabase = createClient();
+    const hash = await getAdminHash();
+    if (!hash) {
+      console.error("No admin hash");
+      return null;
+    }
 
     // Comprimir si es muy grande
     let processedFile: File | Blob = file;
@@ -28,29 +33,11 @@ export async function uploadImage(
       processedFile = await compressImage(file, maxSizeKB);
     }
 
-    // Generar nombre único
-    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-    const safeName = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const formData = new FormData();
+    // Wrap con el nombre original o uno fallback por si acaso
+    formData.append("file", processedFile, file.name);
 
-    const { data, error } = await supabase.storage
-      .from(BUCKET)
-      .upload(safeName, processedFile, {
-        cacheControl: "3600",
-        upsert: false,
-        contentType: file.type,
-      });
-
-    if (error) {
-      console.error("Error subiendo imagen:", error);
-      return null;
-    }
-
-    // Obtener URL pública
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from(BUCKET).getPublicUrl(data.path);
-
-    return publicUrl;
+    return await uploadSecureImage(formData, folder, hash);
   } catch (err) {
     console.error("Error en uploadImage:", err);
     return null;
@@ -62,20 +49,10 @@ export async function uploadImage(
  */
 export async function deleteImage(publicUrl: string): Promise<boolean> {
   try {
-    const supabase = createClient();
-
-    // Extraer path del URL público
-    const url = new URL(publicUrl);
-    const pathParts = url.pathname.split(`/object/public/${BUCKET}/`);
-    if (pathParts.length < 2) return false;
-    const filePath = decodeURIComponent(pathParts[1]);
-
-    const { error } = await supabase.storage.from(BUCKET).remove([filePath]);
-    if (error) {
-      console.error("Error eliminando imagen:", error);
-      return false;
-    }
-    return true;
+    const hash = await getAdminHash();
+    if (!hash) return false;
+    
+    return await deleteSecureImage(publicUrl, hash);
   } catch (err) {
     console.error("Error en deleteImage:", err);
     return false;

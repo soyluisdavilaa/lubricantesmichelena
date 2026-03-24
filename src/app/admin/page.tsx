@@ -13,8 +13,8 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useSiteConfig } from "@/context/SiteConfigContext";
-import { hashPassword, generateId, formatDate } from "@/lib/utils";
-import { getAdminHash, setAdminHash } from "@/lib/storage";
+import { hashPassword, generateId } from "@/lib/utils";
+import { getAdminHash, setAdminHash, verifyAdminLogin, changeGlobalAdminHash } from "@/lib/storage";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import type { Product, Service, Promo, BlogArticle, Cita } from "@/lib/types";
 
@@ -63,9 +63,12 @@ export default function AdminPage() {
         return;
       }
 
+      // Verificar si el hash coincide de verdad en el backend
       const hash = await hashPassword(password);
-      const savedHash = (await getAdminHash()) || DEFAULT_HASH;
-      if (hash === savedHash) {
+      const isOk = await verifyAdminLogin(hash);
+
+      if (isOk) {
+        await setAdminHash(hash); // guardar sesion localmente tras exito
         setIsAuth(true);
         setLoginError("");
         setFailedAttempts(0);
@@ -107,11 +110,25 @@ export default function AdminPage() {
       e.preventDefault();
       if (newPass.length < 8) { setPassMsg("Mínimo 8 caracteres"); return; }
       if (newPass !== newPassConfirm) { setPassMsg("Las contraseñas no coinciden"); return; }
-      const hash = await hashPassword(newPass);
-      await setAdminHash(hash);
-      setPassMsg("✓ Contraseña actualizada");
-      setNewPass(""); setNewPassConfirm("");
-      setTimeout(() => setPassMsg(""), 3000);
+      
+      const newHash = await hashPassword(newPass);
+      const currentHashCtx = await getAdminHash();
+
+      if (!currentHashCtx) {
+        setPassMsg("Error de sesión"); 
+        return;
+      }
+
+      setPassMsg("Actualizando...");
+      const success = await changeGlobalAdminHash(newHash, currentHashCtx);
+      
+      if (success) {
+        setPassMsg("✓ Contraseña actualizada en la base de datos");
+        setNewPass(""); setNewPassConfirm("");
+        setTimeout(() => setPassMsg(""), 3000);
+      } else {
+        setPassMsg("Error al actualizar (Verifique conexión)");
+      }
     },
     [newPass, newPassConfirm]
   );

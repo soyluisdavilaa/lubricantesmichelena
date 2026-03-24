@@ -19,26 +19,37 @@ import type {
   Subscriber,
 } from "./types";
 
+import { 
+  getSiteData, 
+  saveSiteData, 
+  addCitaPublic, 
+  addSubscriberPublic,
+  verifyAdminHashAction,
+  changeAdminHashAction
+} from "./actions";
+
 // Keys de storage
 const KEYS = {
-  config: "lm_config",
-  products: "lm_products",
-  services: "lm_services",
-  promos: "lm_promos",
-  blog: "lm_blog",
-  gallery: "lm_gallery",
-  categories: "lm_categories",
-  reviews: "lm_reviews",
-  citas: "lm_citas",
-  cart: "lm_cart",
-  subscribers: "lm_subscribers",
-  adminHash: "lm_admin_hash",
-  theme: "lm_theme",
+  config: "config",
+  products: "products",
+  services: "services",
+  promos: "promos",
+  blog: "blog",
+  gallery: "gallery",
+  categories: "categories",
+  reviews: "reviews",
+  citas: "citas",
+  cart: "cart", // local only
+  subscribers: "subscribers",
+  adminHash: "adminHash", // local only
+  theme: "theme", // local only
 } as const;
 
 /**
- * Importa localforage dinámicamente (solo en el browser).
- * Esto evita errores de SSR en Next.js.
+ * localforage se usa AHORA SOLO para:
+ * - adminHash (sesión local del admin)
+ * - theme (preferencia local)
+ * - cart (carrito de cotización temporal)
  */
 async function getLocalForage() {
   const lf = (await import("localforage")).default;
@@ -49,154 +60,198 @@ async function getLocalForage() {
   return lf;
 }
 
-// ─── GETTERS GENÉRICOS ───
-
-async function getItem<T>(key: string): Promise<T | null> {
+async function getItemLocal<T>(key: string): Promise<T | null> {
   const lf = await getLocalForage();
   return lf.getItem<T>(key);
 }
 
-async function setItem<T>(key: string, value: T): Promise<T> {
+async function setItemLocal<T>(key: string, value: T): Promise<T> {
   const lf = await getLocalForage();
   return lf.setItem(key, value);
+}
+
+// Helper para guardar en Supabase usando el adminHash validado
+async function setItemDB<T>(key: string, value: T): Promise<void> {
+  const hash = await getAdminHash();
+  if (!hash) {
+    console.warn("No admin hash in local storage. Fallback local?");
+    return;
+  }
+  try {
+    await saveSiteData(key, value, hash);
+  } catch (err) {
+    console.error(`Error guardando ${key} en DB:`, err);
+  }
+}
+
+// Helper para obtener de Supabase
+async function getItemDB<T>(key: string): Promise<T | null> {
+  try {
+    const data = await getSiteData(key);
+    return data as T | null;
+  } catch (err) {
+    console.error(`Error obteniendo ${key} de DB:`, err);
+    return null;
+  }
 }
 
 // ─── CONFIG ───
 
 export async function getSavedConfig(): Promise<Partial<SiteConfig> | null> {
-  return getItem<Partial<SiteConfig>>(KEYS.config);
+  return getItemDB<Partial<SiteConfig>>(KEYS.config);
 }
 
 export async function saveConfig(config: SiteConfig): Promise<void> {
-  await setItem(KEYS.config, config);
+  await setItemDB(KEYS.config, config);
 }
 
 // ─── PRODUCTS ───
 
 export async function getSavedProducts(): Promise<Product[] | null> {
-  return getItem<Product[]>(KEYS.products);
+  return getItemDB<Product[]>(KEYS.products);
 }
 
 export async function saveProducts(products: Product[]): Promise<void> {
-  await setItem(KEYS.products, products);
+  await setItemDB(KEYS.products, products);
 }
 
 // ─── SERVICES ───
 
 export async function getSavedServices(): Promise<Service[] | null> {
-  return getItem<Service[]>(KEYS.services);
+  return getItemDB<Service[]>(KEYS.services);
 }
 
 export async function saveServices(services: Service[]): Promise<void> {
-  await setItem(KEYS.services, services);
+  await setItemDB(KEYS.services, services);
 }
 
 // ─── PROMOS ───
 
 export async function getSavedPromos(): Promise<Promo[] | null> {
-  return getItem<Promo[]>(KEYS.promos);
+  return getItemDB<Promo[]>(KEYS.promos);
 }
 
 export async function savePromos(promos: Promo[]): Promise<void> {
-  await setItem(KEYS.promos, promos);
+  await setItemDB(KEYS.promos, promos);
 }
 
 // ─── BLOG ───
 
 export async function getSavedBlog(): Promise<BlogArticle[] | null> {
-  return getItem<BlogArticle[]>(KEYS.blog);
+  return getItemDB<BlogArticle[]>(KEYS.blog);
 }
 
 export async function saveBlog(articles: BlogArticle[]): Promise<void> {
-  await setItem(KEYS.blog, articles);
+  await setItemDB(KEYS.blog, articles);
 }
 
 // ─── GALLERY ───
 
 export async function getSavedGallery(): Promise<GalleryPhoto[] | null> {
-  return getItem<GalleryPhoto[]>(KEYS.gallery);
+  return getItemDB<GalleryPhoto[]>(KEYS.gallery);
 }
 
 export async function saveGallery(photos: GalleryPhoto[]): Promise<void> {
-  await setItem(KEYS.gallery, photos);
+  await setItemDB(KEYS.gallery, photos);
 }
 
 // ─── CATEGORIES ───
 
 export async function getSavedCategories(): Promise<Categoria[] | null> {
-  return getItem<Categoria[]>(KEYS.categories);
+  return getItemDB<Categoria[]>(KEYS.categories);
 }
 
 export async function saveCategories(categories: Categoria[]): Promise<void> {
-  await setItem(KEYS.categories, categories);
+  await setItemDB(KEYS.categories, categories);
 }
 
 // ─── REVIEWS ───
 
 export async function getSavedReviews(): Promise<Review[] | null> {
-  return getItem<Review[]>(KEYS.reviews);
+  return getItemDB<Review[]>(KEYS.reviews);
 }
 
 export async function saveReviews(reviews: Review[]): Promise<void> {
-  await setItem(KEYS.reviews, reviews);
+  await setItemDB(KEYS.reviews, reviews);
 }
 
 // ─── CITAS ───
 
 export async function getSavedCitas(): Promise<Cita[] | null> {
-  return getItem<Cita[]>(KEYS.citas);
+  return getItemDB<Cita[]>(KEYS.citas);
 }
 
 export async function saveCitas(citas: Cita[]): Promise<void> {
-  await setItem(KEYS.citas, citas);
+  await setItemDB(KEYS.citas, citas);
 }
 
 export async function addCita(cita: Cita): Promise<void> {
-  const existing = (await getSavedCitas()) || [];
-  existing.push(cita);
-  await saveCitas(existing);
+  try {
+    await addCitaPublic(cita);
+  } catch (e) {
+    console.error("Error guardando cita", e);
+  }
 }
 
 // ─── CART ───
 
 export async function getSavedCart(): Promise<CartItem[] | null> {
-  return getItem<CartItem[]>(KEYS.cart);
+  return getItemLocal<CartItem[]>(KEYS.cart);
 }
 
 export async function saveCart(items: CartItem[]): Promise<void> {
-  await setItem(KEYS.cart, items);
+  await setItemLocal(KEYS.cart, items);
 }
 
 // ─── SUBSCRIBERS ───
 
 export async function getSavedSubscribers(): Promise<Subscriber[] | null> {
-  return getItem<Subscriber[]>(KEYS.subscribers);
+  return getItemDB<Subscriber[]>(KEYS.subscribers);
 }
 
 export async function addSubscriber(email: string): Promise<boolean> {
-  const existing = (await getSavedSubscribers()) || [];
-  if (existing.some((s) => s.email === email)) return false;
-  existing.push({ email, fecha: new Date().toISOString() });
-  await setItem(KEYS.subscribers, existing);
-  return true;
+  try {
+    return await addSubscriberPublic(email);
+  } catch (e) {
+    return false;
+  }
 }
 
 // ─── ADMIN ───
 
 export async function getAdminHash(): Promise<string | null> {
-  return getItem<string>(KEYS.adminHash);
+  return getItemLocal<string>(KEYS.adminHash);
 }
 
 export async function setAdminHash(hash: string): Promise<void> {
-  await setItem(KEYS.adminHash, hash);
+  await setItemLocal(KEYS.adminHash, hash);
+}
+
+export async function verifyAdminLogin(hash: string): Promise<boolean> {
+  try {
+    return await verifyAdminHashAction(hash);
+  } catch (e) {
+    return false;
+  }
+}
+
+export async function changeGlobalAdminHash(newHash: string, currentHash: string): Promise<boolean> {
+  try {
+    const success = await changeAdminHashAction(newHash, currentHash);
+    if (success) {
+      await setAdminHash(newHash);
+      return true;
+    }
+  } catch(e) { console.error(e); }
+  return false;
 }
 
 // ─── THEME ───
 
 export async function getSavedTheme(): Promise<"dark" | "light" | null> {
-  return getItem<"dark" | "light">(KEYS.theme);
+  return getItemLocal<"dark" | "light">(KEYS.theme);
 }
 
 export async function saveTheme(theme: "dark" | "light"): Promise<void> {
-  await setItem(KEYS.theme, theme);
+  await setItemLocal(KEYS.theme, theme);
 }
