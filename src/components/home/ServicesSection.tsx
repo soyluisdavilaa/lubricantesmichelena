@@ -10,7 +10,7 @@ import type { LucideProps } from "lucide-react";
 import type { ForwardRefExoticComponent, RefAttributes } from "react";
 
 export function ServicesSection() {
-  const { services } = useSiteConfig();
+  const { services, isLoading } = useSiteConfig();
 
   return (
     <section className="py-20 relative">
@@ -34,7 +34,14 @@ export function ServicesSection() {
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service, i) => {
+          {isLoading
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={`skeleton-service-${i}`}
+                  className="h-[240px] rounded-2xl bg-card border border-border bg-gradient-to-r from-card to-muted animate-pulse"
+                />
+              ))
+            : services.map((service, i) => {
             const IconComponent = (
               Icons as unknown as Record<
                 string,

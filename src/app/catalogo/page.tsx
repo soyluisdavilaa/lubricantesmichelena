@@ -87,7 +87,7 @@ function ProductRow({
 }
 
 export default function CatalogoPage() {
-  const { products } = useSiteConfig();
+  const { products, isLoading } = useSiteConfig();
   const [search, setSearch] = useState("");
   const [selectedCat, setSelectedCat] = useState("");
   const [selectedSub, setSelectedSub] = useState("");
@@ -184,7 +184,31 @@ export default function CatalogoPage() {
 
           {/* Products */}
           <AnimatePresence mode="wait">
-            {paginated.length > 0 ? (
+            {isLoading ? (
+              <motion.div
+                key="loading-catalog"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className={
+                  viewMode === "grid"
+                    ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                    : "space-y-3"
+                }
+              >
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div
+                    key={`skeleton-catalog-${i}`}
+                    className={
+                      viewMode === "grid"
+                        ? "h-[340px] rounded-2xl bg-card border border-border animate-pulse"
+                        : "h-24 rounded-xl bg-card border border-border animate-pulse"
+                    }
+                  />
+                ))}
+              </motion.div>
+            ) : paginated.length > 0 ? (
               <motion.div
                 key={viewMode}
                 initial={{ opacity: 0 }}
@@ -226,7 +250,7 @@ export default function CatalogoPage() {
                                  hover:bg-secondary/80 transition-colors
                                  disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Anterior
+                       Anterior
                     </button>
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
                       <button
@@ -247,7 +271,7 @@ export default function CatalogoPage() {
                                  hover:bg-secondary/80 transition-colors
                                  disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Siguiente
+                       Siguiente
                     </button>
                   </div>
                 )}

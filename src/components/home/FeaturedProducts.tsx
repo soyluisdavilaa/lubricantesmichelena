@@ -11,7 +11,7 @@ import { openWhatsApp } from "@/lib/utils";
 import Link from "next/link";
 
 export function FeaturedProducts() {
-  const { products, config } = useSiteConfig();
+  const { products, isLoading } = useSiteConfig();
   const { addToCart } = useCart();
 
   const featured = products.filter((p) => p.disponible).slice(0, 4);
@@ -39,7 +39,14 @@ export function FeaturedProducts() {
         </RevealOnScroll>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featured.map((product, i) => (
+          {isLoading
+            ? Array.from({ length: 4 }).map((_, i) => (
+                <div
+                  key={`skeleton-featured-${i}`}
+                  className="h-[340px] rounded-2xl bg-card border border-border animate-pulse"
+                />
+              ))
+            : featured.map((product, i) => (
             <RevealOnScroll key={product.id} delay={i * 0.1}>
               <motion.div
                 whileHover={{ y: -8, boxShadow: "0 24px 48px rgba(249,115,22,0.12)" }}
