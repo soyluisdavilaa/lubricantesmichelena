@@ -76,11 +76,11 @@ export function ProductCard({ product, onViewDetail, index }: ProductCardProps) 
 
         {/* Hover overlay */}
         <div
-          className="absolute inset-0 bg-black/0 group-hover:bg-black/25
+          className="absolute inset-0 bg-black/0 group-hover:bg-black/60
                      flex items-center justify-center opacity-0 group-hover:opacity-100
                      transition-all duration-300"
         >
-          <span className="px-4 py-2 rounded-full bg-white/90 text-foreground text-sm font-medium flex items-center gap-2 shadow-lg">
+          <span className="px-4 py-2 rounded-full bg-white text-black text-sm font-semibold flex items-center gap-2 shadow-xl hover:scale-105 transition-transform">
             <Eye className="w-4 h-4" /> Ver Detalle
           </span>
         </div>
@@ -120,26 +120,27 @@ export function ProductCard({ product, onViewDetail, index }: ProductCardProps) 
 
         <div className="flex items-center justify-end pt-2">
           <button
-            onClick={() =>
-              addToCart({
-                id: product.id,
-                nombre: product.nombre,
-                marca: product.marca,
-                presentacion: product.presentacion,
-                imagen: product.imagen,
-              })
-            }
+            onClick={() => {
+              const msg = `¡Hola! Me interesa el producto: ${product.nombre} de ${product.marca} (${product.presentacion}). ¿Me pueden dar más información y precio?`;
+              openWhatsApp(config.site.waNumber, msg);
+            }}
             disabled={!product.disponible}
-            className="relative px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 overflow-hidden
+            className="relative px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 overflow-hidden
                        disabled:opacity-50 disabled:cursor-not-allowed
-                       bg-brand/10 text-brand hover:bg-brand hover:text-white group/btn"
+                       bg-brand/10 text-brand hover:bg-brand hover:text-white group/btn flex items-center gap-1.5"
           >
             <span
               className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full
                          transition-transform duration-500
                          bg-gradient-to-r from-transparent via-white/20 to-transparent"
             />
-            {product.disponible ? "Cotizar" : "Agotado"}
+            {product.disponible ? (
+              <>
+                <MessageCircle className="w-3.5 h-3.5" /> Consultar
+              </>
+            ) : (
+              "Agotado"
+            )}
           </button>
         </div>
       </div>
