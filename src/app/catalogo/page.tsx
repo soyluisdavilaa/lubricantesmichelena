@@ -193,7 +193,7 @@ export default function CatalogoPage() {
                 transition={{ duration: 0.2 }}
                 className={
                   viewMode === "grid"
-                    ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                    ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-6"
                     : "space-y-3"
                 }
               >
@@ -217,7 +217,7 @@ export default function CatalogoPage() {
                 transition={{ duration: 0.2 }}
               >
                 {viewMode === "grid" ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-6">
                     {paginated.map((product, i) => (
                       <ProductCard
                         key={product.id}

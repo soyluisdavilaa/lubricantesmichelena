@@ -11,8 +11,7 @@ import { openWhatsApp } from "@/lib/utils";
 import Link from "next/link";
 
 export function FeaturedProducts() {
-  const { products, isLoading } = useSiteConfig();
-  const { addToCart } = useCart();
+  const { products, isLoading, config } = useSiteConfig();
 
   const featured = products.filter((p) => p.disponible).slice(0, 4);
 
@@ -38,7 +37,7 @@ export function FeaturedProducts() {
           </div>
         </RevealOnScroll>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-6">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
                 <div
@@ -89,19 +88,11 @@ export function FeaturedProducts() {
                   </p>
                   <div className="flex items-center justify-end pt-2">
                     <button
-                      onClick={() =>
-                        addToCart({
-                          id: product.id,
-                          nombre: product.nombre,
-                          marca: product.marca,
-                          presentacion: product.presentacion,
-                          imagen: product.imagen,
-                        })
-                      }
-                      className="px-4 py-2 rounded-lg bg-brand/10 text-brand text-xs font-medium
+                      onClick={() => openWhatsApp(config.site.waNumber, `¡Hola! Me interesa el producto ${product.nombre} (${product.marca}).`)}
+                      className="px-3 sm:px-4 py-2 rounded-lg bg-brand/10 text-brand text-[10px] sm:text-xs font-medium
                                  hover:bg-brand hover:text-white transition-colors duration-200"
                     >
-                      Cotizar
+                      Consultar
                     </button>
                   </div>
                 </div>

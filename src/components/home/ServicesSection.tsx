@@ -32,7 +32,7 @@ export function ServicesSection() {
         </RevealOnScroll>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
           {isLoading
             ? Array.from({ length: 6 }).map((_, i) => (
                 <div
@@ -53,7 +53,7 @@ export function ServicesSection() {
                 <motion.div
                   whileHover={{ y: -4 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="group p-6 rounded-2xl bg-card border border-border relative overflow-hidden
+                  className="group p-4 sm:p-6 rounded-2xl bg-card border border-border relative overflow-hidden
                              hover:border-brand/30 hover:shadow-xl hover:shadow-brand/8
                              transition-colors duration-300 cursor-default flex flex-col h-full"
                 >

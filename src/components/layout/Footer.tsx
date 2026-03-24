@@ -35,7 +35,7 @@ function MagneticWrapper({ children }: { children: React.ReactNode }) {
       onMouseLeave={reset}
       animate={{ x, y }}
       transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
-      className="inline-block hidden sm:inline-block" // Hide magnetic effect on pure mobile
+      className="inline-block"
     >
       {children}
     </motion.div>
@@ -87,17 +87,6 @@ export function Footer() {
             </p>
 
             {/* WhatsApp CTA */}
-            <div className="block sm:hidden">
-              <button
-                onClick={() => openWhatsApp(config.site.waNumber, config.waMessage)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full
-                           bg-whatsapp text-white text-sm font-medium
-                           hover:bg-whatsapp-hover transition-colors"
-              >
-                <MessageCircle className="w-4 h-4" />
-                Contáctanos
-              </button>
-            </div>
             <MagneticWrapper>
               <button
                 onClick={() => openWhatsApp(config.site.waNumber, config.waMessage)}
@@ -105,7 +94,7 @@ export function Footer() {
                            bg-whatsapp text-white text-sm font-medium
                            hover:bg-whatsapp-hover transition-colors shadow-lg shadow-whatsapp/20"
               >
-                <MessageCircle className="w-4 h-4" />
+                <MessageCircle className="w-5 h-5" />
                 Contáctanos
               </button>
             </MagneticWrapper>
