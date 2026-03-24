@@ -10,7 +10,7 @@ export function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
+    <AnimatePresence mode="wait">
       <div key={pathname} className="relative w-full h-full">
         {/* Contenido principal de la página */}
         <motion.div
