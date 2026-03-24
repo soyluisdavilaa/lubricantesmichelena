@@ -25,11 +25,10 @@ export function CTASection() {
 
             <div className="relative z-10">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-                ¿Listo para Cuidar Tu Motor?
+                {config.ctaText.titulo}
               </h2>
               <p className="text-white/80 max-w-xl mx-auto mb-8 text-lg">
-                Contáctanos ahora. Tu vehículo merece el mejor
-                cuidado con productos premium.
+                {config.ctaText.descripcion}
               </p>
 
               <div className="flex flex-wrap gap-4 justify-center">

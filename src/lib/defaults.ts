@@ -145,6 +145,19 @@ export const defaultConfig: SiteConfig = {
     activo: false,
     mensaje: "Estamos mejorando nuestro sitio web. ¡Volvemos pronto!",
   },
+  serviciosText: {
+    badge: "SERVICIOS",
+    titulo: "Soluciones Profesionales para Tu Vehículo",
+    descripcion: "Ofrecemos una gama completa de servicios de mantenimiento con técnicos certificados y productos de primera calidad.",
+  },
+  instalacionesText: {
+    titulo: "Nuestras Instalaciones",
+    descripcion: "Te invitamos a conocer el centro de servicio de Lubricantes Michelena. Instalaciones de primer nivel para brindar el cuidado que tu motor merece.",
+  },
+  ctaText: {
+    titulo: "¿Listo para Cuidar Tu Motor?",
+    descripcion: "Contáctanos ahora. Tu vehículo merece el mejor cuidado con productos premium.",
+  },
 };
 
 // ─── PRODUCTOS ───

@@ -556,6 +556,15 @@ export default function AdminPage() {
                   />
                 </div>
                 <div>
+                  <label className={labelCls}>Píldoras de Confianza (separadas por coma)</label>
+                  <input
+                    value={cfgDraft.hero.trustPills?.join(", ") || ""}
+                    onChange={(e) => setCfgDraft((d) => ({ ...d, hero: { ...d.hero, trustPills: e.target.value.split(",").map(s => s.trim()).filter(Boolean) } }))}
+                    className={`w-full ${inputCls}`}
+                    placeholder="✓ 10 años, ✓ Excelente servicio"
+                  />
+                </div>
+                <div>
                   <label className={labelCls}>Imagen de Fondo</label>
                   <ImageUploader
                     value={cfgDraft.hero.imagen || ""}
@@ -568,8 +577,36 @@ export default function AdminPage() {
 
             {/* Nosotros */}
             <section className="space-y-3">
-              <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Nosotros</h3>
+              <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Sobre Nosotros</h3>
               <div className="p-4 rounded-xl bg-card border border-border space-y-3">
+                <div>
+                  <label className={labelCls}>Badge superior</label>
+                  <input
+                    value={cfgDraft.nosotros.badge}
+                    onChange={(e) => setCfgDraft((d) => ({ ...d, nosotros: { ...d.nosotros, badge: e.target.value } }))}
+                    className={`w-full ${inputCls}`}
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Título principal</label>
+                  <input
+                    value={cfgDraft.nosotros.titulo}
+                    onChange={(e) => setCfgDraft((d) => ({ ...d, nosotros: { ...d.nosotros, titulo: e.target.value } }))}
+                    className={`w-full ${inputCls}`}
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Párrafo</label>
+                  <textarea
+                    value={cfgDraft.nosotros.parrafo}
+                    onChange={(e) => setCfgDraft((d) => ({ ...d, nosotros: { ...d.nosotros, parrafo: e.target.value } }))}
+                    rows={4}
+                    className={`w-full ${inputCls} resize-none`}
+                  />
+                </div>
+                
+                <hr className="border-border my-4" />
+                
                 <div className="space-y-4">
                   <label className={labelCls}>Imágenes del carrusel</label>
                   {cfgDraft.nosotros.imagenes.map((img, idx) => (
@@ -611,10 +648,95 @@ export default function AdminPage() {
               </div>
             </section>
 
+          {/* Servicios y CTA Textos */}
+            <section className="space-y-3">
+              <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Textos: Servicios y CTA</h3>
+              <div className="p-4 rounded-xl bg-card border border-border space-y-3">
+                
+                <div className="bg-secondary/10 p-3 rounded-lg border border-border/50">
+                  <h4 className="text-xs font-bold text-muted-foreground uppercase mb-3">Sección Servicios</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className={labelCls}>Badge superior</label>
+                      <input
+                        value={cfgDraft.serviciosText?.badge ?? ""}
+                        onChange={(e) => setCfgDraft((d) => ({ ...d, serviciosText: { ...d.serviciosText, badge: e.target.value } }))}
+                        className={`w-full ${inputCls}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={labelCls}>Título</label>
+                      <input
+                        value={cfgDraft.serviciosText?.titulo ?? ""}
+                        onChange={(e) => setCfgDraft((d) => ({ ...d, serviciosText: { ...d.serviciosText, titulo: e.target.value } }))}
+                        className={`w-full ${inputCls}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={labelCls}>Descripción</label>
+                      <textarea
+                        value={cfgDraft.serviciosText?.descripcion ?? ""}
+                        onChange={(e) => setCfgDraft((d) => ({ ...d, serviciosText: { ...d.serviciosText, descripcion: e.target.value } }))}
+                        rows={2}
+                        className={`w-full ${inputCls} resize-none`}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-secondary/10 p-3 rounded-lg border border-border/50 mt-4">
+                  <h4 className="text-xs font-bold text-muted-foreground uppercase mb-3">Sección Llamado a la Acción (CTA)</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className={labelCls}>Título</label>
+                      <input
+                        value={cfgDraft.ctaText?.titulo ?? ""}
+                        onChange={(e) => setCfgDraft((d) => ({ ...d, ctaText: { ...d.ctaText, titulo: e.target.value } }))}
+                        className={`w-full ${inputCls}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={labelCls}>Descripción</label>
+                      <textarea
+                        value={cfgDraft.ctaText?.descripcion ?? ""}
+                        onChange={(e) => setCfgDraft((d) => ({ ...d, ctaText: { ...d.ctaText, descripcion: e.target.value } }))}
+                        rows={2}
+                        className={`w-full ${inputCls} resize-none`}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
           {/* Instalaciones / Galería */}
             <section className="space-y-3">
               <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Instalaciones (Galería)</h3>
               <div className="p-4 rounded-xl bg-card border border-border space-y-3">
+                
+                <div className="bg-secondary/10 p-3 rounded-lg border border-border/50 mb-4">
+                  <div className="space-y-3">
+                    <div>
+                      <label className={labelCls}>Título de la sección</label>
+                      <input
+                        value={cfgDraft.instalacionesText?.titulo ?? ""}
+                        onChange={(e) => setCfgDraft((d) => ({ ...d, instalacionesText: { ...d.instalacionesText, titulo: e.target.value } }))}
+                        className={`w-full ${inputCls}`}
+                      />
+                    </div>
+                    <div>
+                      <label className={labelCls}>Descripción</label>
+                      <textarea
+                        value={cfgDraft.instalacionesText?.descripcion ?? ""}
+                        onChange={(e) => setCfgDraft((d) => ({ ...d, instalacionesText: { ...d.instalacionesText, descripcion: e.target.value } }))}
+                        rows={2}
+                        className={`w-full ${inputCls} resize-none`}
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <div className="space-y-4">
                   <label className={labelCls}>Imágenes de las instalaciones</label>
                   {galleryDraft.map((img, idx) => (

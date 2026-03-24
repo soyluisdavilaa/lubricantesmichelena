@@ -179,6 +179,19 @@ export interface SiteConfig {
     activo: boolean;
     mensaje: string;
   };
+  serviciosText: {
+    badge: string;
+    titulo: string;
+    descripcion: string;
+  };
+  instalacionesText: {
+    titulo: string;
+    descripcion: string;
+  };
+  ctaText: {
+    titulo: string;
+    descripcion: string;
+  };
 }
 
 // ─── Cupones ───

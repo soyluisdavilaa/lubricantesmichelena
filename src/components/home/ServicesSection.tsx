@@ -10,7 +10,7 @@ import type { LucideProps } from "lucide-react";
 import type { ForwardRefExoticComponent, RefAttributes } from "react";
 
 export function ServicesSection() {
-  const { services, isLoading } = useSiteConfig();
+  const { services, config, isLoading } = useSiteConfig();
 
   return (
     <section className="py-20 relative">
@@ -20,14 +20,13 @@ export function ServicesSection() {
         <RevealOnScroll>
           <div className="text-center max-w-2xl mx-auto mb-14">
             <span className="text-brand font-semibold text-sm uppercase tracking-wider">
-              Servicios
+              {config.serviciosText.badge}
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold mt-3 mb-4">
-              Soluciones Profesionales para Tu Vehículo
+              {config.serviciosText.titulo}
             </h2>
             <p className="text-muted-foreground">
-              Ofrecemos una gama completa de servicios de mantenimiento con técnicos certificados y
-              productos de primera calidad.
+              {config.serviciosText.descripcion}
             </p>
           </div>
         </RevealOnScroll>

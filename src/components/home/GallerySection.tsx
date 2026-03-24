@@ -8,9 +8,14 @@ import { RevealOnScroll } from "@/components/shared/RevealOnScroll";
 import { Image as ImageIcon } from "lucide-react";
 
 export function GallerySection() {
-  const { gallery } = useSiteConfig();
+  const { gallery, config } = useSiteConfig();
 
   if (!gallery || gallery.length === 0) return null;
+
+  // Renderizar la última palabra con el color de la marca
+  const words = config.instalacionesText.titulo.split(" ");
+  const lastWord = words.length > 1 ? words.pop() : "";
+  const firstWords = words.join(" ");
 
   return (
     <section className="py-24 bg-background overflow-hidden relative">
@@ -26,11 +31,11 @@ export function GallerySection() {
         <RevealOnScroll direction="up">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
-              Nuestras <span className="text-brand">Instalaciones</span>
+              {firstWords} {lastWord && <span className="text-brand">{lastWord}</span>}
+              {!lastWord && config.instalacionesText.titulo}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Te invitamos a conocer el centro de servicio de Lubricantes Michelena.
-              Instalaciones de primer nivel para brindar el cuidado que tu motor merece.
+              {config.instalacionesText.descripcion}
             </p>
           </div>
         </RevealOnScroll>
