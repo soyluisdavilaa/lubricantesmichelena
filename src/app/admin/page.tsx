@@ -586,6 +586,30 @@ export default function AdminPage() {
                     className={`w-full ${inputCls} resize-none`}
                   />
                 </div>
+                <div>
+                  <label className={labelCls}>Mensaje general de WhatsApp</label>
+                  <textarea
+                    value={cfgDraft.waMessage || ""}
+                    onChange={(e) =>
+                      setCfgDraft((d) => ({ ...d, waMessage: e.target.value }))
+                    }
+                    rows={2}
+                    className={`w-full ${inputCls} resize-none`}
+                    placeholder="¡Hola! 👋 Me gustaría obtener más información..."
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Plantilla WhatsApp de Productos (Usa {'{{PRODUCTO}}'} y {'{{MARCA}}'})</label>
+                  <textarea
+                    value={cfgDraft.waProductMessage || ""}
+                    onChange={(e) =>
+                      setCfgDraft((d) => ({ ...d, waProductMessage: e.target.value }))
+                    }
+                    rows={2}
+                    className={`w-full ${inputCls} resize-none`}
+                    placeholder="¡Hola! Me interesa el producto: {{PRODUCTO}}..."
+                  />
+                </div>
               </div>
             </section>
 
@@ -633,6 +657,8 @@ export default function AdminPage() {
                     value={cfgDraft.hero.imagen || ""}
                     onChange={(url) => setCfgDraft((d) => ({ ...d, hero: { ...d.hero, imagen: url } }))}
                     folder="config"
+                    className="w-48 max-w-full"
+                    aspectRatio="aspect-video"
                   />
                 </div>
               </div>
@@ -683,6 +709,8 @@ export default function AdminPage() {
                             setCfgDraft((d) => ({ ...d, nosotros: { ...d.nosotros, imagenes: newImgs } }));
                           }}
                           folder="config"
+                          className="w-40 sm:w-48 shrink-0"
+                          aspectRatio="aspect-video"
                         />
                       </div>
                       <button
@@ -813,6 +841,8 @@ export default function AdminPage() {
                             setGalleryDraft(newImgs);
                           }}
                           folder="gallery"
+                          className="w-40 sm:w-48 shrink-0"
+                          aspectRatio="aspect-video"
                         />
                         <input
                           value={img.caption || ""}

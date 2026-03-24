@@ -13,7 +13,7 @@ import { RevealOnScroll } from "@/components/shared/RevealOnScroll";
 import { Package, LayoutGrid, List, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Product } from "@/lib/types";
-import { openWhatsApp, cn } from "@/lib/utils";
+import { openWhatsApp, getProductWaMessage, cn } from "@/lib/utils";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -74,7 +74,8 @@ function ProductRow({
         <button
           onClick={(e) => {
             e.stopPropagation();
-            openWhatsApp(config.site.waNumber, `Hola, me interesa: ${product.nombre} (${product.marca})`);
+            const msg = getProductWaMessage(config.waProductMessage, product);
+            openWhatsApp(config.site.waNumber, msg);
           }}
           className="p-2 rounded-lg text-whatsapp hover:bg-whatsapp/10 transition-colors"
           aria-label="Consultar por WhatsApp"

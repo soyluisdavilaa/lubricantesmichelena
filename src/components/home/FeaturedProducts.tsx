@@ -7,7 +7,7 @@ import { useSiteConfig } from "@/context/SiteConfigContext";
 import { useCart } from "@/context/CartContext";
 import { RevealOnScroll } from "@/components/shared/RevealOnScroll";
 import { ShoppingCart, ArrowRight, MessageCircle } from "lucide-react";
-import { openWhatsApp } from "@/lib/utils";
+import { openWhatsApp, getProductWaMessage } from "@/lib/utils";
 import Link from "next/link";
 
 export function FeaturedProducts() {
@@ -88,7 +88,10 @@ export function FeaturedProducts() {
                   </p>
                   <div className="flex items-center justify-end pt-2">
                     <button
-                      onClick={() => openWhatsApp(config.site.waNumber, `¡Hola! Me interesa el producto ${product.nombre} (${product.marca}).`)}
+                      onClick={() => {
+                        const msg = getProductWaMessage(config.waProductMessage, product);
+                        openWhatsApp(config.site.waNumber, msg);
+                      }}
                       className="px-3 sm:px-4 py-2 rounded-lg bg-brand/10 text-brand text-[10px] sm:text-xs font-medium
                                  hover:bg-brand hover:text-white transition-colors duration-200"
                     >

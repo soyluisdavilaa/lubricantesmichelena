@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import type { Product } from "@/lib/types";
 import { useCart } from "@/context/CartContext";
 import { useSiteConfig } from "@/context/SiteConfigContext";
-import { openWhatsApp } from "@/lib/utils";
+import { openWhatsApp, getProductWaMessage } from "@/lib/utils";
 
 interface ProductCardProps {
   product: Product;
@@ -121,7 +121,7 @@ export function ProductCard({ product, onViewDetail, index }: ProductCardProps) 
         <div className="flex items-center justify-end pt-2">
           <button
             onClick={() => {
-              const msg = `¡Hola! Me interesa el producto: ${product.nombre} de ${product.marca} (${product.presentacion}). ¿Me pueden dar más información y precio?`;
+              const msg = getProductWaMessage(config.waProductMessage, product);
               openWhatsApp(config.site.waNumber, msg);
             }}
             disabled={!product.disponible}

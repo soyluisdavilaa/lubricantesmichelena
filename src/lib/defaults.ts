@@ -141,6 +141,8 @@ export const defaultConfig: SiteConfig = {
   },
   waMessage:
     "¡Hola! 👋 Me gustaría obtener más información sobre sus servicios.",
+  waProductMessage:
+    "¡Hola! 👋 Me gustaría cotizar el producto: {{PRODUCTO}} ({{MARCA}})",
   mantenimiento: {
     activo: false,
     mensaje: "Estamos mejorando nuestro sitio web. ¡Volvemos pronto!",

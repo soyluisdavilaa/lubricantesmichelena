@@ -175,6 +175,7 @@ export interface SiteConfig {
     gaId: string;
   };
   waMessage: string;
+  waProductMessage?: string;
   mantenimiento: {
     activo: boolean;
     mensaje: string;

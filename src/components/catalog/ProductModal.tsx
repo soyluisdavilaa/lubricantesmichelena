@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, MessageCircle } from "lucide-react";
 import type { Product } from "@/lib/types";
 import { useSiteConfig } from "@/context/SiteConfigContext";
-import { openWhatsApp } from "@/lib/utils";
+import { openWhatsApp, getProductWaMessage } from "@/lib/utils";
 
 interface ProductModalProps {
   product: Product | null;
@@ -108,12 +108,10 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
 
                   {/* Consultar */}
                   <button
-                    onClick={() =>
-                      openWhatsApp(
-                        config.site.waNumber,
-                        `Hola, me interesa: ${product.nombre} (${product.marca})`
-                      )
-                    }
+                    onClick={() => {
+                      const msg = getProductWaMessage(config.waProductMessage, product);
+                      openWhatsApp(config.site.waNumber, msg);
+                    }}
                     className="w-full flex items-center justify-center gap-2 px-4 py-3
                                rounded-xl bg-whatsapp/10 text-whatsapp font-medium
                                hover:bg-whatsapp hover:text-white transition-colors"

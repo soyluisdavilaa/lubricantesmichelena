@@ -91,6 +91,16 @@ export function openWhatsApp(number: string, message: string): void {
 }
 
 /**
+ * Procesa la plantilla del mensaje de WhatsApp para productos.
+ */
+export function getProductWaMessage(template: string | undefined, product: { nombre: string; marca: string }): string {
+  const tpl = template || "¡Hola! 👋 Me gustaría cotizar el producto: {{PRODUCTO}} ({{MARCA}})";
+  return tpl
+    .replace(/\{\{PRODUCTO\}\}/g, product.nombre)
+    .replace(/\{\{MARCA\}\}/g, product.marca || "");
+}
+
+/**
  * Formatea una hora de "HH:MM" a "H:MM AM/PM".
  */
 export function fmtHora(hora: string): string {
