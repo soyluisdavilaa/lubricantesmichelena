@@ -59,24 +59,22 @@ export function HeroSection() {
   return (
     <section className="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden">
       {/* Deep background */}
-      <div className="absolute inset-0 bg-background" />
+      <div className="absolute inset-0 bg-background -z-20" />
 
       {/* Hero background image, if configured */}
       {hero.imagen && (
-        <>
-          <div className="absolute inset-0 pointer-events-none -z-10">
-            <Image
-              src={hero.imagen}
-              alt="Hero Background"
-              fill
-              priority
-              className="object-cover object-center"
-              sizes="100vw"
-            />
-          </div>
-          {/* Capa negra al 50% sobre la foto */}
-          <div className="absolute inset-0 bg-black/50 pointer-events-none -z-[5]" />
-        </>
+        <div className="absolute inset-0 pointer-events-none -z-10">
+          <Image
+            src={hero.imagen}
+            alt="Hero Background"
+            fill
+            priority
+            className="object-cover object-center"
+            sizes="100vw"
+          />
+          {/* Capa oscura (50-60%) sobre la foto para que el texto resalte */}
+          <div className="absolute inset-0 bg-black/60" />
+        </div>
       )}
 
       {/* Radial glow top-right */}
