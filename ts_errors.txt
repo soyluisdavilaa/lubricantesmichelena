@@ -1,0 +1,8 @@
+.next/dev/types/validator.ts(42,39): error TS2307: Cannot find module '../../../src/app/admin/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(51,39): error TS2307: Cannot find module '../../../src/app/blog/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(69,39): error TS2307: Cannot find module '../../../src/app/citas/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(78,39): error TS2307: Cannot find module '../../../src/app/links/page.js' or its corresponding type declarations.
+src/components/AppShell.tsx(11,28): error TS2307: Cannot find module '@/components/cart/CartDrawer' or its corresponding type declarations.
+src/components/AppShell.tsx(12,36): error TS2307: Cannot find module '@/components/cart/CartFloatingButton' or its corresponding type declarations.
+src/components/AppShell.tsx(13,27): error TS2307: Cannot find module '@/components/cart/CartToast' or its corresponding type declarations.
+src/components/shared/RevealOnScroll.tsx(45,19): error TS2322: Type 'object' is not assignable to type 'Variant'.
