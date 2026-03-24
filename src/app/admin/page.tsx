@@ -52,6 +52,14 @@ export default function AdminPage() {
   const [galleryDraft, setGalleryDraft] = useState(gallery);
   const [cfgSaved, setCfgSaved] = useState(false);
 
+  // local array drafts
+  const [productsDraft, setProductsDraft] = useState(products);
+  const [servicesDraft, setServicesDraft] = useState(services);
+  const [categoriesDraft, setCategoriesDraft] = useState(categorias);
+  const [productsSaved, setProductsSaved] = useState(false);
+  const [servicesSaved, setServicesSaved] = useState(false);
+  const [categoriesSaved, setCategoriesSaved] = useState(false);
+
   // ─── LOGIN ───
   const handleLogin = useCallback(
     async (e: React.FormEvent) => {
@@ -76,6 +84,9 @@ export default function AdminPage() {
         setLockedUntil(null);
         setCfgDraft(config);
         setGalleryDraft(gallery);
+        setProductsDraft(products);
+        setServicesDraft(services);
+        setCategoriesDraft(categorias);
       } else {
         const next = failedAttempts + 1;
         setFailedAttempts(next);
@@ -142,22 +153,31 @@ export default function AdminPage() {
       subcategoria: "", descripcion: "", presentacion: "",
       imagen: "", disponible: true, badge: "",
     };
-    saveProducts([p, ...products]);
+    setProductsDraft([p, ...productsDraft]);
   };
   const updateProduct = (id: string, field: keyof Product, value: string | boolean) =>
-    saveProducts(products.map((p) => p.id === id ? { ...p, [field]: value } : p));
+    setProductsDraft(productsDraft.map((p) => p.id === id ? { ...p, [field]: value } : p));
   const deleteProduct = (id: string) => {
-    if (confirm("¿Eliminar este producto?")) saveProducts(products.filter((p) => p.id !== id));
+    if (confirm("¿Eliminar este producto?")) setProductsDraft(productsDraft.filter((p) => p.id !== id));
+  };
+  const handleSaveProducts = () => {
+    saveProducts(productsDraft);
+    setProductsSaved(true);
+    setTimeout(() => setProductsSaved(false), 2500);
   };
 
-
   // ─── CATEGORIES ───
-  const addCategoria = () => saveCategories([{ id: generateId(), nombre: "Nueva Categoría", subs: [] }, ...categorias]);
-  const updateCategoria = (id: string, nombre: string) => saveCategories(categorias.map((c) => c.id === id ? { ...c, nombre } : c));
-  const deleteCategoria = (id: string) => { if (confirm("¿Eliminar categoría y sus subcategorías?")) saveCategories(categorias.filter((c) => c.id !== id)); };
-  const addSub = (catId: string) => saveCategories(categorias.map((c) => c.id === catId ? { ...c, subs: [...c.subs, { id: generateId(), nombre: "Nueva Sub" }] } : c));
-  const updateSub = (catId: string, subId: string, nombre: string) => saveCategories(categorias.map((c) => c.id === catId ? { ...c, subs: c.subs.map((s) => s.id === subId ? { ...s, nombre } : s) } : c));
-  const deleteSub = (catId: string, subId: string) => { if (confirm("¿Eliminar sub?")) saveCategories(categorias.map((c) => c.id === catId ? { ...c, subs: c.subs.filter((s) => s.id !== subId) } : c)); };
+  const addCategoria = () => setCategoriesDraft([{ id: generateId(), nombre: "Nueva Categoría", subs: [] }, ...categoriesDraft]);
+  const updateCategoria = (id: string, nombre: string) => setCategoriesDraft(categoriesDraft.map((c) => c.id === id ? { ...c, nombre } : c));
+  const deleteCategoria = (id: string) => { if (confirm("¿Eliminar categoría y sus subcategorías?")) setCategoriesDraft(categoriesDraft.filter((c) => c.id !== id)); };
+  const addSub = (catId: string) => setCategoriesDraft(categoriesDraft.map((c) => c.id === catId ? { ...c, subs: [...c.subs, { id: generateId(), nombre: "Nueva Sub" }] } : c));
+  const updateSub = (catId: string, subId: string, nombre: string) => setCategoriesDraft(categoriesDraft.map((c) => c.id === catId ? { ...c, subs: c.subs.map((s) => s.id === subId ? { ...s, nombre } : s) } : c));
+  const deleteSub = (catId: string, subId: string) => { if (confirm("¿Eliminar sub?")) setCategoriesDraft(categoriesDraft.map((c) => c.id === catId ? { ...c, subs: c.subs.filter((s) => s.id !== subId) } : c)); };
+  const handleSaveCategories = () => {
+    saveCategories(categoriesDraft);
+    setCategoriesSaved(true);
+    setTimeout(() => setCategoriesSaved(false), 2500);
+  };
 
   // ─── SERVICES ───
   const addService = () => {
@@ -165,12 +185,17 @@ export default function AdminPage() {
       id: generateId(), nombre: "Nuevo Servicio", descripcion: "",
       precio: "$0", duracion: "30 min", icono: "Wrench",
     };
-    saveServices([s, ...services]);
+    setServicesDraft([s, ...servicesDraft]);
   };
   const updateService = (id: string, field: keyof Service, value: string) =>
-    saveServices(services.map((s) => s.id === id ? { ...s, [field]: value } : s));
+    setServicesDraft(servicesDraft.map((s) => s.id === id ? { ...s, [field]: value } : s));
   const deleteService = (id: string) => {
-    if (confirm("¿Eliminar este servicio?")) saveServices(services.filter((s) => s.id !== id));
+    if (confirm("¿Eliminar este servicio?")) setServicesDraft(servicesDraft.filter((s) => s.id !== id));
+  };
+  const handleSaveServices = () => {
+    saveServices(servicesDraft);
+    setServicesSaved(true);
+    setTimeout(() => setServicesSaved(false), 2500);
   };
 
   // ─── CONFIG ───
@@ -297,14 +322,29 @@ export default function AdminPage() {
         {activeTab === "products" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="font-semibold">{products.length} Productos</h2>
+              <div className="flex items-center gap-3">
+                <h2 className="font-semibold">{productsDraft.length} Productos</h2>
+                <button
+                  onClick={handleSaveProducts}
+                  className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-600/10 text-green-600 text-sm font-medium hover:bg-green-600/20 transition-colors"
+                >
+                  {productsSaved ? "✓ Guardado" : "Guardar Cambios"}
+                </button>
+              </div>
               <button onClick={addProduct} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-brand text-brand-foreground text-sm font-medium hover:bg-brand-hover transition-colors">
                 <Plus className="w-4 h-4" /> Agregar
               </button>
             </div>
+            
+            <button
+               onClick={handleSaveProducts}
+               className="sm:hidden w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-green-600/10 text-green-600 font-medium hover:bg-green-600/20 transition-colors"
+            >
+               {productsSaved ? "✓ Guardado" : "Guardar Cambios"}
+            </button>
 
             <div className="space-y-4">
-              {products.map((p) => (
+              {productsDraft.map((p) => (
                 <div key={p.id} className="p-4 rounded-xl bg-card border border-border">
                   <div className="flex gap-4">
                     {/* Image */}
@@ -341,14 +381,14 @@ export default function AdminPage() {
                             updateProduct(p.id, "subcategoria", "");
                           }} className={`w-full ${inputCls} cursor-pointer`}>
                             <option value="">Seleccione...</option>
-                            {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+                            {categoriesDraft.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
                           </select>
                         </div>
                         <div>
                           <label className={labelCls}>Subcategoría</label>
                           <select value={p.subcategoria ?? ""} onChange={(e) => updateProduct(p.id, "subcategoria", e.target.value)} className={`w-full ${inputCls} cursor-pointer`}>
                             <option value="">Ninguna</option>
-                            {categorias.find(c => c.id === p.categoria)?.subs.map(s => <option key={s.id} value={s.id}>{s.nombre}</option>)}
+                            {categoriesDraft.find(c => c.id === p.categoria)?.subs.map(s => <option key={s.id} value={s.id}>{s.nombre}</option>)}
                           </select>
                         </div>
                       </div>
@@ -383,14 +423,29 @@ export default function AdminPage() {
         {activeTab === "services" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="font-semibold">{services.length} Servicios</h2>
+              <div className="flex items-center gap-3">
+                <h2 className="font-semibold">{servicesDraft.length} Servicios</h2>
+                <button
+                  onClick={handleSaveServices}
+                  className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-600/10 text-green-600 text-sm font-medium hover:bg-green-600/20 transition-colors"
+                >
+                  {servicesSaved ? "✓ Guardado" : "Guardar Cambios"}
+                </button>
+              </div>
               <button onClick={addService} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-brand text-brand-foreground text-sm font-medium hover:bg-brand-hover transition-colors">
                 <Plus className="w-4 h-4" /> Agregar
               </button>
             </div>
+            
+            <button
+               onClick={handleSaveServices}
+               className="sm:hidden w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-green-600/10 text-green-600 font-medium hover:bg-green-600/20 transition-colors"
+            >
+               {servicesSaved ? "✓ Guardado" : "Guardar Cambios"}
+            </button>
 
             <div className="space-y-4">
-              {services.map((s) => (
+              {servicesDraft.map((s) => (
                 <div key={s.id} className="p-4 rounded-xl bg-card border border-border">
                   <div className="flex gap-4">
                     <ImageUploader
@@ -443,13 +498,21 @@ export default function AdminPage() {
         {activeTab === "categories" && (
           <div className="space-y-6 max-w-2xl">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">Categorías y Subcategorías</h2>
+              <div className="flex items-center gap-3">
+                <h2 className="text-xl font-bold border-none hidden sm:block">Categorías</h2>
+                <button
+                  onClick={handleSaveCategories}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-600/10 text-green-600 text-sm font-medium hover:bg-green-600/20 transition-colors"
+                >
+                  {categoriesSaved ? "✓ Guardado" : "Guardar Cambios"}
+                </button>
+              </div>
               <button onClick={addCategoria} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand text-brand-foreground text-sm font-medium hover:bg-brand-hover transition-colors">
-                <Plus className="w-4 h-4" /> Nueva Categoría
+                <Plus className="w-4 h-4" /> Nueva
               </button>
             </div>
             <div className="space-y-4">
-              {categorias.map((c) => (
+              {categoriesDraft.map((c) => (
                 <div key={c.id} className="p-4 rounded-xl bg-card border border-border shadow-sm flex flex-col gap-4">
                   <div className="flex items-center justify-between gap-4">
                     <input value={c.nombre} onChange={(e) => updateCategoria(c.id, e.target.value)} className={`font-bold text-lg w-full ${inputCls}`} placeholder="Nombre de categoría" />
