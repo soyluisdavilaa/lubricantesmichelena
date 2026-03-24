@@ -8,6 +8,24 @@ import { useSiteConfig } from "@/context/SiteConfigContext";
 import { RevealOnScroll } from "@/components/shared/RevealOnScroll";
 import type { LucideProps } from "lucide-react";
 import type { ForwardRefExoticComponent, RefAttributes } from "react";
+import { AnimatedCounter } from "@/components/shared/AnimatedCounter";
+
+function renderAnimatedTitle(title: string) {
+  // Ej: "+5000" -> ["+", "5000", ""]
+  // Ej: "12 Años" -> ["", "12", " Años"]
+  const match = title.match(/^([^\d]*)(\d+)(.*)$/);
+  if (match) {
+    const [, prefix, numStr, suffix] = match;
+    const target = parseInt(numStr, 10);
+    return (
+      <span className="inline-flex items-center gap-0.5">
+        {prefix && <span>{prefix}</span>}
+        <AnimatedCounter target={target} suffix={suffix} duration={2000} />
+      </span>
+    );
+  }
+  return title;
+}
 
 export function AboutSection() {
   const { config } = useSiteConfig();
@@ -63,7 +81,7 @@ export function AboutSection() {
                         )}
                       </motion.div>
                       <div>
-                        <h4 className="text-sm font-semibold">{valor.titulo}</h4>
+                        <h4 className="text-sm font-semibold">{renderAnimatedTitle(valor.titulo)}</h4>
                         <p className="text-xs text-muted-foreground mt-0.5">
                           {valor.texto}
                         </p>

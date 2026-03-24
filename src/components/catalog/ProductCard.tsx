@@ -20,19 +20,16 @@ export function ProductCard({ product, onViewDetail, index }: ProductCardProps) 
   const { addToCart } = useCart();
   const { config } = useSiteConfig();
   const cardRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
 
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
     const rect = cardRef.current?.getBoundingClientRect();
     if (!rect) return;
-    const dx = (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
-    const dy = (e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2);
-    setTilt({ x: dy * -6, y: dx * 6 });
+    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
   }
 
   function handleMouseLeave() {
-    setTilt({ x: 0, y: 0 });
     setIsHovered(false);
   }
 
@@ -47,23 +44,18 @@ export function ProductCard({ product, onViewDetail, index }: ProductCardProps) 
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
-      style={{
-        transform: `perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-        transition: isHovered ? "transform 0.1s ease-out" : "transform 0.4s ease-out",
-      }}
       className="group relative rounded-2xl overflow-hidden bg-card border border-border
-                 hover:shadow-2xl hover:shadow-brand/10 transition-shadow duration-300"
+                 hover:shadow-2xl hover:shadow-brand/20 transition-all duration-300 transform-gpu"
     >
-      {/* Gradient border glow on hover */}
-      <div
-        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100
-                   transition-opacity duration-300 pointer-events-none z-10"
-        style={{
-          background:
-            "rgba(6,149,66,0.1)",
-          boxShadow: "inset 0 0 0 1px rgba(249,115,22,0.25)",
-        }}
-      />
+      {/* Spotlight Hover Effect */}
+      {isHovered && (
+        <div
+          className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition duration-300 group-hover:opacity-100 z-10 hidden sm:block"
+          style={{
+            background: `radial-gradient(400px circle at ${mousePos.x}px ${mousePos.y}px, rgba(249,115,22,0.15), transparent 40%)`,
+          }}
+        />
+      )}
 
       {/* Image */}
       <div
@@ -74,7 +66,7 @@ export function ProductCard({ product, onViewDetail, index }: ProductCardProps) 
           <img
             src={product.imagen}
             alt={product.nombre}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            className="w-full h-full object-cover origin-bottom transition-transform duration-700 ease-out group-hover:scale-[1.15]"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">

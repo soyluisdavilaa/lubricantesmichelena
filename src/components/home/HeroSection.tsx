@@ -155,13 +155,25 @@ export function HeroSection() {
           transition={{ delay: 0.3 + words.length * 0.08 + 0.45, duration: 0.5 }}
           className="flex flex-wrap items-center justify-center gap-4"
         >
-          {/* Primary — shimmer */}
-          <button
+          {/* Primary — Pulse */}
+          <motion.button
+            animate={{
+              boxShadow: [
+                "0 0 0 0 rgba(249, 115, 22, 0.4)",
+                "0 0 0 20px rgba(249, 115, 22, 0)"
+              ]
+            }}
+            transition={{
+              repeat: Infinity,
+              duration: 2,
+              repeatType: "loop"
+            }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => openWhatsApp(site.waNumber, config.waMessage)}
             className="relative inline-flex items-center gap-2.5 px-8 py-4 rounded-full
                        bg-brand text-white font-semibold text-base overflow-hidden
-                       hover:bg-brand-hover hover:scale-105 active:scale-95
-                       transition-all duration-200 shadow-xl shadow-brand/30 group"
+                       shadow-xl shadow-brand/30 group"
           >
             <span
               className="absolute inset-0 -translate-x-full group-hover:translate-x-full
@@ -170,7 +182,7 @@ export function HeroSection() {
             />
             <MessageCircle className="w-5 h-5 relative z-10" />
             <span className="relative z-10">{hero.btnTexto}</span>
-          </button>
+          </motion.button>
 
           {/* Secondary */}
           <Link
@@ -205,17 +217,19 @@ export function HeroSection() {
 
       {/* Scroll hint */}
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 cursor-pointer z-10"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.6 }}
+        whileHover={{ scale: 1.3, transition: { type: "spring", stiffness: 400, damping: 10 } }}
+        whileTap={{ scale: 0.9 }}
       >
         <motion.div
-          animate={{ y: [0, 6, 0] }}
-          transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
-          className="text-muted-foreground/40"
+          animate={{ y: [0, 8, 0] }}
+          transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
+          className="text-white/60 hover:text-white transition-colors"
         >
-          <ChevronDown className="w-6 h-6" />
+          <ChevronDown className="w-8 h-8" />
         </motion.div>
       </motion.div>
 

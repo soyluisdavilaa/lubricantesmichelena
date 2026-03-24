@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, MessageCircle, Droplets, Search } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { useSiteConfig } from "@/context/SiteConfigContext";
@@ -25,18 +25,29 @@ interface HeaderProps {
 
 export function Header({ onSearchOpen }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const pathname = usePathname();
   const { config } = useSiteConfig();
+  const { scrollY } = useScroll();
 
-  useEffect(() => {
-    function handleScroll() {
-      setIsScrolled(window.scrollY > 30);
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() ?? 0;
+    
+    // Always show and remove blur if near the top
+    if (latest <= 60) {
+      setIsHidden(false);
+      setIsScrolled(latest > 30);
+    } else {
+      setIsScrolled(true);
+      // Hide if scrolling down past 100px, show if scrolling up
+      if (latest > previous && latest > 150) {
+        setIsHidden(true);
+      } else {
+        setIsHidden(false);
+      }
     }
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  });
 
   useEffect(() => {
     setIsMobileOpen(false);
@@ -45,18 +56,22 @@ export function Header({ onSearchOpen }: HeaderProps) {
   return (
     <>
       <motion.header
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        variants={{
+          visible: { y: 0, opacity: 1 },
+          hidden: { y: "-100%", opacity: 0 }
+        }}
+        initial="visible"
+        animate={isHidden ? "hidden" : "visible"}
+        transition={{ duration: 0.35, ease: "easeInOut" }}
         className={cn(
-          "fixed top-0 left-0 right-0 z-[80] transition-all duration-500",
+          "fixed top-0 left-0 right-0 z-[80] transition-colors duration-500",
           isScrolled
             ? "border-b border-white/5 shadow-2xl shadow-black/30"
             : "bg-transparent"
         )}
         style={
           isScrolled
-            ? { background: "rgba(5,5,5,0.82)", backdropFilter: "blur(24px) saturate(180%)" }
+            ? { background: "rgba(5,5,5,0.85)", backdropFilter: "blur(24px) saturate(180%)" }
             : {}
         }
       >

@@ -9,6 +9,38 @@ import { motion } from "framer-motion";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 import { openWhatsApp } from "@/lib/utils";
 import { NewsletterForm } from "@/components/shared/NewsletterForm";
+import { useRef, useState } from "react";
+
+function MagneticWrapper({ children }: { children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  const handleMouse = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { clientX, clientY } = e;
+    if (!ref.current) return;
+    const { height, width, left, top } = ref.current.getBoundingClientRect();
+    const middleX = clientX - (left + width / 2);
+    const middleY = clientY - (top + height / 2);
+    // Attract the element slightly towards the mouse (by 25% of the distance)
+    setPosition({ x: middleX * 0.25, y: middleY * 0.25 });
+  };
+
+  const reset = () => setPosition({ x: 0, y: 0 });
+  const { x, y } = position;
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={handleMouse}
+      onMouseLeave={reset}
+      animate={{ x, y }}
+      transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+      className="inline-block hidden sm:inline-block" // Hide magnetic effect on pure mobile
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 const quickLinks = [
   { href: "/", label: "Inicio" },
@@ -55,17 +87,28 @@ export function Footer() {
             </p>
 
             {/* WhatsApp CTA */}
-            <button
-              onClick={() =>
-                openWhatsApp(config.site.waNumber, config.waMessage)
-              }
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full
-                         bg-whatsapp text-white text-sm font-medium
-                         hover:bg-whatsapp-hover transition-colors"
-            >
-              <MessageCircle className="w-4 h-4" />
-              Contáctanos
-            </button>
+            <div className="block sm:hidden">
+              <button
+                onClick={() => openWhatsApp(config.site.waNumber, config.waMessage)}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full
+                           bg-whatsapp text-white text-sm font-medium
+                           hover:bg-whatsapp-hover transition-colors"
+              >
+                <MessageCircle className="w-4 h-4" />
+                Contáctanos
+              </button>
+            </div>
+            <MagneticWrapper>
+              <button
+                onClick={() => openWhatsApp(config.site.waNumber, config.waMessage)}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full
+                           bg-whatsapp text-white text-sm font-medium
+                           hover:bg-whatsapp-hover transition-colors shadow-lg shadow-whatsapp/20"
+              >
+                <MessageCircle className="w-4 h-4" />
+                Contáctanos
+              </button>
+            </MagneticWrapper>
           </div>
 
           {/* Quick links */}

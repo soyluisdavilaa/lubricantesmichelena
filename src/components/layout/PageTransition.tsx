@@ -11,15 +11,34 @@ export function PageTransition({ children }: { children: ReactNode }) {
 
   return (
     <AnimatePresence mode="wait" initial={false}>
-      <motion.div
-        key={pathname}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -6 }}
-        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-      >
-        {children}
-      </motion.div>
+      <div key={pathname} className="relative w-full h-full">
+        {/* Contenido principal de la página */}
+        <motion.div
+           initial={{ opacity: 0, y: 15 }}
+           animate={{ opacity: 1, y: 0, transition: { delay: 0.2, duration: 0.4, ease: "easeOut" } }}
+           exit={{ opacity: 0, y: -15, transition: { duration: 0.3, ease: "easeIn" } }}
+        >
+          {children}
+        </motion.div>
+
+        {/* "Wiper" de entrada: Al salir de la página actual, el panel negro cubre la pantalla desde la derecha */}
+        <motion.div
+          className="fixed inset-0 z-[150] pointer-events-none"
+          style={{ background: "#0c0c0c" }}
+          initial={{ x: "100%" }}
+          animate={{ x: "100%", transition: { duration: 0 } }}
+          exit={{ x: "0%", transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }}
+        />
+
+        {/* "Wiper" de salida: Al entrar a la nueva página, el panel negro descubre la pantalla hacia la izquierda */}
+        <motion.div
+          className="fixed inset-0 z-[150] pointer-events-none"
+          style={{ background: "#0c0c0c" }}
+          initial={{ x: "0%" }}
+          animate={{ x: "-100%", transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: 0.1 } }}
+          exit={{ x: "-100%", transition: { duration: 0 } }}
+        />
+      </div>
     </AnimatePresence>
   );
 }

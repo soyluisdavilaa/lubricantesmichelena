@@ -186,8 +186,17 @@ export default function AdminPage() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <motion.form
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
+          variants={{
+            hidden: { opacity: 0, scale: 0.95 },
+            visible: { opacity: 1, scale: 1, x: 0 },
+            shake: {
+              x: [-10, 10, -10, 10, -5, 5, 0],
+              transition: { duration: 0.4 },
+              borderColor: "rgba(239, 68, 68, 0.5)" // Soft red border on error
+            }
+          }}
+          initial="hidden"
+          animate={loginError ? "shake" : "visible"}
           onSubmit={handleLogin}
           className="w-full max-w-sm p-8 rounded-2xl bg-card border border-border space-y-6"
         >
