@@ -200,9 +200,9 @@ export function HeroSection() {
           <Link
             href="/catalogo"
             className="inline-flex items-center gap-2 px-8 py-4 rounded-full
-                       bg-white/5 border border-white/10 text-foreground font-semibold text-base
-                       hover:bg-white/10 hover:border-white/20 hover:scale-105
-                       active:scale-95 transition-all duration-200 backdrop-blur-sm"
+                       bg-white text-gray-900 font-semibold text-base
+                       hover:bg-white/90 hover:scale-105
+                       active:scale-95 transition-all duration-200 shadow-lg"
           >
             Ver Catálogo
             <ArrowRight className="w-4 h-4" />
@@ -214,12 +214,12 @@ export function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2 }}
-          className="flex flex-wrap items-center justify-center gap-3 mt-10"
+          className="flex flex-wrap items-center justify-center gap-2 mt-8 max-w-xs sm:max-w-none mx-auto"
         >
           {(hero.trustPills || []).map((text, i) => (
             <span
               key={i}
-              className="text-xs text-muted-foreground bg-white/5 border border-white/8 px-3 py-1.5 rounded-full"
+              className="text-[11px] sm:text-xs text-white/70 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full whitespace-nowrap"
             >
               {text}
             </span>
