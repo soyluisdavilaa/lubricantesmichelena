@@ -43,7 +43,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <Header />
       <main className="flex-1 pt-16"><PageTransition>{children}</PageTransition></main>
       <Footer />
-      <FloatingCart />
+      {pathname === "/catalogo" && <FloatingCart />}
       <FloatingWhatsApp />
       <BackToTop />
     </>
