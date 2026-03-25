@@ -38,7 +38,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     async function loadCart() {
       const saved = await getSavedCart();
       if (saved && saved.length > 0) {
-        setItems(saved);
+        // sanitize cantidad: IndexedDB can return strings, coerce to number
+        const sanitized = saved.map(item => ({ ...item, cantidad: Math.max(1, Number(item.cantidad) || 1) }));
+        setItems(sanitized);
       }
     }
     loadCart();

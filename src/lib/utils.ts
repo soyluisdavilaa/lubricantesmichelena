@@ -93,17 +93,27 @@ export function openWhatsApp(number: string, message: string): void {
 /**
  * Genera el enlace de WhatsApp para solicitar la cotización de varios productos del carrito.
  */
-export function generateCartWaMessage(phone: string, items: { nombre: string, presentacion?: string, marca?: string, cantidad: number }[], baseMessage: string = "") {
+export function generateCartWaMessage(phone: string, items: { nombre: string, presentacion?: string, marca?: string, cantidad: number }[], _baseMessage: string = "") {
   const cleanPhone = phone.replace(/\D/g, "");
-  const productList = items.map(i => `• ${i.cantidad}x ${i.nombre} ${i.marca ? `(${i.marca})` : ""} ${i.presentacion ? `[${i.presentacion}]` : ""}`).join("\n");
-  
-  let text = baseMessage || "Hola, me gustaría cotizar los siguientes productos:";
-  if (text.includes("{{PRODUCTOS}}")) {
-    text = text.replace(/\{\{PRODUCTOS\}\}/g, "\n" + productList + "\n");
-  } else {
-    text += "\n\n" + productList;
-  }
-  
+
+  const lines: string[] = [
+    "🛢️ *COTIZACIÓN — Lubricantes Michelena C.A.*",
+    "──────────────────────────",
+  ];
+
+  items.forEach((item, idx) => {
+    const qty = Number(item.cantidad) || 1;
+    lines.push(`*${idx + 1}.* ${item.nombre}`);
+    if (item.marca) lines.push(`   🏷️ Marca: ${item.marca}`);
+    if (item.presentacion) lines.push(`   📦 Presentación: ${item.presentacion}`);
+    lines.push(`   🔢 Cantidad: ${qty} unidad${qty !== 1 ? "es" : ""}`);
+    lines.push("");
+  });
+
+  lines.push("──────────────────────────");
+  lines.push("Por favor, indíquenme disponibilidad y precio. ¡Gracias! 🙏");
+
+  const text = lines.join("\n");
   return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text)}`;
 }
 
