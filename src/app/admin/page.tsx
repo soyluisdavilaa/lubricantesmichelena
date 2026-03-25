@@ -5,23 +5,23 @@
    Login SHA-256, CRUD completo, exportar
    ═══════════════════════════════════════════════ */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   Lock, LogOut, Package, Settings, Tag, Calendar, FileDown,
   Plus, Trash2, ShieldCheck, BookOpen, Star, Cog, Phone,
-  Eye, EyeOff, KeyRound, Folder,
+  Eye, EyeOff, KeyRound, Folder, Mail, RefreshCw,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 import { hashPassword, generateId } from "@/lib/utils";
-import { getAdminHash, setAdminHash, verifyAdminLogin, changeGlobalAdminHash } from "@/lib/storage";
+import { getAdminHash, setAdminHash, verifyAdminLogin, changeGlobalAdminHash, getSavedSubscribers } from "@/lib/storage";
 import { ImageUploader } from "@/components/admin/ImageUploader";
-import type { Product, Service, Promo, BlogArticle, Cita } from "@/lib/types";
+import type { Product, Service, Promo, BlogArticle, Cita, Subscriber } from "@/lib/types";
 
 const DEFAULT_HASH =
   "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"; // "admin"
 
-type Tab = "products" | "services" | "config" | "categories";
+type Tab = "products" | "services" | "config" | "categories" | "citas" | "suscriptores";
 
 /* ─── Input / Textarea helpers ─── */
 const inputCls =
@@ -30,8 +30,8 @@ const labelCls = "block text-xs font-medium text-muted-foreground mb-1";
 
 export default function AdminPage() {
   const {
-    products, services, config, categorias, gallery,
-    saveProducts, saveServices, saveConfig, saveCategories, saveGallery,
+    products, services, config, categorias, gallery, citas,
+    saveProducts, saveServices, saveConfig, saveCategories, saveGallery, saveCitas, refreshCitas,
   } = useSiteConfig();
 
   const [isAuth, setIsAuth] = useState(false);
@@ -59,6 +59,21 @@ export default function AdminPage() {
   const [productsSaved, setProductsSaved] = useState(false);
   const [servicesSaved, setServicesSaved] = useState(false);
   const [categoriesSaved, setCategoriesSaved] = useState(false);
+
+  // subscribers
+  const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
+  const [subsLoading, setSubsLoading] = useState(false);
+
+  const loadSubscribers = useCallback(async () => {
+    setSubsLoading(true);
+    const data = await getSavedSubscribers();
+    setSubscribers(data ?? []);
+    setSubsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (isAuth && activeTab === "suscriptores") loadSubscribers();
+  }, [isAuth, activeTab, loadSubscribers]);
 
   // ─── LOGIN ───
   const handleLogin = useCallback(
@@ -268,7 +283,9 @@ export default function AdminPage() {
     { id: "products", label: "Productos", icon: <Package className="w-4 h-4" /> },
     { id: "services", label: "Servicios", icon: <Settings className="w-4 h-4" /> },
     { id: "categories", label: "Categorías", icon: <Folder className="w-4 h-4" /> },
-    { id: "config", label: "Configuración global", icon: <Cog className="w-4 h-4" /> },
+    { id: "citas", label: "Citas", icon: <Calendar className="w-4 h-4" /> },
+    { id: "suscriptores", label: "Suscriptores", icon: <Mail className="w-4 h-4" /> },
+    { id: "config", label: "Configuración", icon: <Cog className="w-4 h-4" /> },
   ];
 
   return (
@@ -530,6 +547,106 @@ export default function AdminPage() {
           </div>
         )}
 
+        {/* ═══ CITAS ═══ */}
+        {activeTab === "citas" && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold">{citas.length} Citas recibidas</h2>
+              <button
+                onClick={refreshCitas}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary text-sm hover:bg-secondary/80 transition-colors"
+              >
+                <RefreshCw className="w-4 h-4" /> Actualizar
+              </button>
+            </div>
+            {citas.length === 0 ? (
+              <div className="text-center py-16 text-muted-foreground">
+                <Calendar className="w-10 h-10 mx-auto mb-3 opacity-30" />
+                <p className="text-sm">No hay citas registradas aún.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {[...citas].sort((a, b) => b.id - a.id).map((cita) => (
+                  <div key={cita.id} className="p-4 rounded-xl bg-card border border-border space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="font-semibold">{cita.nombre}</p>
+                        <p className="text-sm text-muted-foreground">{cita.servicio}</p>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <select
+                          value={cita.estado}
+                          onChange={(e) => {
+                            const updated = citas.map((c) => c.id === cita.id ? { ...c, estado: e.target.value as Cita["estado"] } : c);
+                            saveCitas(updated);
+                          }}
+                          className={`text-xs ${inputCls} cursor-pointer`}
+                        >
+                          <option value="pendiente">Pendiente</option>
+                          <option value="confirmada">Confirmada</option>
+                          <option value="completada">Completada</option>
+                        </select>
+                        <button
+                          onClick={() => { if (confirm("¿Eliminar esta cita?")) saveCitas(citas.filter((c) => c.id !== cita.id)); }}
+                          className="p-1.5 text-muted-foreground hover:text-destructive transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                      <span>📅 {cita.fecha} {cita.hora}</span>
+                      <span>🚗 {cita.vehiculo}</span>
+                      <span>📞 {cita.telefono}</span>
+                      {cita.notas && <span>📝 {cita.notas}</span>}
+                    </div>
+                    <span className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      cita.estado === "completada" ? "bg-green-500/15 text-green-500" :
+                      cita.estado === "confirmada" ? "bg-brand/15 text-brand" :
+                      "bg-yellow-500/15 text-yellow-500"
+                    }`}>
+                      {cita.estado.toUpperCase()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ═══ SUSCRIPTORES ═══ */}
+        {activeTab === "suscriptores" && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold">{subscribers.length} Suscriptores</h2>
+              <button
+                onClick={loadSubscribers}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary text-sm hover:bg-secondary/80 transition-colors"
+              >
+                <RefreshCw className={`w-4 h-4 ${subsLoading ? "animate-spin" : ""}`} /> Actualizar
+              </button>
+            </div>
+            {subscribers.length === 0 ? (
+              <div className="text-center py-16 text-muted-foreground">
+                <Mail className="w-10 h-10 mx-auto mb-3 opacity-30" />
+                <p className="text-sm">{subsLoading ? "Cargando..." : "No hay suscriptores aún."}</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {[...subscribers].sort((a, b) => b.fecha.localeCompare(a.fecha)).map((sub, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-card border border-border">
+                    <div>
+                      <p className="text-sm font-medium">{sub.email}</p>
+                      <p className="text-xs text-muted-foreground">{new Date(sub.fecha).toLocaleDateString("es-VE", { day: "2-digit", month: "short", year: "numeric" })}</p>
+                    </div>
+                    <Mail className="w-4 h-4 text-muted-foreground/40" />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* ═══ CONFIG ═══ */}
         {activeTab === "config" && (
           <div className="space-y-8 max-w-2xl">
@@ -600,6 +717,59 @@ export default function AdminPage() {
                     rows={2}
                     className={`w-full ${inputCls} resize-none`}
                     placeholder="¡Hola! Me interesa el producto: {{PRODUCTO}}..."
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>URL Google Maps (enlace directo)</label>
+                  <input
+                    value={cfgDraft.site.mapsUrl || ""}
+                    onChange={(e) => setCfgDraft((d) => ({ ...d, site: { ...d.site, mapsUrl: e.target.value } }))}
+                    className={`w-full ${inputCls}`}
+                    placeholder="https://maps.google.com/?q=..."
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Embed Google Maps (código src del iframe)</label>
+                  <textarea
+                    value={cfgDraft.site.mapsEmbed || ""}
+                    onChange={(e) => setCfgDraft((d) => ({ ...d, site: { ...d.site, mapsEmbed: e.target.value } }))}
+                    rows={3}
+                    className={`w-full ${inputCls} resize-none font-mono text-xs`}
+                    placeholder="https://www.google.com/maps/embed?pb=..."
+                  />
+                  <p className="text-[11px] text-muted-foreground mt-1">Ve a Google Maps → Compartir → Insertar mapa → copia solo el valor del atributo src del iframe.</p>
+                </div>
+              </div>
+            </section>
+
+            {/* SEO */}
+            <section className="space-y-3">
+              <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">SEO (Google)</h3>
+              <div className="p-4 rounded-xl bg-card border border-border space-y-3">
+                <div>
+                  <label className={labelCls}>Título página principal (aparece en Google)</label>
+                  <input
+                    value={cfgDraft.seo?.indexTitulo || ""}
+                    onChange={(e) => setCfgDraft((d) => ({ ...d, seo: { ...d.seo, indexTitulo: e.target.value } }))}
+                    className={`w-full ${inputCls}`}
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Descripción página principal (aparece en Google)</label>
+                  <textarea
+                    value={cfgDraft.seo?.indexDesc || ""}
+                    onChange={(e) => setCfgDraft((d) => ({ ...d, seo: { ...d.seo, indexDesc: e.target.value } }))}
+                    rows={3}
+                    className={`w-full ${inputCls} resize-none`}
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Descripción página Catálogo (aparece en Google)</label>
+                  <textarea
+                    value={cfgDraft.seo?.catalogoDesc || ""}
+                    onChange={(e) => setCfgDraft((d) => ({ ...d, seo: { ...d.seo, catalogoDesc: e.target.value } }))}
+                    rows={2}
+                    className={`w-full ${inputCls} resize-none`}
                   />
                 </div>
               </div>

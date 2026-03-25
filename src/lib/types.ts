@@ -140,11 +140,6 @@ export interface SiteConfig {
     fondo: string;
     color: string;
   };
-  stats: Array<{
-    valor: number;
-    sufijo: string;
-    label: string;
-  }>;
   horarios: Record<string, Horario>;
   nosotros: {
     badge: string;
@@ -160,10 +155,6 @@ export interface SiteConfig {
       alt: string;
     }>;
   };
-  faq: Array<{
-    pregunta: string;
-    respuesta: string;
-  }>;
   colores: {
     primario: string;
   };
@@ -171,9 +162,6 @@ export interface SiteConfig {
     indexTitulo: string;
     indexDesc: string;
     catalogoDesc: string;
-  };
-  analytics: {
-    gaId: string;
   };
   waMessage: string;
   waProductMessage?: string;

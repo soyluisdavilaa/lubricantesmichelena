@@ -49,12 +49,6 @@ export const defaultConfig: SiteConfig = {
     fondo: "#f97316",
     color: "#ffffff",
   },
-  stats: [
-    { valor: 10000, sufijo: "+", label: "Vehículos Atendidos" },
-    { valor: 12, sufijo: "+", label: "Años de Experiencia" },
-    { valor: 50, sufijo: "+", label: "Marcas Disponibles" },
-    { valor: 98, sufijo: "%", label: "Clientes Satisfechos" },
-  ],
   horarios: {
     lunes: { abre: "08:00", cierra: "18:00", cerrado: false },
     martes: { abre: "08:00", cierra: "18:00", cerrado: false },
@@ -98,33 +92,6 @@ export const defaultConfig: SiteConfig = {
       { url: "/img/taller-4.jpg", alt: "Productos disponibles" },
     ],
   },
-  faq: [
-    {
-      pregunta: "¿Cada cuánto debo cambiar el aceite de mi vehículo?",
-      respuesta:
-        "Se recomienda cada 5.000–10.000 km dependiendo del tipo de aceite (mineral, semi-sintético o sintético) y las condiciones de manejo. Nuestros técnicos pueden asesorarte según tu modelo.",
-    },
-    {
-      pregunta: "¿Cuánto tiempo toma un servicio de cambio de aceite?",
-      respuesta:
-        "Un cambio de aceite estándar toma aproximadamente 30 minutos. Servicios más completos como entonación o mantenimiento preventivo pueden tomar entre 1 y 3 horas.",
-    },
-    {
-      pregunta: "¿Ofrecen garantía en sus servicios?",
-      respuesta:
-        "Sí, todos nuestros servicios incluyen garantía. Los productos instalados mantienen su garantía de fabricante y nuestro trabajo está respaldado por 30 días de garantía.",
-    },
-    {
-      pregunta: "¿Qué marcas de vehículos atienden?",
-      respuesta:
-        "Atendemos todas las marcas: Toyota, Chevrolet, Ford, Hyundai, Kia, Honda, Mazda, Mitsubishi, Volkswagen, y muchas más. Contamos con filtros y aceites para cada modelo.",
-    },
-    {
-      pregunta: "¿Necesito cita previa?",
-      respuesta:
-        "No es obligatorio, pero recomendamos agendar tu cita para garantizar atención inmediata y reducir tu tiempo de espera. Puedes hacerlo por WhatsApp o en nuestra sección de citas.",
-    },
-  ],
   colores: {
     primario: "#f97316",
   },
@@ -135,9 +102,6 @@ export const defaultConfig: SiteConfig = {
       "Centro de lubricación automotriz en Valencia, Venezuela. Aceites, filtros, aditivos, cambio de aceite y mantenimiento preventivo. +10 años de experiencia.",
     catalogoDesc:
       "Catálogo de aceites, filtros, aditivos y lubricantes de las mejores marcas. Precios competitivos en Valencia, Venezuela.",
-  },
-  analytics: {
-    gaId: "",
   },
   waMessage:
     "¡Hola! 👋 Me gustaría obtener más información sobre sus servicios.",

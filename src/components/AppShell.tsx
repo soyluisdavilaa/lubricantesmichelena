@@ -8,7 +8,6 @@ import { ScrollProgress } from "@/components/layout/ScrollProgress";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { FloatingWhatsApp } from "@/components/shared/FloatingWhatsApp";
 import { BackToTop } from "@/components/shared/BackToTop";
-import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 import { usePathname } from "next/navigation";
 import { Wrench } from "lucide-react";
@@ -39,17 +38,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const isAdmin = pathname?.startsWith("/admin");
 
   if (isAdmin) {
-    return (
-      <>
-        <GoogleAnalytics />
-        <main className="flex-1">{children}</main>
-      </>
-    );
+    return <main className="flex-1">{children}</main>;
   }
 
   return (
     <>
-      <GoogleAnalytics />
       <ScrollProgress />
       <Header />
       <main className="flex-1 pt-14 sm:pt-20 lg:pt-24"><PageTransition>{children}</PageTransition></main>

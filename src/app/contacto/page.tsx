@@ -92,6 +92,20 @@ export default function ContactoPage() {
                   Chatear por WhatsApp
                 </button>
               </div>
+              {/* Mapa */}
+              {config.site.mapsEmbed && (
+                <div className="mt-8 rounded-2xl overflow-hidden border border-border h-56">
+                  <iframe
+                    src={config.site.mapsEmbed}
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                </div>
+              )}
             </div>
           </RevealOnScroll>
 
