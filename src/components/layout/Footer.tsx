@@ -59,9 +59,9 @@ export function Footer() {
   return (
     <footer className="bg-card border-t border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10">
+        <div className="flex flex-wrap lg:flex-nowrap gap-8 lg:gap-12 justify-between">
           {/* Brand */}
-          <div className="lg:col-span-4 space-y-6">
+          <div className="w-full lg:w-1/4 space-y-6 shrink-0">
             <Link href="/" className="inline-block transition-transform hover:scale-105">
               <motion.div
                 animate={{
@@ -101,7 +101,7 @@ export function Footer() {
           </div>
 
           {/* Quick links */}
-          <div className="lg:col-span-2">
+          <div className="w-full sm:w-5/12 lg:w-[15%] shrink-0">
             <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground mb-4">
               Navegación
             </h3>
@@ -120,7 +120,7 @@ export function Footer() {
           </div>
 
           {/* Contact */}
-          <div className="lg:col-span-3">
+          <div className="w-full sm:w-6/12 lg:w-[30%] shrink-0">
             <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground mb-4">
               Contacto
             </h3>
@@ -137,7 +137,7 @@ export function Footer() {
               <li>
                 <a
                   href={`mailto:${config.site.email}`}
-                  className="flex items-start gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors break-all"
+                  className="flex items-start gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <Mail className="w-4 h-4 mt-0.5 shrink-0" />
                   {config.site.email}
@@ -158,7 +158,7 @@ export function Footer() {
           </div>
 
           {/* Newsletter */}
-          <div className="lg:col-span-3">
+          <div className="w-full sm:w-full lg:w-[25%] shrink-0">
             <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground mb-4">
               Novedades
             </h3>
