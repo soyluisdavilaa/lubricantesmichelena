@@ -89,31 +89,28 @@ export function Header({ onSearchOpen }: HeaderProps) {
         )}
       >
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20 lg:h-24">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-14 sm:h-20 lg:h-24 gap-2">
             {/* Logo */}
             <Link
               href="/"
-              className="flex items-center gap-2 group focus:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-lg
+              className="flex items-center shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-lg
                          transition-transform hover:scale-105 active:scale-95"
             >
-              <div className="transition-all duration-300 hover:scale-105 active:scale-95">
-                <Image
-                  src="/logo.png"
-                  alt="Lubricantes Michelena"
-                  width={280}
-                  height={110}
-                  className="w-auto h-[42px] sm:h-[60px] lg:h-[80px] object-contain drop-shadow-md"
-                  priority
-                />
-              </div>
+              <Image
+                src="/logo.png"
+                alt="Lubricantes Michelena"
+                width={280}
+                height={110}
+                className="w-auto h-[34px] sm:h-[54px] lg:h-[76px] object-contain drop-shadow-md"
+                priority
+              />
             </Link>
 
             {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center gap-1">
+            <nav className="hidden md:flex items-center gap-1 flex-1 justify-center">
               {navLinks
                 .filter((link) => {
-                  // Si tiene anchor (Productos, Servicios, Nosotros) solo mostrar en home
                   if (link.anchor && link.anchor !== "inicio") return pathname === "/";
                   return true;
                 })
@@ -143,13 +140,13 @@ export function Header({ onSearchOpen }: HeaderProps) {
             </nav>
 
             {/* Actions */}
-            <div className="flex items-center gap-2">
-              {/* Search */}
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+              {/* Search — solo desktop */}
               {onSearchOpen && (
                 <button
                   onClick={onSearchOpen}
-                  className="w-9 h-9 rounded-full flex items-center justify-center
-                             text-muted-foreground hover:text-foreground hover:bg-white/10
+                  className="hidden sm:flex w-9 h-9 rounded-full items-center justify-center
+                             text-white/70 hover:text-white hover:bg-white/10
                              transition-all duration-200"
                   aria-label="Buscar"
                 >
@@ -166,7 +163,7 @@ export function Header({ onSearchOpen }: HeaderProps) {
                              transition-all duration-200"
                   aria-label="Ver cotización"
                 >
-                  <ShoppingCart className="w-4 h-4" />
+                  <ShoppingCart className="w-[18px] h-[18px]" />
                   {itemCount > 0 && (
                     <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-brand text-white text-[10px] font-black flex items-center justify-center">
                       {itemCount > 9 ? "9+" : itemCount}
@@ -177,7 +174,7 @@ export function Header({ onSearchOpen }: HeaderProps) {
 
               <ThemeToggle />
 
-              {/* WhatsApp button */}
+              {/* WhatsApp button — solo en pantallas medianas+ */}
               <button
                 onClick={() => openWhatsApp(config.site.waNumber, config.waMessage)}
                 className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full
@@ -190,12 +187,12 @@ export function Header({ onSearchOpen }: HeaderProps) {
                 WhatsApp
               </button>
 
-              {/* Mobile menu */}
+              {/* Mobile menu — siempre visible en < md */}
               <button
                 onClick={() => setIsMobileOpen(true)}
-                className="md:hidden w-10 h-10 rounded-full bg-white/5 border border-white/10
-                           flex items-center justify-center
-                           hover:bg-white/10 transition-colors"
+                className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl
+                           bg-white/15 border border-white/30 text-white
+                           hover:bg-white/25 active:scale-95 transition-all duration-200"
                 aria-label="Abrir menú"
               >
                 <Menu className="w-5 h-5" />

@@ -52,7 +52,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <GoogleAnalytics />
       <ScrollProgress />
       <Header />
-      <main className="flex-1 pt-16"><PageTransition>{children}</PageTransition></main>
+      <main className="flex-1 pt-14 sm:pt-20 lg:pt-24"><PageTransition>{children}</PageTransition></main>
       <Footer />
       {pathname === "/catalogo" && <FloatingCart />}
       <FloatingWhatsApp />
