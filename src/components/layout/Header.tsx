@@ -111,29 +111,35 @@ export function Header({ onSearchOpen }: HeaderProps) {
 
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-1">
-              {navLinks.map((link) => {
-                const isActive =
-                  link.anchor
-                    ? pathname === "/"
-                    : link.href === "/"
+              {navLinks
+                .filter((link) => {
+                  // Si tiene anchor (Productos, Servicios, Nosotros) solo mostrar en home
+                  if (link.anchor && link.anchor !== "inicio") return pathname === "/";
+                  return true;
+                })
+                .map((link) => {
+                  const isActive =
+                    link.anchor
                       ? pathname === "/"
-                      : pathname.startsWith(link.href);
-                return (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    onClick={(e) => handleNavClick(e, link.anchor)}
-                    className={cn(
-                      "relative px-4 lg:px-5 py-2 text-base lg:text-lg font-medium rounded-lg transition-all duration-200 cursor-pointer",
-                      isActive && !link.anchor
-                        ? "text-brand"
-                        : "text-muted-foreground hover:text-foreground hover:bg-white/5"
-                    )}
-                  >
-                    {link.label}
-                  </a>
-                );
-              })}
+                      : link.href === "/"
+                        ? pathname === "/"
+                        : pathname.startsWith(link.href);
+                  return (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      onClick={(e) => handleNavClick(e, link.anchor)}
+                      className={cn(
+                        "relative px-4 lg:px-5 py-2 text-base lg:text-lg font-medium rounded-lg transition-all duration-200 cursor-pointer",
+                        isActive && !link.anchor
+                          ? "text-brand"
+                          : "text-muted-foreground hover:text-foreground hover:bg-white/5"
+                      )}
+                    >
+                      {link.label}
+                    </a>
+                  );
+                })}
             </nav>
 
             {/* Actions */}
