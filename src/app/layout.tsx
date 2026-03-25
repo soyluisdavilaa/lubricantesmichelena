@@ -3,6 +3,10 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Providers } from "@/components/Providers";
 import { AppShell } from "@/components/AppShell";
+import { getSiteData } from "@/lib/actions";
+import { deepMerge } from "@/lib/utils";
+import { defaultConfig } from "@/lib/defaults";
+import type { SiteConfig } from "@/lib/types";
 import "./globals.css";
 
 const inter = Inter({
@@ -11,60 +15,133 @@ const inter = Inter({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Lubricantes Michelena C.A — Centro de Lubricación Automotriz",
-    template: "%s | Lubricantes Michelena",
-  },
-  description:
-    "Centro de lubricación automotriz en Valencia, Venezuela. Aceites, filtros, aditivos, cambio de aceite y mantenimiento preventivo.",
-  keywords: [
-    "lubricantes",
-    "aceite de motor",
-    "cambio de aceite",
-    "Valencia Venezuela",
-    "mantenimiento automotriz",
-    "filtros",
-    "Michelena",
-  ],
-  authors: [{ name: "Lubricantes Michelena C.A" }],
-  openGraph: {
-    type: "website",
-    locale: "es_VE",
-    siteName: "Lubricantes Michelena C.A",
-    title: "Lubricantes Michelena C.A — Centro de Lubricación Automotriz",
-    description:
-      "Centro de lubricación automotriz en Valencia, Venezuela. Aceites, filtros, aditivos y mantenimiento preventivo.",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Lubricantes Michelena C.A",
-    description: "Centro de lubricación automotriz en Valencia, Venezuela.",
-  },
-  icons: {
-    icon: "/logo.png",
-    shortcut: "/logo.png",
-    apple: "/logo.png",
-  },
-};
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://lubricantesmichelena.com";
 
-export default function RootLayout({
+async function getConfig(): Promise<SiteConfig> {
+  try {
+    const saved = await getSiteData("config");
+    if (saved) return deepMerge(defaultConfig, saved) as SiteConfig;
+  } catch {}
+  return defaultConfig;
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const cfg = await getConfig();
+
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: cfg.seo.indexTitulo,
+      template: `%s | ${cfg.site.nombre}`,
+    },
+    description: cfg.seo.indexDesc,
+    keywords: [
+      "lubricantes Valencia Venezuela",
+      "aceite de motor",
+      "cambio de aceite Valencia",
+      "mantenimiento automotriz Venezuela",
+      "filtros aceite",
+      "lubricantes Carabobo",
+      cfg.site.nombre,
+    ],
+    authors: [{ name: cfg.site.nombre }],
+    alternates: { canonical: SITE_URL },
+    openGraph: {
+      type: "website",
+      locale: "es_VE",
+      siteName: cfg.site.nombre,
+      title: cfg.seo.indexTitulo,
+      description: cfg.seo.indexDesc,
+      url: SITE_URL,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: cfg.site.nombre,
+      description: cfg.seo.indexDesc,
+    },
+    icons: {
+      icon: cfg.site.logo || "/logo.png",
+      shortcut: cfg.site.logo || "/logo.png",
+      apple: cfg.site.logo || "/logo.png",
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true },
+    },
+  };
+}
+
+export default async function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
+  const cfg = await getConfig();
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "AutoRepair",
+    "name": cfg.site.nombre,
+    "description": cfg.seo.indexDesc,
+    "url": SITE_URL,
+    "telephone": cfg.site.telefono,
+    "email": cfg.site.email,
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": cfg.site.direccion,
+      "addressLocality": "Valencia",
+      "addressRegion": "Carabobo",
+      "postalCode": "2001",
+      "addressCountry": "VE",
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 10.162,
+      "longitude": -67.994,
+    },
+    "hasMap": cfg.site.mapsUrl || `${SITE_URL}/contacto`,
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        "opens": "08:00",
+        "closes": "18:00",
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Saturday"],
+        "opens": "08:00",
+        "closes": "14:00",
+      },
+    ],
+    "priceRange": "$$",
+    "currenciesAccepted": "USD, VES",
+    "paymentAccepted": "Efectivo, Transferencia",
+    "areaServed": {
+      "@type": "City",
+      "name": "Valencia",
+      "addressRegion": "Carabobo",
+      "addressCountry": "VE",
+    },
+  };
+
   return (
     <html lang="es" className={`${inter.variable}`} suppressHydrationWarning>
       <head>
-        {/*
-          Script síncrono: aplica la clase dark/light ANTES de cualquier paint
-          para evitar el flash de tema incorrecto (FOUC).
-          No usar next/script aquí — debe ejecutarse en línea y de forma síncrona.
-        */}
+        {/* Tema: aplica dark/light ANTES del primer paint */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('lm_theme');if(t==='light'){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}catch(e){}})()`,
           }}
+        />
+        {/* Geo-localización */}
+        <meta name="geo.region" content="VE-G" />
+        <meta name="geo.placename" content="Valencia, Carabobo, Venezuela" />
+        <meta name="geo.position" content="10.162;-67.994" />
+        <meta name="ICBM" content="10.162, -67.994" />
+        {/* Structured Data — LocalBusiness / AutoRepair */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body className="min-h-screen flex flex-col font-sans antialiased">
