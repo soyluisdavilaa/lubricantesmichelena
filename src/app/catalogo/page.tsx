@@ -17,10 +17,6 @@ import { openWhatsApp, getProductWaMessage, cn } from "@/lib/utils";
 
 const ITEMS_PER_PAGE = 12;
 
-function parsePrice(price: string): number {
-  return parseFloat(price.replace(/[^0-9.]/g, "")) || 0;
-}
-
 /* ── List row view ── */
 function ProductRow({
   product,
@@ -92,7 +88,6 @@ export default function CatalogoPage() {
   const [search, setSearch] = useState("");
   const [selectedCat, setSelectedCat] = useState("");
   const [selectedSub, setSelectedSub] = useState("");
-  const [selectedBrand, setSelectedBrand] = useState("");
   const [sortBy, setSortBy] = useState("default");
   const [page, setPage] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -112,13 +107,12 @@ export default function CatalogoPage() {
     }
     if (selectedCat) result = result.filter((p) => p.categoria === selectedCat);
     if (selectedSub) result = result.filter((p) => p.subcategoria === selectedSub);
-    if (selectedBrand) result = result.filter((p) => p.marca === selectedBrand);
     switch (sortBy) {
       case "name-asc":   result.sort((a, b) => a.nombre.localeCompare(b.nombre)); break;
       case "name-desc":  result.sort((a, b) => b.nombre.localeCompare(a.nombre)); break;
     }
     return result;
-  }, [products, search, selectedCat, selectedSub, selectedBrand, sortBy]);
+  }, [products, search, selectedCat, selectedSub, sortBy]);
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
@@ -126,14 +120,38 @@ export default function CatalogoPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
-      <section className="py-12 border-b border-border bg-card/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Header con imagen de fondo */}
+      <section className="relative py-24 border-b border-border overflow-hidden">
+        {/* Dark gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-slate-900 to-gray-900" />
+        {/* Brand glow accents */}
+        <div className="absolute -top-24 -right-24 w-[500px] h-[500px] rounded-full bg-brand/10 blur-[80px] pointer-events-none" />
+        <div className="absolute -bottom-16 -left-16 w-80 h-80 rounded-full bg-brand/5 blur-[60px] pointer-events-none" />
+        {/* Grid pattern overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.04] pointer-events-none"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
+            backgroundSize: "60px 60px",
+          }}
+        />
+        {/* Diagonal brand stripe */}
+        <div className="absolute top-0 right-0 w-1/3 h-full opacity-10 pointer-events-none"
+          style={{ background: "linear-gradient(135deg, transparent 40%, #e87b20 100%)" }} />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealOnScroll>
-            <span className="text-brand font-semibold text-sm uppercase tracking-wider">Catálogo Avanzado</span>
-            <h1 className="text-3xl sm:text-4xl font-bold mt-2 mb-2">Búsqueda Inteligente</h1>
-            <p className="text-muted-foreground">
-              {filtered.length} producto{filtered.length !== 1 ? "s" : ""} coinciden con tus filtros
+            <span className="inline-flex items-center gap-2 text-brand font-bold text-sm uppercase tracking-widest mb-3">
+              <span className="w-6 h-px bg-brand" />
+              Catálogo Avanzado
+              <span className="w-6 h-px bg-brand" />
+            </span>
+            <h1 className="text-4xl sm:text-5xl font-black mt-1 mb-3 text-white leading-tight">
+              Búsqueda <span className="text-brand">Inteligente</span>
+            </h1>
+            <p className="text-slate-400 text-lg">
+              {filtered.length} producto{filtered.length !== 1 ? "s" : ""} disponibles en nuestro catálogo
             </p>
           </RevealOnScroll>
         </div>
@@ -150,8 +168,6 @@ export default function CatalogoPage() {
               onCatChange={reset(setSelectedCat)}
               selectedSub={selectedSub}
               onSubChange={reset(setSelectedSub)}
-              selectedBrand={selectedBrand}
-              onBrandChange={reset(setSelectedBrand)}
               sortBy={sortBy}
               onSortChange={reset(setSortBy)}
             />

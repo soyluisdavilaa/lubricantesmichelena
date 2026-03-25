@@ -1,12 +1,13 @@
 "use client";
 
-/* Modal de detalle de producto */
+/* Modal de detalle de producto — rediseño premium */
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X, MessageCircle, ShoppingCart } from "lucide-react";
+import { X, MessageCircle, ShoppingCart, Package, Tag, Box } from "lucide-react";
 import type { Product } from "@/lib/types";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 import { useCart } from "@/context/CartContext";
+import { openWhatsApp, getProductWaMessage } from "@/lib/utils";
 
 interface ProductModalProps {
   product: Product | null;
@@ -27,107 +28,160 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-[90] bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[90] bg-black/70 backdrop-blur-md"
           />
 
           {/* Modal */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.92, y: 24 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ type: "spring", damping: 25, stiffness: 250 }}
-            className="fixed inset-4 sm:inset-auto sm:left-1/2 sm:top-1/2
+            exit={{ opacity: 0, scale: 0.92, y: 24 }}
+            transition={{ type: "spring", damping: 28, stiffness: 280 }}
+            className="fixed inset-3 sm:inset-auto sm:left-1/2 sm:top-1/2
                        sm:-translate-x-1/2 sm:-translate-y-1/2
-                       z-[91] w-auto sm:w-full sm:max-w-2xl max-h-[90vh]
-                       bg-card rounded-2xl border border-border shadow-2xl
-                       overflow-y-auto"
+                       z-[91] sm:w-full sm:max-w-4xl max-h-[92vh]
+                       bg-card rounded-3xl border border-border/80 shadow-2xl
+                       overflow-hidden flex flex-col sm:flex-row"
             role="dialog"
             aria-modal="true"
             aria-label={product.nombre}
           >
-            {/* Close */}
-            <button
-              onClick={onClose}
-              className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-secondary
-                         flex items-center justify-center hover:bg-secondary/80 transition-colors"
-              aria-label="Cerrar"
-            >
-              <X className="w-4 h-4" />
-            </button>
+            {/* ── Left: Image panel ── */}
+            <div className="sm:w-[45%] relative bg-muted shrink-0 overflow-hidden min-h-[220px] sm:min-h-0">
+              {product.imagen ? (
+                <img
+                  src={product.imagen}
+                  alt={product.nombre}
+                  className="w-full h-full object-cover object-center absolute inset-0"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <Package className="w-24 h-24 text-muted-foreground/10" />
+                </div>
+              )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-0">
-              {/* Image */}
-              <div className="aspect-square bg-muted relative">
-                {product.imagen ? (
-                  <img
-                    src={product.imagen}
-                    alt={product.nombre}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <MessageCircle className="w-16 h-16 text-muted-foreground/20" />
-                  </div>
-                )}
-                <span className="absolute bottom-3 left-3 px-3 py-1 rounded-lg bg-background/80 backdrop-blur text-sm font-semibold">
-                  {product.marca}
+              {/* Gradient overlay — bottom to top */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+              {/* Category badge — top left */}
+              <div className="absolute top-4 left-4 z-10">
+                <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-brand/90 backdrop-blur-sm text-white text-xs font-bold shadow-lg">
+                  <Tag className="w-3 h-3" />
+                  {product.categoria}
                 </span>
               </div>
 
-              {/* Info */}
-              <div className="p-6 flex flex-col">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="px-2 py-0.5 rounded bg-brand/10 text-brand text-xs font-medium capitalize">
-                    {product.categoria}
+              {/* Brand name — bottom left */}
+              <div className="absolute bottom-4 left-4 right-4 z-10">
+                <p className="text-white/60 text-xs font-medium uppercase tracking-widest mb-1">Marca</p>
+                <p className="text-white text-xl font-black tracking-tight drop-shadow-lg">{product.marca}</p>
+              </div>
+
+              {/* Agotado badge */}
+              {!product.disponible && (
+                <div className="absolute top-4 right-4 z-10">
+                  <span className="px-3 py-1.5 rounded-full bg-destructive/90 text-white text-xs font-bold">
+                    Agotado
                   </span>
+                </div>
+              )}
+            </div>
+
+            {/* ── Right: Info panel ── */}
+            <div className="flex-1 flex flex-col overflow-y-auto">
+              {/* Top bar */}
+              <div className="flex items-start justify-between p-6 pb-4">
+                <div className="flex flex-wrap gap-2">
                   {product.subcategoria && (
-                    <span className="px-2 py-0.5 rounded bg-secondary text-xs text-muted-foreground">
+                    <span className="px-2.5 py-1 rounded-lg bg-secondary text-xs font-semibold text-muted-foreground">
                       {product.subcategoria}
                     </span>
                   )}
+                  {product.badge && (
+                    <span
+                      className="px-2.5 py-1 rounded-lg text-white text-xs font-bold"
+                      style={{ background: "#e87b20" }}
+                    >
+                      {product.badge}
+                    </span>
+                  )}
                 </div>
+                <button
+                  onClick={onClose}
+                  className="ml-3 shrink-0 w-9 h-9 rounded-full bg-secondary hover:bg-secondary/80
+                             flex items-center justify-center transition-colors"
+                  aria-label="Cerrar"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
 
-                <h2 className="text-xl font-bold mb-2">{product.nombre}</h2>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-4 flex-1">
-                  {product.descripcion}
+              {/* Product name */}
+              <div className="px-6 pb-4">
+                <h2 className="text-2xl sm:text-3xl font-black leading-tight mb-3">{product.nombre}</h2>
+                <div className="w-10 h-1 rounded-full bg-brand" />
+              </div>
+
+              {/* Description */}
+              <div className="px-6 flex-1">
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {product.descripcion || "Consulta con nosotros para más información sobre este producto."}
                 </p>
+              </div>
 
-                <div className="space-y-4">
-                  {/* Details */}
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div className="p-3 rounded-lg bg-secondary/50">
-                      <p className="text-muted-foreground text-xs">Presentación</p>
-                      <p className="font-medium">{product.presentacion}</p>
+              {/* Details grid */}
+              <div className="px-6 pt-5">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-4 rounded-2xl bg-secondary/60 border border-border/50 space-y-1">
+                    <div className="flex items-center gap-1.5 text-muted-foreground">
+                      <Box className="w-3.5 h-3.5" />
+                      <p className="text-[11px] uppercase tracking-wider font-semibold">Presentación</p>
                     </div>
-                    <div className="p-3 rounded-lg bg-secondary/50">
-                      <p className="text-muted-foreground text-xs">Disponibilidad</p>
-                      <p className={`font-medium ${product.disponible ? "text-green-500" : "text-destructive"}`}>
-                        {product.disponible ? "En stock" : "Agotado"}
-                      </p>
-                    </div>
+                    <p className="font-bold text-sm">{product.presentacion || "—"}</p>
                   </div>
-
-                  {/* Añadir al Carrito */}
-                  <button
-                    onClick={() => {
-                      addToCart(product);
-                      onClose(); // Cierra el modal para que el usuario pueda ver el drawer del carrito
-                    }}
-                    disabled={!product.disponible}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3
-                               rounded-xl bg-brand text-white font-bold
-                               hover:bg-brand/90 hover:scale-[1.02] active:scale-95 transition-all
-                               disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-brand/20"
-                  >
-                    {product.disponible ? (
-                      <>
-                        <ShoppingCart className="w-5 h-5" /> Añadir a Cotización
-                      </>
-                    ) : (
-                      "Agotado"
-                    )}
-                  </button>
+                  <div className="p-4 rounded-2xl bg-secondary/60 border border-border/50 space-y-1">
+                    <p className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">
+                      Disponibilidad
+                    </p>
+                    <p className={`font-bold text-sm flex items-center gap-1.5 ${product.disponible ? "text-emerald-500" : "text-destructive"}`}>
+                      <span className={`w-2 h-2 rounded-full ${product.disponible ? "bg-emerald-500" : "bg-destructive"}`} />
+                      {product.disponible ? "En stock" : "Agotado"}
+                    </p>
+                  </div>
                 </div>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="p-6 space-y-3 mt-4">
+                <button
+                  onClick={() => {
+                    addToCart(product);
+                    onClose();
+                  }}
+                  disabled={!product.disponible}
+                  className="w-full flex items-center justify-center gap-2 px-5 py-4 rounded-2xl
+                             bg-brand text-white font-bold text-sm
+                             hover:bg-brand/90 hover:scale-[1.02] active:scale-95 transition-all duration-200
+                             disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100
+                             shadow-xl shadow-brand/25"
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  {product.disponible ? "Añadir a Cotización" : "No disponible"}
+                </button>
+
+                <button
+                  onClick={() => {
+                    const msg = getProductWaMessage(config.waProductMessage, product);
+                    openWhatsApp(config.site.waNumber, msg);
+                  }}
+                  className="w-full flex items-center justify-center gap-2 px-5 py-4 rounded-2xl
+                             bg-[#16a34a] text-white font-bold text-sm
+                             hover:bg-[#15803d] hover:scale-[1.02] active:scale-95 transition-all duration-200
+                             shadow-xl shadow-green-700/25"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  Consultar por WhatsApp
+                </button>
               </div>
             </div>
           </motion.div>

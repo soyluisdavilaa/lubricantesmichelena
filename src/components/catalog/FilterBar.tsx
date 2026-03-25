@@ -2,7 +2,7 @@
 
 /* Barra de filtros — categoría, subcategoría, búsqueda, ordenar */
 
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { Search, X, SlidersHorizontal, ChevronDown } from "lucide-react";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 
 interface FilterBarProps {
@@ -12,8 +12,6 @@ interface FilterBarProps {
   onCatChange: (val: string) => void;
   selectedSub: string;
   onSubChange: (val: string) => void;
-  selectedBrand: string;
-  onBrandChange: (val: string) => void;
   sortBy: string;
   onSortChange: (val: string) => void;
 }
@@ -25,156 +23,135 @@ export function FilterBar({
   onCatChange,
   selectedSub,
   onSubChange,
-  selectedBrand,
-  onBrandChange,
   sortBy,
   onSortChange,
 }: FilterBarProps) {
-  const { categorias, products } = useSiteConfig();
+  const { categorias } = useSiteConfig();
 
   const activeCat = categorias.find((c) => c.id === selectedCat);
   const subs = activeCat?.subs ?? [];
-
-  // Extraer las marcas únicas de los productos activos
-  const uniqueBrands = Array.from(new Set(products.filter(p => p.disponible).map(p => p.marca))).filter(Boolean).sort();
 
   const clearFilters = () => {
     onSearchChange("");
     onCatChange("");
     onSubChange("");
-    onBrandChange("");
     onSortChange("default");
   };
 
-  const hasActiveFilters = Boolean(search || selectedCat || selectedSub || selectedBrand || sortBy !== "default");
+  const hasActiveFilters = Boolean(search || selectedCat || selectedSub || sortBy !== "default");
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* Search + Sort row */}
       <div className="flex flex-col sm:flex-row gap-3">
-        {/* Search */}
+        {/* Search bar — modern glowing design */}
         <div className="relative flex-1 group">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Búsqueda Inteligente (ej. viscosidad, nombre, marca...)"
-            className="w-full pl-10 pr-10 py-3 rounded-xl bg-card border border-brand/20
-                       text-sm placeholder:text-muted-foreground focus:outline-none focus:bg-background
-                       focus:ring-2 focus:ring-brand/50 focus:border-brand/50 transition-all font-medium shadow-sm"
-          />
-          {search && (
-            <button
-              onClick={() => onSearchChange("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
+          {/* Glow border */}
+          <div className="absolute -inset-px rounded-2xl bg-gradient-to-r from-brand/40 via-brand/20 to-brand/40 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 blur-sm pointer-events-none" />
+          <div className="relative flex items-center bg-card border border-border group-focus-within:border-brand/50 rounded-2xl shadow-sm transition-all duration-300 overflow-hidden">
+            <div className="flex items-center justify-center w-12 h-full shrink-0 text-muted-foreground group-focus-within:text-brand transition-colors duration-300">
+              <Search className="w-4 h-4" />
+            </div>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => onSearchChange(e.target.value)}
+              placeholder="Buscar por nombre, categoría, descripción…"
+              className="flex-1 py-3.5 pr-4 bg-transparent text-sm placeholder:text-muted-foreground/60 focus:outline-none font-medium"
+            />
+            {search && (
+              <button
+                onClick={() => onSearchChange("")}
+                className="mr-3 p-1.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
         </div>
 
-        {/* Sort */}
-        <select
-          value={sortBy}
-          onChange={(e) => onSortChange(e.target.value)}
-          className="px-4 py-3 rounded-xl bg-card border border-border text-sm font-medium
-                     focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/30 cursor-pointer shadow-sm"
-        >
-          <option value="default">Ordenar por</option>
-          <option value="name-asc">Nombre A-Z</option>
-          <option value="name-desc">Nombre Z-A</option>
-        </select>
+        {/* Sort selector — styled wrapper */}
+        <div className="relative shrink-0">
+          <div className="flex items-center bg-card border border-border rounded-2xl shadow-sm overflow-hidden hover:border-brand/30 transition-colors">
+            <SlidersHorizontal className="w-4 h-4 text-muted-foreground ml-4 shrink-0" />
+            <select
+              value={sortBy}
+              onChange={(e) => onSortChange(e.target.value)}
+              className="appearance-none pl-2.5 pr-9 py-3.5 bg-transparent text-sm font-semibold
+                         focus:outline-none cursor-pointer text-foreground min-w-[160px]"
+            >
+              <option value="default">Orden predeterminado</option>
+              <option value="name-asc">Nombre A → Z</option>
+              <option value="name-desc">Nombre Z → A</option>
+            </select>
+            <ChevronDown className="w-4 h-4 text-muted-foreground absolute right-3 pointer-events-none" />
+          </div>
+        </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 bg-card/50 p-4 rounded-xl border border-border/50">
-        {/* Category chips */}
-        <div className="flex-1 space-y-2">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Categoría</p>
-          <div className="flex flex-wrap gap-2">
+      {/* Category + subcategory chips */}
+      <div className="bg-card/60 backdrop-blur-sm p-4 rounded-2xl border border-border/60 space-y-3">
+        <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+          <span className="w-4 h-px bg-brand/50" />
+          Categoría
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => { onCatChange(""); onSubChange(""); }}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 ${
+              !selectedCat
+                ? "bg-brand text-white shadow-md shadow-brand/30 scale-[1.03]"
+                : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/70 hover:scale-[1.02]"
+            }`}
+          >
+            Todas
+          </button>
+          {categorias.map((cat) => (
             <button
+              key={cat.id}
               onClick={() => {
-                onCatChange("");
+                onCatChange(cat.id === selectedCat ? "" : cat.id);
                 onSubChange("");
               }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                !selectedCat
-                  ? "bg-brand text-white shadow-md shadow-brand/20"
-                  : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 ${
+                selectedCat === cat.id
+                  ? "bg-brand text-white shadow-md shadow-brand/30 scale-[1.03]"
+                  : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/70 hover:scale-[1.02]"
               }`}
             >
-              Todas
+              {cat.nombre}
             </button>
-            {categorias.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => {
-                  onCatChange(cat.id === selectedCat ? "" : cat.id);
-                  onSubChange("");
-                }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  selectedCat === cat.id
-                    ? "bg-brand text-white shadow-md shadow-brand/20"
-                    : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
-                }`}
-              >
-                {cat.nombre}
-              </button>
-            ))}
-          </div>
-          
-          {/* Subcategory chips (only if a category is selected) */}
-          {subs.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 pt-1">
-              {subs.map((sub) => (
-                <button
-                  key={sub.id}
-                  onClick={() => onSubChange(sub.id === selectedSub ? "" : sub.id)}
-                  className={`px-2.5 py-1 rounded-md text-[10px] uppercase font-bold tracking-wider transition-all ${
-                    selectedSub === sub.id
-                      ? "bg-brand/20 text-brand outline outline-1 outline-brand/30"
-                      : "bg-secondary/50 text-muted-foreground hover:text-foreground hover:bg-secondary/80"
-                  }`}
-                >
-                  {sub.nombre}
-                </button>
-              ))}
-            </div>
-          )}
+          ))}
         </div>
 
-        {/* Brand chips */}
-        {uniqueBrands.length > 0 && (
-          <div className="flex-1 space-y-2 lg:border-l lg:border-border/50 lg:pl-8">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Marcas</p>
-            <div className="flex flex-wrap gap-2">
-              {uniqueBrands.map((marca) => (
-                <button
-                  key={marca}
-                  onClick={() => onBrandChange(marca === selectedBrand ? "" : marca)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                    selectedBrand === marca
-                      ? "bg-blue-600 text-white shadow-md shadow-blue-600/20"
-                      : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
-                  }`}
-                >
-                  {marca}
-                </button>
-              ))}
-            </div>
+        {/* Subcategory chips */}
+        {subs.length > 0 && (
+          <div className="flex flex-wrap gap-2 pt-1 border-t border-border/40">
+            {subs.map((sub) => (
+              <button
+                key={sub.id}
+                onClick={() => onSubChange(sub.id === selectedSub ? "" : sub.id)}
+                className={`px-3 py-1.5 rounded-lg text-[11px] uppercase font-bold tracking-wider transition-all duration-200 ${
+                  selectedSub === sub.id
+                    ? "bg-brand/20 text-brand ring-1 ring-brand/40 scale-[1.03]"
+                    : "bg-secondary/50 text-muted-foreground hover:text-foreground hover:bg-secondary/80 hover:scale-[1.02]"
+                }`}
+              >
+                {sub.nombre}
+              </button>
+            ))}
           </div>
         )}
       </div>
 
-      {/* Active filters indicator */}
+      {/* Clear filters */}
       {hasActiveFilters && (
         <button
           onClick={clearFilters}
-          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-brand transition-colors group"
         >
-          <SlidersHorizontal className="w-3 h-3" />
-          Limpiar filtros
-          <X className="w-3 h-3" />
+          <X className="w-3.5 h-3.5 group-hover:rotate-90 transition-transform duration-200" />
+          Limpiar todos los filtros
         </button>
       )}
     </div>

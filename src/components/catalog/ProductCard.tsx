@@ -1,9 +1,9 @@
 "use client";
 
-/* Tarjeta de producto — 3D tilt hover, gradient border, badges */
+/* Tarjeta de producto — 3D tilt hover, gradient border, badges, two CTAs */
 
 import { useRef, useState } from "react";
-import { ShoppingCart, Eye, MessageCircle, Zap } from "lucide-react";
+import { ShoppingCart, Eye, MessageCircle, Zap, Package } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Product } from "@/lib/types";
 import { useCart } from "@/context/CartContext";
@@ -29,10 +29,6 @@ export function ProductCard({ product, onViewDetail, index }: ProductCardProps) 
     setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
   }
 
-  function handleMouseLeave() {
-    setIsHovered(false);
-  }
-
   const badge = product.badge;
 
   return (
@@ -43,16 +39,17 @@ export function ProductCard({ product, onViewDetail, index }: ProductCardProps) 
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={handleMouseLeave}
+      onMouseLeave={() => setIsHovered(false)}
       className="group relative rounded-2xl overflow-hidden bg-card border border-border
-                 hover:shadow-2xl hover:shadow-brand/20 transition-all duration-300 transform-gpu"
+                 hover:shadow-2xl hover:shadow-brand/20 hover:border-brand/25
+                 transition-all duration-300 transform-gpu flex flex-col"
     >
       {/* Spotlight Hover Effect */}
       {isHovered && (
         <div
           className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition duration-300 group-hover:opacity-100 z-10 hidden sm:block"
           style={{
-            background: `radial-gradient(400px circle at ${mousePos.x}px ${mousePos.y}px, rgba(249,115,22,0.15), transparent 40%)`,
+            background: `radial-gradient(400px circle at ${mousePos.x}px ${mousePos.y}px, rgba(249,115,22,0.12), transparent 40%)`,
           }}
         />
       )}
@@ -66,27 +63,23 @@ export function ProductCard({ product, onViewDetail, index }: ProductCardProps) 
           <img
             src={product.imagen}
             alt={product.nombre}
-            className="w-full h-full object-cover origin-bottom transition-transform duration-700 ease-out group-hover:scale-[1.15]"
+            className="w-full h-full object-cover origin-bottom transition-transform duration-700 ease-out group-hover:scale-[1.12]"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <ShoppingCart className="w-12 h-12 text-muted-foreground/20" />
+            <Package className="w-12 h-12 text-muted-foreground/20" />
           </div>
         )}
 
         {/* Hover overlay */}
-        <div
-          className="absolute inset-0 bg-black/0 group-hover:bg-black/60
-                     flex items-center justify-center opacity-0 group-hover:opacity-100
-                     transition-all duration-300"
-        >
-          <span className="px-4 py-2 rounded-full bg-white text-black text-sm font-semibold flex items-center gap-2 shadow-xl hover:scale-105 transition-transform">
-            <Eye className="w-4 h-4" /> Ver Detalle
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/55 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+          <span className="px-4 py-2 rounded-full bg-white text-black text-xs font-bold flex items-center gap-2 shadow-xl hover:scale-105 transition-transform">
+            <Eye className="w-3.5 h-3.5" /> Ver Detalle
           </span>
         </div>
 
         {/* Brand badge */}
-        <span className="absolute top-3 left-3 px-2 py-1 rounded-md bg-background/80 backdrop-blur text-xs font-semibold z-20">
+        <span className="absolute top-3 left-3 px-2 py-1 rounded-md bg-background/80 backdrop-blur text-xs font-bold z-20">
           {product.marca}
         </span>
 
@@ -110,37 +103,45 @@ export function ProductCard({ product, onViewDetail, index }: ProductCardProps) 
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-2 relative z-20">
+      <div className="p-4 space-y-2 relative z-20 flex flex-col flex-1">
         <p className="text-xs text-muted-foreground capitalize">
           {product.categoria}
           {product.subcategoria && ` · ${product.subcategoria}`}
         </p>
-        <h3 className="font-semibold text-sm line-clamp-2 min-h-[2.5rem]">{product.nombre}</h3>
+        <h3 className="font-bold text-sm line-clamp-2 min-h-[2.5rem] flex-1">{product.nombre}</h3>
         <p className="text-xs text-muted-foreground">{product.presentacion}</p>
 
-        <div className="flex items-center justify-end pt-2">
+        {/* Two permanent CTA buttons */}
+        <div className="pt-2 space-y-2">
+          {/* Añadir a Cotización */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               addToCart(product);
             }}
             disabled={!product.disponible}
-            className="relative px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 overflow-hidden
-                       disabled:opacity-50 disabled:cursor-not-allowed
-                       bg-brand/10 text-brand hover:bg-brand hover:text-white group/btn flex items-center gap-1.5"
+            className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold
+                       bg-brand text-white hover:bg-brand/85 active:scale-95 transition-all duration-200
+                       disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-brand
+                       shadow-md shadow-brand/30"
           >
-            <span
-              className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full
-                         transition-transform duration-500
-                         bg-gradient-to-r from-transparent via-white/20 to-transparent"
-            />
-            {product.disponible ? (
-              <>
-                <ShoppingCart className="w-3.5 h-3.5" /> Añadir
-              </>
-            ) : (
-              "Agotado"
-            )}
+            <ShoppingCart className="w-3.5 h-3.5 shrink-0" />
+            {product.disponible ? "Añadir a Cotización" : "Agotado"}
+          </button>
+
+          {/* Consultar por WhatsApp */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              const msg = getProductWaMessage(config.waProductMessage, product);
+              openWhatsApp(config.site.waNumber, msg);
+            }}
+            className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold
+                       bg-[#16a34a] text-white hover:bg-[#15803d] active:scale-95 transition-all duration-200
+                       shadow-md shadow-green-700/30"
+          >
+            <MessageCircle className="w-3.5 h-3.5 shrink-0" />
+            Consultar
           </button>
         </div>
       </div>

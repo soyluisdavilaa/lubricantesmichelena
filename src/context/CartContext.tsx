@@ -16,6 +16,7 @@ interface CartContextType {
   items: CartItem[];
   isOpen: boolean;
   itemCount: number;
+  justAdded: boolean;
   openCart: () => void;
   closeCart: () => void;
   addToCart: (product: Product, quantity?: number) => void;
@@ -29,6 +30,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [justAdded, setJustAdded] = useState(false);
   const { toast } = useToast();
 
   // Cargar carrito desde IndexedDB al iniciar
@@ -75,7 +77,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       ];
     });
     toast(`Has añadido ${product.nombre} a tu cotización`, "success");
-    setIsOpen(true); // Abrir el carrito automáticamente al añadir
+    setJustAdded(true);
+    setTimeout(() => setJustAdded(false), 900);
+    setIsOpen(true);
   }, [toast]);
 
   const removeFromCart = useCallback((productId: string) => {
@@ -104,6 +108,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         items,
         isOpen,
         itemCount,
+        justAdded,
         openCart,
         closeCart,
         addToCart,

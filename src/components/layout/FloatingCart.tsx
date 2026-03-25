@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, X, Plus, Minus, Trash2, MessageCircle } from "lucide-react";
 
 export function FloatingCart() {
-  const { items, isOpen, itemCount, openCart, closeCart, updateQuantity, removeFromCart } = useCart();
+  const { items, isOpen, itemCount, justAdded, openCart, closeCart, updateQuantity, removeFromCart } = useCart();
   const { config } = useSiteConfig();
 
   // Handle WhatsApp checkout
@@ -24,10 +24,19 @@ export function FloatingCart() {
         {itemCount > 0 && !isOpen && (
           <motion.button
             initial={{ opacity: 0, scale: 0.5, y: 50 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
+            animate={
+              justAdded
+                ? { opacity: 1, scale: [1, 1.25, 1], y: 0,
+                    boxShadow: [
+                      "0 0 0 0px rgba(232,123,32,0.5)",
+                      "0 0 0 18px rgba(232,123,32,0)",
+                    ] }
+                : { opacity: 1, scale: 1, y: 0 }
+            }
             exit={{ opacity: 0, scale: 0.5, y: 50 }}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
+            transition={{ duration: 0.5 }}
             onClick={openCart}
             className="fixed bottom-[84px] right-6 sm:bottom-6 z-50 flex items-center justify-center
                        w-14 h-14 rounded-full bg-brand text-white shadow-xl shadow-brand/30
