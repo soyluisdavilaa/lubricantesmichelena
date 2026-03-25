@@ -36,26 +36,26 @@ export function NewsletterForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-2">
+    <form onSubmit={handleSubmit} className="space-y-3">
       <div className="flex gap-2">
         <input
           type="email"
           value={email}
           onChange={(e) => { setEmail(e.target.value); setStatus("idle"); }}
           placeholder="tu@email.com"
-          className="flex-1 px-3 py-2 rounded-lg bg-background border border-border text-sm
-                     focus:outline-none focus:ring-1 focus:ring-brand/30 min-w-0"
+          className="flex-1 px-4 py-3 rounded-lg bg-background border border-border text-base
+                     focus:outline-none focus:ring-1 focus:ring-brand/30 min-w-0 shadow-inner"
         />
         <button
           type="submit"
           disabled={status === "loading"}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-brand text-brand-foreground
-                     text-sm font-medium hover:bg-brand-hover transition-colors disabled:opacity-60 shrink-0"
+          className="flex items-center gap-2 px-4 py-3 rounded-lg bg-brand text-brand-foreground
+                     text-base font-semibold hover:bg-brand-hover transition-colors disabled:opacity-60 shrink-0 shadow-md"
         >
           {status === "loading" ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <Loader2 className="w-5 h-5 animate-spin" />
           ) : (
-            <Mail className="w-4 h-4" />
+            <Mail className="w-5 h-5" />
           )}
           Suscribir
         </button>
