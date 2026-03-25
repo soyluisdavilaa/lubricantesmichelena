@@ -90,7 +90,7 @@ export function Header({ onSearchOpen }: HeaderProps) {
       >
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20 lg:h-24">
+          <div className="flex items-center justify-between h-16 sm:h-20 lg:h-24">
             {/* Logo */}
             <Link
               href="/"
@@ -98,12 +98,12 @@ export function Header({ onSearchOpen }: HeaderProps) {
                          transition-transform hover:scale-105 active:scale-95"
             >
               <div className="transition-all duration-300 hover:scale-105 active:scale-95">
-                <Image 
-                  src="/logo.png" 
-                  alt="Lubricantes Michelena" 
-                  width={280} 
-                  height={110} 
-                  className="w-auto h-[60px] lg:h-[80px] object-contain drop-shadow-md"
+                <Image
+                  src="/logo.png"
+                  alt="Lubricantes Michelena"
+                  width={280}
+                  height={110}
+                  className="w-auto h-[42px] sm:h-[60px] lg:h-[80px] object-contain drop-shadow-md"
                   priority
                 />
               </div>
@@ -161,22 +161,16 @@ export function Header({ onSearchOpen }: HeaderProps) {
               {pathname === "/catalogo" && (
                 <button
                   onClick={openCart}
-                  className={`relative w-10 h-10 rounded-full flex items-center justify-center
-                             border-2 transition-all duration-200
-                             ${itemCount > 0
-                               ? "border-white bg-white/10 text-white shadow-lg shadow-white/10 scale-105 hover:bg-white/20 hover:scale-110"
-                               : "border-white/30 bg-white/5 text-white/60 hover:border-white/70 hover:text-white hover:bg-white/10"
-                             }`}
+                  className="relative w-9 h-9 rounded-full flex items-center justify-center
+                             text-white/70 hover:text-white hover:bg-white/10
+                             transition-all duration-200"
                   aria-label="Ver cotización"
                 >
                   <ShoppingCart className="w-4 h-4" />
                   {itemCount > 0 && (
-                    <>
-                      <span className="absolute inset-0 rounded-full animate-ping bg-white/20" />
-                      <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-brand border-2 border-background text-white text-[10px] font-black flex items-center justify-center shadow-md">
-                        {itemCount > 9 ? "9+" : itemCount}
-                      </span>
-                    </>
+                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-brand text-white text-[10px] font-black flex items-center justify-center">
+                      {itemCount > 9 ? "9+" : itemCount}
+                    </span>
                   )}
                 </button>
               )}

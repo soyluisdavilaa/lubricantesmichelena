@@ -37,9 +37,9 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 24 }}
             transition={{ type: "spring", damping: 28, stiffness: 280 }}
-            className="fixed inset-3 sm:inset-auto sm:left-1/2 sm:top-1/2
+            className="fixed inset-x-3 top-[10%] bottom-3 sm:inset-auto sm:left-1/2 sm:top-1/2
                        sm:-translate-x-1/2 sm:-translate-y-1/2
-                       z-[91] sm:w-full sm:max-w-4xl max-h-[92vh]
+                       z-[91] sm:w-full sm:max-w-4xl sm:max-h-[90vh]
                        bg-card rounded-3xl border border-border/80 shadow-2xl
                        overflow-hidden flex flex-col sm:flex-row"
             role="dialog"
@@ -47,7 +47,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
             aria-label={product.nombre}
           >
             {/* ── Left: Image panel ── */}
-            <div className="sm:w-[45%] relative bg-muted shrink-0 overflow-hidden min-h-[220px] sm:min-h-0">
+            <div className="sm:w-[45%] relative bg-muted shrink-0 overflow-hidden h-[150px] sm:h-auto">
               {product.imagen ? (
                 <img
                   src={product.imagen}
@@ -90,7 +90,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
             {/* ── Right: Info panel ── */}
             <div className="flex-1 flex flex-col overflow-y-auto">
               {/* Top bar */}
-              <div className="flex items-start justify-between p-6 pb-4">
+              <div className="flex items-start justify-between p-4 sm:p-6 pb-3 sm:pb-4">
                 <div className="flex flex-wrap gap-2">
                   {product.subcategoria && (
                     <span className="px-2.5 py-1 rounded-lg bg-secondary text-xs font-semibold text-muted-foreground">
@@ -117,20 +117,20 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
               </div>
 
               {/* Product name */}
-              <div className="px-6 pb-4">
-                <h2 className="text-2xl sm:text-3xl font-black leading-tight mb-3">{product.nombre}</h2>
+              <div className="px-4 sm:px-6 pb-3 sm:pb-4">
+                <h2 className="text-xl sm:text-3xl font-black leading-tight mb-2">{product.nombre}</h2>
                 <div className="w-10 h-1 rounded-full bg-brand" />
               </div>
 
               {/* Description */}
-              <div className="px-6 flex-1">
+              <div className="px-4 sm:px-6 flex-1">
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   {product.descripcion || "Consulta con nosotros para más información sobre este producto."}
                 </p>
               </div>
 
               {/* Details grid */}
-              <div className="px-6 pt-5">
+              <div className="px-4 sm:px-6 pt-3 sm:pt-5">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-4 rounded-2xl bg-secondary/60 border border-border/50 space-y-1">
                     <div className="flex items-center gap-1.5 text-muted-foreground">
@@ -152,7 +152,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
               </div>
 
               {/* CTA Buttons */}
-              <div className="p-6 space-y-3 mt-4">
+              <div className="p-4 sm:p-6 space-y-2 sm:space-y-3 mt-2 sm:mt-4">
                 <button
                   onClick={() => {
                     addToCart(product);

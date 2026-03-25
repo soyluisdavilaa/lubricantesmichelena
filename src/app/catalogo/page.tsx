@@ -142,17 +142,19 @@ export default function CatalogoPage() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealOnScroll>
-            <span className="inline-flex items-center gap-2 text-brand font-bold text-sm uppercase tracking-widest mb-3">
-              <span className="w-6 h-px bg-brand" />
-              Catálogo Avanzado
-              <span className="w-6 h-px bg-brand" />
-            </span>
-            <h1 className="text-4xl sm:text-5xl font-black mt-1 mb-3 text-white leading-tight">
-              Búsqueda <span className="text-brand">Inteligente</span>
-            </h1>
-            <p className="text-slate-400 text-lg">
-              {filtered.length} producto{filtered.length !== 1 ? "s" : ""} disponibles en nuestro catálogo
-            </p>
+            <div className="text-center sm:text-left">
+              <span className="inline-flex items-center gap-2 text-brand font-bold text-sm uppercase tracking-widest mb-3">
+                <span className="w-6 h-px bg-brand" />
+                Catálogo Avanzado
+                <span className="w-6 h-px bg-brand" />
+              </span>
+              <h1 className="text-3xl sm:text-5xl font-black mt-1 mb-3 text-white leading-tight">
+                Búsqueda <span className="text-brand">Inteligente</span>
+              </h1>
+              <p className="text-slate-400 text-base sm:text-lg">
+                {filtered.length} producto{filtered.length !== 1 ? "s" : ""} disponibles
+              </p>
+            </div>
           </RevealOnScroll>
         </div>
       </section>
