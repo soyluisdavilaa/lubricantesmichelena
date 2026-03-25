@@ -31,24 +31,24 @@ export function CTASection() {
                 {config.ctaText.descripcion}
               </p>
 
-              <div className="flex flex-wrap gap-4 justify-center">
+              <div className="flex flex-row flex-wrap gap-3 sm:gap-4 justify-center items-center w-full">
                 <button
                   onClick={() =>
                     openWhatsApp(config.site.waNumber, config.waMessage)
                   }
-                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full
-                             bg-white text-brand font-bold
+                  className="flex-1 min-w-[130px] sm:min-w-[150px] flex justify-center items-center gap-2 px-3 sm:px-7 py-3.5 rounded-full
+                             bg-white text-brand font-bold text-sm sm:text-base
                              hover:bg-white/90 hover:scale-105
                              active:scale-95 transition-all duration-200"
                 >
-                  <MessageCircle className="w-5 h-5" />
+                  <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                   WhatsApp
                 </button>
 
                 <Link
                   href="/contacto"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full
-                             bg-white/20 text-white font-bold border border-white/30
+                  className="flex-1 min-w-[130px] sm:min-w-[150px] flex justify-center items-center gap-2 px-3 sm:px-7 py-3.5 rounded-full
+                             bg-white/20 text-white font-bold border border-white/30 text-sm sm:text-base
                              hover:bg-white/30 hover:scale-105
                              active:scale-95 transition-all duration-200"
                 >
@@ -57,12 +57,12 @@ export function CTASection() {
 
                 <a
                   href={`tel:${config.site.waNumber}`}
-                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full
-                             bg-white/20 text-white font-bold border border-white/30
+                  className="flex-1 min-w-[130px] sm:min-w-[150px] flex justify-center items-center gap-2 px-3 sm:px-7 py-3.5 rounded-full
+                             bg-white/20 text-white font-bold border border-white/30 text-sm sm:text-base
                              hover:bg-white/30 hover:scale-105
                              active:scale-95 transition-all duration-200"
                 >
-                  <Phone className="w-5 h-5" />
+                  <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
                   Llamar
                 </a>
               </div>

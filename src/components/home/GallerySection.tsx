@@ -41,11 +41,11 @@ export function GallerySection() {
         </RevealOnScroll>
 
         {/* Gallery Grid - Responsive Asymmetric Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[200px]">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 auto-rows-[140px] sm:auto-rows-[200px]">
           {gallery.map((img, i) => {
             // Determine sizes based on index
             const isLarge = i === 0 || i === 3;
-            const spanClass = isLarge ? "md:col-span-2 md:row-span-2" : "col-span-1 row-span-1";
+            const spanClass = isLarge ? "col-span-2 row-span-2 md:col-span-2 md:row-span-2" : "col-span-1 row-span-1";
 
             return (
               <motion.div
