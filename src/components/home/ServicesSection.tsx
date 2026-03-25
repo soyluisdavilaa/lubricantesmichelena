@@ -95,8 +95,8 @@ export function ServicesSection() {
                     </div>
                   </div>
 
-                  <h3 className="text-lg font-semibold mb-2 relative">{service.nombre}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-4 relative flex-1">
+                  <h3 className="text-sm sm:text-lg font-semibold mb-1 sm:mb-2 relative leading-tight">{service.nombre}</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mb-3 sm:mb-4 relative flex-1">
                     {service.descripcion}
                   </p>
 

@@ -115,7 +115,7 @@ export function HeroSection() {
       {/* Floating particles */}
       {!shouldReduce && PARTICLES.map((p, i) => <Particle key={i} {...p} />)}
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, scale: 0.85 }}
@@ -132,7 +132,7 @@ export function HeroSection() {
         </motion.div>
 
         {/* Title — word by word */}
-        <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] mb-6">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] mb-6">
           {words.map((word, i) => (
             <motion.span
               key={i}
@@ -155,7 +155,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 + words.length * 0.08 + 0.2, duration: 0.6 }}
-          className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-12 leading-relaxed"
+          className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-12 leading-relaxed px-2"
         >
           {hero.subtitulo}
         </motion.p>
@@ -165,7 +165,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 + words.length * 0.08 + 0.45, duration: 0.5 }}
-          className="flex flex-wrap items-center justify-center gap-4"
+          className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
         >
           {/* Primary — Pulse */}
           <motion.button

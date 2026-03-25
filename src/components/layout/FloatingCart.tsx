@@ -5,7 +5,6 @@ import { useSiteConfig } from "@/context/SiteConfigContext";
 import { generateCartWaMessage } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, X, Plus, Minus, Trash2, MessageCircle } from "lucide-react";
-import Image from "next/image";
 
 export function FloatingCart() {
   const { items, isOpen, itemCount, openCart, closeCart, updateQuantity, removeFromCart } = useCart();
@@ -97,9 +96,10 @@ export function FloatingCart() {
                       className="flex gap-4 p-4 rounded-xl bg-card border border-border group"
                     >
                       {/* Image Thumbnail */}
-                      <div className="relative w-20 h-20 rounded-lg bg-background border border-border flex-shrink-0 overflow-hidden">
+                      <div className="relative w-16 h-16 rounded-lg bg-background border border-border flex-shrink-0 overflow-hidden">
                         {item.imagen ? (
-                          <Image src={item.imagen} alt={item.nombre} fill className="object-contain p-1" />
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={item.imagen} alt={item.nombre} className="w-full h-full object-contain p-1" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                             <ShoppingCart className="w-6 h-6 opacity-30" />
