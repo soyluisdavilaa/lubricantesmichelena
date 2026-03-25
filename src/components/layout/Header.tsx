@@ -5,11 +5,12 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, MessageCircle, Search } from "lucide-react";
+import { Menu, MessageCircle, Search, ShoppingCart } from "lucide-react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { useSiteConfig } from "@/context/SiteConfigContext";
+import { useCart } from "@/context/CartContext";
 import { openWhatsApp } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -34,6 +35,7 @@ export function Header({ onSearchOpen }: HeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { config } = useSiteConfig();
+  const { itemCount, openCart } = useCart();
 
   // Scroll suave a una sección del home
   const handleNavClick = useCallback((e: React.MouseEvent, anchor?: string) => {
@@ -148,6 +150,22 @@ export function Header({ onSearchOpen }: HeaderProps) {
                   <Search className="w-4 h-4" />
                 </button>
               )}
+
+              {/* Cart button */}
+              <button
+                onClick={openCart}
+                className="relative w-9 h-9 rounded-full flex items-center justify-center
+                           text-muted-foreground hover:text-foreground hover:bg-white/10
+                           transition-all duration-200"
+                aria-label="Ver cotización"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                {itemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-brand text-white text-[10px] font-bold flex items-center justify-center">
+                    {itemCount > 9 ? "9+" : itemCount}
+                  </span>
+                )}
+              </button>
 
               <ThemeToggle />
 
