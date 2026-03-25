@@ -190,12 +190,12 @@ export function Header({ onSearchOpen }: HeaderProps) {
               {/* Mobile menu — siempre visible en < md */}
               <button
                 onClick={() => setIsMobileOpen(true)}
-                className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl
-                           bg-white/15 border border-white/30 text-white
-                           hover:bg-white/25 active:scale-95 transition-all duration-200"
+                className="md:hidden flex items-center justify-center w-11 h-11 rounded-xl
+                           active:scale-95 transition-all duration-200"
+                style={{ background: "rgba(255,255,255,0.18)", border: "1.5px solid rgba(255,255,255,0.35)", color: "#ffffff" }}
                 aria-label="Abrir menú"
               >
-                <Menu className="w-5 h-5" />
+                <Menu className="w-6 h-6" style={{ color: "#ffffff" }} />
               </button>
             </div>
           </div>

@@ -121,7 +121,7 @@ export default function CatalogoPage() {
   return (
     <div className="min-h-screen">
       {/* Header con imagen de fondo */}
-      <section className="relative py-24 border-b border-border overflow-hidden">
+      <section className="relative py-12 sm:py-20 border-b border-border overflow-hidden">
         {/* Dark gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-slate-900 to-gray-900" />
         {/* Brand glow accents */}

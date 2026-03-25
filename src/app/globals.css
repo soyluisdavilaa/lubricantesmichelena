@@ -169,9 +169,11 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
+    overflow-x: hidden;
   }
   html {
     @apply font-sans scroll-smooth;
+    overflow-x: hidden;
   }
   /* Más espacio entre secciones */
   section + section {
