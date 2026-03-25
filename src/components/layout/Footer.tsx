@@ -59,9 +59,9 @@ export function Footer() {
   return (
     <footer className="bg-card border-t border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10">
           {/* Brand */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-4 space-y-6">
             <Link href="/" className="inline-block transition-transform hover:scale-105">
               <motion.div
                 animate={{
@@ -101,7 +101,7 @@ export function Footer() {
           </div>
 
           {/* Quick links */}
-          <div>
+          <div className="lg:col-span-2">
             <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground mb-4">
               Navegación
             </h3>
@@ -120,7 +120,7 @@ export function Footer() {
           </div>
 
           {/* Contact */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-3">
             <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground mb-4">
               Contacto
             </h3>
@@ -158,7 +158,7 @@ export function Footer() {
           </div>
 
           {/* Newsletter */}
-          <div>
+          <div className="lg:col-span-3">
             <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground mb-4">
               Novedades
             </h3>
