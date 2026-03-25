@@ -4,7 +4,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
-import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 
 interface MobileMenuProps {
@@ -13,11 +13,30 @@ interface MobileMenuProps {
 }
 
 const navLinks = [
-  { href: "/", label: "Inicio" },
-  { href: "/catalogo", label: "Catálogo" },
+  { href: "/", label: "Inicio", anchor: "inicio" },
+  { href: "/#productos", label: "Productos", anchor: "productos" },
+  { href: "/#servicios", label: "Servicios", anchor: "servicios" },
+  { href: "/#nosotros", label: "Nosotros", anchor: "nosotros" },
+  { href: "/contacto", label: "Contacto" },
 ];
 
 export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const handleClick = (e: React.MouseEvent, anchor?: string) => {
+    onClose();
+    if (!anchor) return;
+    e.preventDefault();
+    if (pathname === "/") {
+      setTimeout(() => {
+        document.getElementById(anchor)?.scrollIntoView({ behavior: "smooth" });
+      }, 300); // esperar que el menú se cierre
+    } else {
+      router.push(`/#${anchor}`);
+    }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -51,14 +70,14 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + i * 0.05 }}
               >
-                <Link
+                <a
                   href={link.href}
-                  onClick={onClose}
+                  onClick={(e) => handleClick(e, link.anchor)}
                   className="text-3xl font-semibold text-foreground
-                             hover:text-brand transition-colors"
+                             hover:text-brand transition-colors cursor-pointer"
                 >
                   {link.label}
-                </Link>
+                </a>
               </motion.div>
             ))}
 

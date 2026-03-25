@@ -15,10 +15,10 @@ import { CTASection } from "@/components/home/CTASection";
 export default function HomePage() {
   return (
     <>
-      <HeroSection />
-      <FeaturedProducts />
-      <ServicesSection />
-      <AboutSection />
+      <section id="inicio"><HeroSection /></section>
+      <section id="productos"><FeaturedProducts /></section>
+      <section id="servicios"><ServicesSection /></section>
+      <section id="nosotros"><AboutSection /></section>
       <GallerySection />
       <CTASection />
     </>

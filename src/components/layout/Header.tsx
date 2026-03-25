@@ -2,10 +2,10 @@
 
 /* Header fijo — transparente al inicio, glassmorphism al scroll */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Menu, MessageCircle, Droplets, Search } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Menu, MessageCircle, Search } from "lucide-react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { MobileMenu } from "@/components/layout/MobileMenu";
@@ -14,9 +14,13 @@ import { openWhatsApp } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
+// Links del menú: los que tienen 'anchor' hacen scroll suave en el home
 const navLinks = [
-  { href: "/", label: "Inicio" },
-  { href: "/catalogo", label: "Catálogo" },
+  { href: "/", label: "Inicio", anchor: "inicio" },
+  { href: "/#productos", label: "Productos", anchor: "productos" },
+  { href: "/#servicios", label: "Servicios", anchor: "servicios" },
+  { href: "/#nosotros", label: "Nosotros", anchor: "nosotros" },
+  { href: "/contacto", label: "Contacto" },
 ];
 
 interface HeaderProps {
@@ -28,7 +32,21 @@ export function Header({ onSearchOpen }: HeaderProps) {
   const [isHidden, setIsHidden] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const { config } = useSiteConfig();
+
+  // Scroll suave a una sección del home
+  const handleNavClick = useCallback((e: React.MouseEvent, anchor?: string) => {
+    if (!anchor) return; // link normal, sin intercepción
+    e.preventDefault();
+    if (pathname === "/") {
+      // Ya estamos en el home → scroll directo
+      document.getElementById(anchor)?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      // Otra página → navegar al home y luego al anchor
+      router.push(`/#${anchor}`);
+    }
+  }, [pathname, router]);
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -114,30 +132,25 @@ export function Header({ onSearchOpen }: HeaderProps) {
             <nav className="hidden md:flex items-center gap-1">
               {navLinks.map((link) => {
                 const isActive =
-                  link.href === "/"
+                  link.anchor
                     ? pathname === "/"
-                    : pathname.startsWith(link.href);
+                    : link.href === "/"
+                      ? pathname === "/"
+                      : pathname.startsWith(link.href);
                 return (
-                  <Link
+                  <a
                     key={link.href}
                     href={link.href}
+                    onClick={(e) => handleNavClick(e, link.anchor)}
                     className={cn(
-                      "relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200",
-                      isActive
+                      "relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer",
+                      isActive && !link.anchor
                         ? "text-brand"
                         : "text-muted-foreground hover:text-foreground hover:bg-white/5"
                     )}
                   >
                     {link.label}
-                    {isActive && (
-                      <motion.div
-                        layoutId="nav-indicator"
-                        className="absolute bottom-0.5 left-3 right-3 h-0.5 rounded-full"
-                        style={{ background: "#069542" }}
-                        transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                      />
-                    )}
-                  </Link>
+                  </a>
                 );
               })}
             </nav>
