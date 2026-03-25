@@ -62,7 +62,7 @@ export async function saveSiteData(key: string, data: any, adminHash: string) {
 }
 
 /**
- * Sube una imagen a Supabase Storage de manera segura (Solo Admin)
+ * Sube una imagen a Cloudinary de manera segura (Solo Admin)
  */
 export async function uploadSecureImage(formData: FormData, folder: string, adminHash: string): Promise<string | null> {
   const isValid = await isAdminValid(adminHash);
@@ -71,59 +71,26 @@ export async function uploadSecureImage(formData: FormData, folder: string, admi
   const file = formData.get("file") as File;
   if (!file) return null;
 
-  const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-  const safeName = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  // Convertir File a Buffer para Cloudinary
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
 
-  // Fix para iOS/Safari: Asegurar que el contentType no sea application/octet-stream o vacío
-  let mimeType = file.type;
-  if (!mimeType || mimeType === "application/octet-stream") {
-    if (ext === "jpg" || ext === "jpeg") mimeType = "image/jpeg";
-    else if (ext === "png") mimeType = "image/png";
-    else if (ext === "webp") mimeType = "image/webp";
-    else if (ext === "svg") mimeType = "image/svg+xml";
-    else mimeType = "image/jpeg";
-  }
+  const { uploadToCloudinary } = await import("@/lib/cloudinary");
+  const url = await uploadToCloudinary(buffer, folder);
 
-  // Usar admin para saltarse el RLS y subir la foto
-  const { data, error } = await supabaseAdmin.storage
-    .from("lm-assets")
-    .upload(safeName, file, {
-      cacheControl: "3600",
-      upsert: false,
-      contentType: mimeType,
-    });
-
-  if (error) {
-    console.error("Error secure upload:", error.message);
-    return null;
-  }
-
-  const { data: { publicUrl } } = supabaseAdmin.storage
-    .from("lm-assets")
-    .getPublicUrl(data.path);
-
-  return publicUrl;
+  return url;
 }
 
 /**
- * Elimina una imagen de Supabase Storage (Solo Admin)
+ * Elimina una imagen de Cloudinary por su URL pública (Solo Admin)
  */
 export async function deleteSecureImage(publicUrl: string, adminHash: string): Promise<boolean> {
   const isValid = await isAdminValid(adminHash);
   if (!isValid) throw new Error("No autorizado");
 
   try {
-    const url = new URL(publicUrl);
-    const pathParts = url.pathname.split(`/object/public/lm-assets/`);
-    if (pathParts.length < 2) return false;
-    const filePath = decodeURIComponent(pathParts[1]);
-
-    const { error } = await supabaseAdmin.storage.from("lm-assets").remove([filePath]);
-    if (error) {
-      console.error("Error eliminando imagen segura:", error);
-      return false;
-    }
-    return true;
+    const { deleteFromCloudinary } = await import("@/lib/cloudinary");
+    return await deleteFromCloudinary(publicUrl);
   } catch (err) {
     console.error("Error en deleteSecureImage:", err);
     return false;
