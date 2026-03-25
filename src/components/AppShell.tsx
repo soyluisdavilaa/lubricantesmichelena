@@ -36,6 +36,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     );
   }
 
+  const isAdmin = pathname?.startsWith("/admin");
+
+  if (isAdmin) {
+    return (
+      <>
+        <GoogleAnalytics />
+        <main className="flex-1">{children}</main>
+      </>
+    );
+  }
+
   return (
     <>
       <GoogleAnalytics />

@@ -448,14 +448,6 @@ export default function AdminPage() {
               {servicesDraft.map((s) => (
                 <div key={s.id} className="p-4 rounded-xl bg-card border border-border">
                   <div className="flex gap-4">
-                    <ImageUploader
-                      value={s.imagen ?? ""}
-                      onChange={(url) => updateService(s.id, "imagen", url)}
-                      folder="services"
-                      className="w-24 shrink-0"
-                      aspectRatio="aspect-square"
-                    />
-
                     <div className="flex-1 space-y-2">
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
                         <div>
@@ -876,94 +868,6 @@ export default function AdminPage() {
               </div>
             </section>
 
-            {/* Banner */}
-            <section className="space-y-3">
-              <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Banner</h3>
-              <div className="p-4 rounded-xl bg-card border border-border space-y-3">
-                <label className="flex items-center gap-2 text-sm cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={cfgDraft.banner.activo}
-                    onChange={(e) => setCfgDraft((d) => ({ ...d, banner: { ...d.banner, activo: e.target.checked } }))}
-                    className="accent-brand"
-                  />
-                  Mostrar banner
-                </label>
-                <div>
-                  <label className={labelCls}>Texto del banner</label>
-                  <input
-                    value={cfgDraft.banner.texto}
-                    onChange={(e) => setCfgDraft((d) => ({ ...d, banner: { ...d.banner, texto: e.target.value } }))}
-                    className={`w-full ${inputCls}`}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className={labelCls}>Color de fondo</label>
-                    <input
-                      type="color"
-                      value={cfgDraft.banner.fondo}
-                      onChange={(e) => setCfgDraft((d) => ({ ...d, banner: { ...d.banner, fondo: e.target.value } }))}
-                      className="h-10 w-full rounded-lg border border-border cursor-pointer"
-                    />
-                  </div>
-                  <div>
-                    <label className={labelCls}>Color de texto</label>
-                    <input
-                      type="color"
-                      value={cfgDraft.banner.color}
-                      onChange={(e) => setCfgDraft((d) => ({ ...d, banner: { ...d.banner, color: e.target.value } }))}
-                      className="h-10 w-full rounded-lg border border-border cursor-pointer"
-                    />
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Analytics & Mantenimiento */}
-            <section className="space-y-3">
-              <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Otros</h3>
-              <div className="p-4 rounded-xl bg-card border border-border space-y-3">
-                <div>
-                  <label className={labelCls}>Google Analytics ID (GA4)</label>
-                  <input
-                    value={cfgDraft.analytics.gaId}
-                    onChange={(e) => setCfgDraft((d) => ({ ...d, analytics: { gaId: e.target.value } }))}
-                    placeholder="G-XXXXXXXXXX"
-                    className={`w-full ${inputCls}`}
-                  />
-                </div>
-                <div>
-                  <label className={labelCls}>Color primario</label>
-                  <input
-                    type="color"
-                    value={cfgDraft.colores.primario}
-                    onChange={(e) => setCfgDraft((d) => ({ ...d, colores: { primario: e.target.value } }))}
-                    className="h-10 w-full rounded-lg border border-border cursor-pointer"
-                  />
-                </div>
-                <hr className="border-border" />
-                <label className="flex items-center gap-2 text-sm cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={cfgDraft.mantenimiento.activo}
-                    onChange={(e) => setCfgDraft((d) => ({ ...d, mantenimiento: { ...d.mantenimiento, activo: e.target.checked } }))}
-                    className="accent-brand"
-                  />
-                  Modo mantenimiento
-                </label>
-                {cfgDraft.mantenimiento.activo && (
-                  <div>
-                    <label className={labelCls}>Mensaje de mantenimiento</label>
-                    <input
-                      value={cfgDraft.mantenimiento.mensaje}
-                      onChange={(e) => setCfgDraft((d) => ({ ...d, mantenimiento: { ...d.mantenimiento, mensaje: e.target.value } }))}
-                      className={`w-full ${inputCls}`}
-                    />
-                  </div>
-                )}
-              </div>
-            </section>
 
             <button
               onClick={handleSaveConfig}
