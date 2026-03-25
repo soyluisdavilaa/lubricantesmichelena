@@ -66,9 +66,9 @@ export function HeroSection() {
       {/* Hero background image, if configured */}
       {hero.imagen && (
         <motion.div 
-          initial={{ opacity: 0, scale: 1.05 }}
-          animate={{ opacity: imgLoaded ? 1 : 0, scale: imgLoaded ? 1 : 1.05 }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, ease: "easeOut" }}
           className="absolute inset-0 pointer-events-none -z-10"
         >
           <Image
@@ -77,7 +77,6 @@ export function HeroSection() {
             fill
             priority
             unoptimized={true}
-            onLoad={() => setImgLoaded(true)}
             className="object-cover object-center"
             sizes="100vw"
           />

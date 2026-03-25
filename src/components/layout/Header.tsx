@@ -83,20 +83,9 @@ export function Header({ onSearchOpen }: HeaderProps) {
         transition={{ duration: 0.35, ease: "easeInOut" }}
         className={cn(
           "fixed top-0 left-0 right-0 z-[80] transition-colors duration-500",
-          isScrolled
-            ? "border-b border-white/5 shadow-2xl shadow-black/30"
-            : "bg-transparent"
+          "border-b border-white/5 shadow-2xl shadow-black/30 bg-[#050505]/95 backdrop-blur-md"
         )}
-        style={
-          isScrolled
-            ? { background: "rgba(5,5,5,0.85)", backdropFilter: "blur(24px) saturate(180%)" }
-            : {}
-        }
       >
-        {/* Top accent line */}
-        {!isScrolled && (
-          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand/30 to-transparent" />
-        )}
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20 lg:h-24">
@@ -106,17 +95,7 @@ export function Header({ onSearchOpen }: HeaderProps) {
               className="flex items-center gap-2 group focus:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-lg
                          transition-transform hover:scale-105 active:scale-95"
             >
-              <motion.div
-                animate={{
-                  y: [0, -4, 0],
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className={cn("transition-all duration-500 origin-left", isScrolled ? "scale-90" : "scale-100")}
-              >
+              <div className="transition-all duration-300 hover:scale-105 active:scale-95">
                 <Image 
                   src="/logo.png" 
                   alt="Lubricantes Michelena" 
@@ -125,7 +104,7 @@ export function Header({ onSearchOpen }: HeaderProps) {
                   className="w-auto h-[60px] lg:h-[80px] object-contain drop-shadow-md"
                   priority
                 />
-              </motion.div>
+              </div>
             </Link>
 
             {/* Desktop Nav */}
