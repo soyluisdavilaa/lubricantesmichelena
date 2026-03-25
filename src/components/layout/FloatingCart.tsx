@@ -6,8 +6,9 @@ import { generateCartWaMessage } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, X, Plus, Minus, Trash2, MessageCircle, Package } from "lucide-react";
 
+
 export function FloatingCart() {
-  const { items, isOpen, itemCount, justAdded, openCart, closeCart, updateQuantity, removeFromCart } = useCart();
+  const { items, isOpen, itemCount, closeCart, updateQuantity, removeFromCart } = useCart();
   const { config } = useSiteConfig();
 
   const handleCheckout = () => {
@@ -21,43 +22,6 @@ export function FloatingCart() {
 
   return (
     <>
-      {/* FAB — solo cuando hay items y el modal está cerrado */}
-      <AnimatePresence>
-        {itemCount > 0 && !isOpen && (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.5, y: 50 }}
-            animate={
-              justAdded
-                ? {
-                    opacity: 1, scale: [1, 1.25, 1], y: 0,
-                    boxShadow: ["0 0 0 0px rgba(232,123,32,0.5)", "0 0 0 18px rgba(232,123,32,0)"],
-                  }
-                : { opacity: 1, scale: 1, y: 0 }
-            }
-            exit={{ opacity: 0, scale: 0.5, y: 50 }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            transition={{ duration: 0.5 }}
-            onClick={openCart}
-            className="fixed bottom-6 right-6 z-50 flex items-center justify-center
-                       w-16 h-16 rounded-full bg-brand text-white shadow-2xl shadow-brand/40
-                       border-2 border-brand/50"
-          >
-            <ShoppingCart className="w-7 h-7" />
-            <motion.div
-              key={itemCount}
-              initial={{ scale: 1.5 }}
-              animate={{ scale: 1 }}
-              className="absolute -top-2 -right-2 flex items-center justify-center w-6 h-6
-                         rounded-full bg-red-500 text-white text-xs font-black
-                         border-2 border-white shadow-md"
-            >
-              {itemCount > 9 ? "9+" : itemCount}
-            </motion.div>
-          </motion.button>
-        )}
-      </AnimatePresence>
-
       {/* Modal centrado */}
       <AnimatePresence>
         {isOpen && (
