@@ -122,7 +122,7 @@ export function Header({ onSearchOpen }: HeaderProps) {
                   alt="Lubricantes Michelena" 
                   width={280} 
                   height={110} 
-                  className="w-auto h-20 lg:h-24 object-contain drop-shadow-md py-2"
+                  className="w-auto h-[60px] lg:h-[80px] object-contain drop-shadow-md"
                   priority
                 />
               </motion.div>
