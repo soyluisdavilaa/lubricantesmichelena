@@ -19,7 +19,7 @@ export function ServicesSection() {
         {/* Header */}
         <RevealOnScroll>
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="text-brand font-semibold text-sm uppercase tracking-wider">
+            <span className="text-brand font-bold text-base sm:text-lg uppercase tracking-widest block mb-2">
               {config.serviciosText.badge}
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold mt-3 mb-4">

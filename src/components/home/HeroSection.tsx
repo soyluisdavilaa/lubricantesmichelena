@@ -214,16 +214,24 @@ export function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2 }}
-          className="flex flex-wrap items-center justify-center gap-2 mt-8 max-w-xs sm:max-w-none mx-auto"
+          className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mt-12 max-w-lg sm:max-w-none mx-auto"
         >
-          {(hero.trustPills || []).map((text, i) => (
-            <span
-              key={i}
-              className="text-[11px] sm:text-xs text-white/70 bg-white/10 border border-white/15 px-3 py-1.5 rounded-full whitespace-nowrap"
-            >
-              {text}
-            </span>
-          ))}
+          {(hero.trustPills || []).map((text, i) => {
+            const cleanText = text.replace("✓ ", "");
+            return (
+              <span
+                key={i}
+                className="flex items-center gap-1.5 text-sm sm:text-base font-medium text-white bg-white/10 hover:bg-white/15 border border-white/20 hover:border-white/30 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full whitespace-nowrap backdrop-blur-md transition-all shadow-lg"
+              >
+                <div className="w-4 h-4 rounded-full bg-brand flex items-center justify-center shrink-0">
+                  <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3 text-white">
+                    <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                {cleanText}
+              </span>
+            );
+          })}
         </motion.div>
       </div>
 

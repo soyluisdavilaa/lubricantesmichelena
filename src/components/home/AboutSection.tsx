@@ -38,7 +38,7 @@ export function AboutSection() {
           {/* Text content */}
           <RevealOnScroll direction="left">
             <div>
-              <span className="inline-flex px-3 py-1 rounded-full bg-brand/10 text-brand text-sm font-semibold">
+              <span className="inline-flex py-1 text-brand font-bold text-base sm:text-lg uppercase tracking-widest">
                 {nosotros.badge}
               </span>
               <h2 className="text-3xl sm:text-4xl font-bold mt-4 mb-6">

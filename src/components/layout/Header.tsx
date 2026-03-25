@@ -120,9 +120,9 @@ export function Header({ onSearchOpen }: HeaderProps) {
                 <Image 
                   src="/logo.png" 
                   alt="Lubricantes Michelena" 
-                  width={200} 
-                  height={80} 
-                  className="w-auto h-14 md:h-16 object-contain"
+                  width={240} 
+                  height={96} 
+                  className="w-auto h-16 md:h-20 object-contain drop-shadow-md"
                   priority
                 />
               </motion.div>

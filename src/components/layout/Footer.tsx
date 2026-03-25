@@ -59,9 +59,9 @@ export function Footer() {
   return (
     <footer className="bg-card border-t border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
           {/* Brand */}
-          <div className="lg:col-span-4 space-y-6">
+          <div className="lg:col-span-2 space-y-6">
             <Link href="/" className="inline-block transition-transform hover:scale-105">
               <motion.div
                 animate={{
@@ -120,7 +120,7 @@ export function Footer() {
           </div>
 
           {/* Contact */}
-          <div>
+          <div className="lg:col-span-1">
             <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground mb-4">
               Contacto
             </h3>
@@ -137,7 +137,7 @@ export function Footer() {
               <li>
                 <a
                   href={`mailto:${config.site.email}`}
-                  className="flex items-start gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="flex items-start gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors break-all"
                 >
                   <Mail className="w-4 h-4 mt-0.5 shrink-0" />
                   {config.site.email}
@@ -179,13 +179,6 @@ export function Footer() {
               ))}
             </ul>
           </div>
-        </div>
-
-        {/* Copyright */}
-        <div className="mt-10 pt-6 border-t border-border">
-          <p className="text-center text-xs text-muted-foreground">
-            {config.site.footerCopy}
-          </p>
         </div>
       </div>
     </footer>

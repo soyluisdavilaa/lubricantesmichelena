@@ -22,7 +22,7 @@ export function FeaturedProducts() {
         <RevealOnScroll>
           <div className="flex items-end justify-between mb-14">
             <div>
-              <span className="text-brand font-semibold text-sm uppercase tracking-wider">
+              <span className="text-brand font-bold text-base sm:text-lg uppercase tracking-widest">
                 Productos
               </span>
               <h2 className="text-3xl sm:text-4xl font-bold mt-3">
