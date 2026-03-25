@@ -97,21 +97,21 @@ export function generateCartWaMessage(phone: string, items: { nombre: string, pr
   const cleanPhone = phone.replace(/\D/g, "");
 
   const lines: string[] = [
-    "🛢️ *COTIZACIÓN — Lubricantes Michelena C.A.*",
+    "COTIZACION — Lubricantes Michelena C.A.",
     "──────────────────────────",
   ];
 
   items.forEach((item, idx) => {
     const qty = Number(item.cantidad) || 1;
-    lines.push(`*${idx + 1}.* ${item.nombre}`);
-    if (item.marca) lines.push(`   🏷️ Marca: ${item.marca}`);
-    if (item.presentacion) lines.push(`   📦 Presentación: ${item.presentacion}`);
-    lines.push(`   🔢 Cantidad: ${qty} unidad${qty !== 1 ? "es" : ""}`);
+    lines.push(`${idx + 1}. ${item.nombre}`);
+    if (item.marca) lines.push(`   Marca: ${item.marca}`);
+    if (item.presentacion) lines.push(`   Presentacion: ${item.presentacion}`);
+    lines.push(`   Cantidad: ${qty} unidad${qty !== 1 ? "es" : ""}`);
     lines.push("");
   });
 
   lines.push("──────────────────────────");
-  lines.push("Por favor, indíquenme disponibilidad y precio. ¡Gracias! 🙏");
+  lines.push("Por favor, indicarme disponibilidad y precio. Gracias!");
 
   const text = lines.join("\n");
   return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text)}`;
