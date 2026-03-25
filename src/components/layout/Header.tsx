@@ -157,29 +157,29 @@ export function Header({ onSearchOpen }: HeaderProps) {
                 </button>
               )}
 
-              {/* Cart button */}
-              <button
-                onClick={openCart}
-                className={`relative w-10 h-10 rounded-full flex items-center justify-center
-                           border-2 transition-all duration-200
-                           ${itemCount > 0
-                             ? "border-white bg-white/10 text-white shadow-lg shadow-white/10 scale-105 hover:bg-white/20 hover:scale-110"
-                             : "border-white/30 bg-white/5 text-white/60 hover:border-white/70 hover:text-white hover:bg-white/10"
-                           }`}
-                aria-label="Ver cotización"
-              >
-                <ShoppingCart className="w-4 h-4" />
-                {itemCount > 0 && (
-                  <>
-                    {/* Ping animation ring */}
-                    <span className="absolute inset-0 rounded-full animate-ping bg-white/20" />
-                    {/* Badge */}
-                    <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-brand border-2 border-background text-white text-[10px] font-black flex items-center justify-center shadow-md">
-                      {itemCount > 9 ? "9+" : itemCount}
-                    </span>
-                  </>
-                )}
-              </button>
+              {/* Cart button — solo en catálogo */}
+              {pathname === "/catalogo" && (
+                <button
+                  onClick={openCart}
+                  className={`relative w-10 h-10 rounded-full flex items-center justify-center
+                             border-2 transition-all duration-200
+                             ${itemCount > 0
+                               ? "border-white bg-white/10 text-white shadow-lg shadow-white/10 scale-105 hover:bg-white/20 hover:scale-110"
+                               : "border-white/30 bg-white/5 text-white/60 hover:border-white/70 hover:text-white hover:bg-white/10"
+                             }`}
+                  aria-label="Ver cotización"
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  {itemCount > 0 && (
+                    <>
+                      <span className="absolute inset-0 rounded-full animate-ping bg-white/20" />
+                      <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-brand border-2 border-background text-white text-[10px] font-black flex items-center justify-center shadow-md">
+                        {itemCount > 9 ? "9+" : itemCount}
+                      </span>
+                    </>
+                  )}
+                </button>
+              )}
 
               <ThemeToggle />
 
