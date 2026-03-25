@@ -123,25 +123,24 @@ export function ServicesSection() {
                   </div>
 
                   {/* Botones de acción */}
-                  <div className="flex gap-2 mt-auto">
+                  <div className="flex gap-1 sm:gap-2 mt-auto">
                     <Link
                       href="/contacto"
-                      className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl
+                      className="flex-1 flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-2 rounded-xl
                                  bg-brand/10 text-brand text-xs font-bold border border-brand/20
                                  hover:bg-brand hover:text-white transition-all duration-200"
                     >
-                      <Icons.CalendarCheck className="w-3.5 h-3.5" />
+                      <Icons.CalendarCheck className="w-3.5 h-3.5 shrink-0" />
                       <span className="hidden sm:inline">Agendar</span>
-                      <span className="sm:hidden">Cita</span>
                     </Link>
                     <button
                       onClick={() => openWhatsApp(config.site.waNumber, waMsg)}
-                      className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl
+                      className="flex-1 flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-2 rounded-xl
                                  bg-whatsapp/10 text-whatsapp text-xs font-bold border border-whatsapp/20
                                  hover:bg-whatsapp hover:text-white transition-all duration-200"
                     >
-                      <Icons.MessageCircle className="w-3.5 h-3.5" />
-                      Consultar
+                      <Icons.MessageCircle className="w-3.5 h-3.5 shrink-0" />
+                      <span className="hidden sm:inline">Consultar</span>
                     </button>
                   </div>
                 </motion.div>
