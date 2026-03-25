@@ -194,6 +194,11 @@ export interface SiteConfig {
     titulo: string;
     descripcion: string;
   };
+  legalPages: {
+    privacidad: string;
+    terminos: string;
+    devoluciones: string;
+  };
 }
 
 // ─── Cupones ───

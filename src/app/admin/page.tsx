@@ -687,7 +687,82 @@ export default function AdminPage() {
                 </div>
                 
                 <hr className="border-border my-4" />
-                
+
+                {/* Valores / trust items */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className={labelCls}>Valores / puntos de confianza</label>
+                    <button
+                      onClick={() => setCfgDraft((d) => ({
+                        ...d,
+                        nosotros: {
+                          ...d.nosotros,
+                          valores: [...(d.nosotros.valores ?? []), { icono: "Shield", titulo: "Nuevo valor", texto: "" }],
+                        },
+                      }))}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-secondary rounded-lg hover:bg-secondary/80"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Añadir
+                    </button>
+                  </div>
+                  {(cfgDraft.nosotros.valores ?? []).map((val, idx) => (
+                    <div key={idx} className="p-3 border border-border rounded-lg bg-secondary/20 space-y-2">
+                      <div className="flex gap-2">
+                        <div className="flex-1">
+                          <label className={labelCls}>Ícono (nombre Lucide)</label>
+                          <input
+                            value={val.icono}
+                            onChange={(e) => {
+                              const next = [...cfgDraft.nosotros.valores];
+                              next[idx] = { ...next[idx], icono: e.target.value };
+                              setCfgDraft((d) => ({ ...d, nosotros: { ...d.nosotros, valores: next } }));
+                            }}
+                            className={`w-full ${inputCls}`}
+                            placeholder="Shield, Award, Clock, Users…"
+                          />
+                        </div>
+                        <button
+                          onClick={() => {
+                            if (confirm("¿Eliminar este valor?")) {
+                              const next = cfgDraft.nosotros.valores.filter((_, i) => i !== idx);
+                              setCfgDraft((d) => ({ ...d, nosotros: { ...d.nosotros, valores: next } }));
+                            }
+                          }}
+                          className="mt-5 text-muted-foreground hover:text-destructive transition-colors shrink-0"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <div>
+                        <label className={labelCls}>Título</label>
+                        <input
+                          value={val.titulo}
+                          onChange={(e) => {
+                            const next = [...cfgDraft.nosotros.valores];
+                            next[idx] = { ...next[idx], titulo: e.target.value };
+                            setCfgDraft((d) => ({ ...d, nosotros: { ...d.nosotros, valores: next } }));
+                          }}
+                          className={`w-full ${inputCls}`}
+                        />
+                      </div>
+                      <div>
+                        <label className={labelCls}>Descripción</label>
+                        <input
+                          value={val.texto}
+                          onChange={(e) => {
+                            const next = [...cfgDraft.nosotros.valores];
+                            next[idx] = { ...next[idx], texto: e.target.value };
+                            setCfgDraft((d) => ({ ...d, nosotros: { ...d.nosotros, valores: next } }));
+                          }}
+                          className={`w-full ${inputCls}`}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <hr className="border-border my-4" />
+
                 <div className="space-y-4">
                   <label className={labelCls}>Imágenes del carrusel</label>
                   {cfgDraft.nosotros.imagenes.map((img, idx) => (
@@ -868,6 +943,45 @@ export default function AdminPage() {
               </div>
             </section>
 
+
+          {/* Páginas Legales */}
+            <section className="space-y-3">
+              <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Páginas Legales</h3>
+              <div className="p-4 rounded-xl bg-card border border-border space-y-4">
+
+                <div className="bg-secondary/10 p-3 rounded-lg border border-border/50">
+                  <h4 className="text-xs font-bold text-muted-foreground uppercase mb-2">Política de Privacidad</h4>
+                  <p className="text-[11px] text-muted-foreground mb-2">Separa secciones con línea en blanco. Los títulos que empiecen con número (1. 2.) se resaltan automáticamente.</p>
+                  <textarea
+                    value={cfgDraft.legalPages?.privacidad ?? ""}
+                    onChange={(e) => setCfgDraft((d) => ({ ...d, legalPages: { ...d.legalPages, privacidad: e.target.value } }))}
+                    rows={8}
+                    className={`w-full ${inputCls} resize-y font-mono text-xs`}
+                  />
+                </div>
+
+                <div className="bg-secondary/10 p-3 rounded-lg border border-border/50">
+                  <h4 className="text-xs font-bold text-muted-foreground uppercase mb-2">Términos y Condiciones</h4>
+                  <textarea
+                    value={cfgDraft.legalPages?.terminos ?? ""}
+                    onChange={(e) => setCfgDraft((d) => ({ ...d, legalPages: { ...d.legalPages, terminos: e.target.value } }))}
+                    rows={8}
+                    className={`w-full ${inputCls} resize-y font-mono text-xs`}
+                  />
+                </div>
+
+                <div className="bg-secondary/10 p-3 rounded-lg border border-border/50">
+                  <h4 className="text-xs font-bold text-muted-foreground uppercase mb-2">Política de Devoluciones</h4>
+                  <textarea
+                    value={cfgDraft.legalPages?.devoluciones ?? ""}
+                    onChange={(e) => setCfgDraft((d) => ({ ...d, legalPages: { ...d.legalPages, devoluciones: e.target.value } }))}
+                    rows={8}
+                    className={`w-full ${inputCls} resize-y font-mono text-xs`}
+                  />
+                </div>
+
+              </div>
+            </section>
 
             <button
               onClick={handleSaveConfig}
