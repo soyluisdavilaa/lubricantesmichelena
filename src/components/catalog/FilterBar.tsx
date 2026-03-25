@@ -126,7 +126,7 @@ export function FilterBar({
 
         {/* Subcategory chips */}
         {subs.length > 0 && (
-          <div className="flex flex-wrap gap-2 pt-1 border-t border-border/40">
+          <div className="flex flex-wrap gap-2 mt-1 pt-3 border-t border-border/40">
             {subs.map((sub) => (
               <button
                 key={sub.id}
