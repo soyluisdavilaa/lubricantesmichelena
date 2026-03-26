@@ -92,6 +92,7 @@ export default function CatalogoPage() {
   const [page, setPage] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [bgLoaded, setBgLoaded] = useState(false);
 
   const filtered = useMemo(() => {
     let result = [...products];
@@ -131,6 +132,10 @@ export default function CatalogoPage() {
               alt=""
               className="w-full h-full object-cover bg-ken-burns"
               aria-hidden="true"
+              loading="eager"
+              fetchPriority="high"
+              onLoad={() => setBgLoaded(true)}
+              style={{ opacity: bgLoaded ? 1 : 0, transition: "opacity 0.6s ease" }}
             />
           </div>
         )}
