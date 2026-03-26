@@ -68,18 +68,20 @@ function HeroCarousel({
   const prev = () => setCurrent(i => (i - 1 + slides.length) % slides.length);
   const next = () => setCurrent(i => (i + 1) % slides.length);
 
-  // Si está cargando o no hay slides, no renderizamos nada (transparente)
-  if (isLoading || !slides.length) return null;
+  const showCarousel = !isLoading && slides.length > 0;
 
   return (
-    <>
+    <div
+      className="absolute inset-0 -z-10 pointer-events-none transition-opacity duration-1000 ease-in-out"
+      style={{ opacity: showCarousel ? 1 : 0 }}
+    >
       {/* Slides track — rendered immediately, browser paints images as they load */}
-      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+      <div className="absolute inset-0 overflow-hidden">
         <div
           className="flex h-full"
           style={{
-            width: `${slides.length * 100}%`,
-            transform: `translateX(${-current * (100 / slides.length)}%)`,
+            width: `${slides.length > 0 ? slides.length * 100 : 100}%`,
+            transform: slides.length > 0 ? `translateX(${-current * (100 / slides.length)}%)` : "none",
             transition: "transform 0.75s cubic-bezier(0.32, 0.72, 0, 1)",
           }}
         >
@@ -140,7 +142,7 @@ function HeroCarousel({
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
