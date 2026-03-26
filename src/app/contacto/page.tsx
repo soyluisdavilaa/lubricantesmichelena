@@ -76,7 +76,7 @@ export default function ContactoPage() {
 
           {/* Info de contacto */}
           <RevealOnScroll direction="right">
-            <div>
+            <div className="bg-gray-950/85 border border-white/10 rounded-3xl p-6 sm:p-8">
               <h2 className="text-2xl font-bold mb-6">Información de Contacto</h2>
               <ul className="space-y-6">
                 <li className="flex gap-4">
@@ -152,7 +152,7 @@ export default function ContactoPage() {
 
           {/* Formulario de mensaje */}
           <RevealOnScroll direction="left">
-            <div className="p-8 rounded-3xl bg-card border border-border shadow-lg">
+            <div className="p-8 rounded-3xl bg-gray-950/85 border border-white/10 shadow-lg">
               <h2 className="text-2xl font-bold mb-6">Envíanos un Mensaje</h2>
               {msgSuccess ? (
                 <div className="flex flex-col items-center gap-4 text-center py-10">
