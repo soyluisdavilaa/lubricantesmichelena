@@ -4,8 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useInView } from "framer-motion";
 import * as LucideIcons from "lucide-react";
 import { useSiteConfig } from "@/context/SiteConfigContext";
-
-const STAGGER_MS = 350;
+import { defaultConfig } from "@/lib/defaults";
 
 function getIcon(name: string) {
   const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[name];
@@ -16,26 +15,17 @@ function CountUp({
   value,
   prefix,
   suffix,
-  delay,
+  trigger,
 }: {
   value: number;
   prefix: string;
   suffix: string;
-  delay: number;
+  trigger: boolean;
 }) {
   const [display, setDisplay] = useState(0);
-  const [started, setStarted] = useState(false);
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
 
   useEffect(() => {
-    if (!inView) return;
-    const timer = setTimeout(() => setStarted(true), delay);
-    return () => clearTimeout(timer);
-  }, [inView, delay]);
-
-  useEffect(() => {
-    if (!started) return;
+    if (!trigger) return;
     const duration = 1800;
     const start = Date.now();
     let raf: number;
@@ -48,10 +38,10 @@ function CountUp({
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [started, value]);
+  }, [trigger, value]);
 
   return (
-    <span ref={ref} className="tabular-nums">
+    <span className="tabular-nums">
       {prefix}{display.toLocaleString("es")}{suffix}
     </span>
   );
@@ -59,11 +49,15 @@ function CountUp({
 
 export function StatsSection() {
   const { config } = useSiteConfig();
-  const stats = config.stats?.length ? config.stats : [];
+  const stats = config.stats?.length ? config.stats : defaultConfig.stats;
+
+  const sectionRef = useRef<HTMLElement>(null);
+  const inView = useInView(sectionRef, { once: true, margin: "-60px" });
+
   if (!stats.length) return null;
 
   return (
-    <section className="py-16 bg-brand">
+    <section ref={sectionRef} className="py-16 bg-brand">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-4">
           {stats.map((stat, i) => {
@@ -84,7 +78,7 @@ export function StatsSection() {
                     value={stat.valor}
                     prefix={stat.prefijo}
                     suffix={stat.sufijo}
-                    delay={i * STAGGER_MS}
+                    trigger={inView}
                   />
                 </p>
                 <p className="text-sm sm:text-base font-semibold text-white/80 uppercase tracking-wide">
