@@ -39,8 +39,19 @@ export default function ContactoPage() {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div
+      className="min-h-screen pt-24 pb-12 relative"
+      style={config.bgImages?.contacto ? {
+        backgroundImage: `url(${config.bgImages.contacto})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      } : undefined}
+    >
+      {config.bgImages?.contacto && (
+        <div className="absolute inset-0 bg-black/60" />
+      )}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Header */}
         <div className="text-center mb-16">

@@ -90,7 +90,7 @@ export function Header({ onSearchOpen }: HeaderProps) {
       >
 
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 sm:h-20 lg:h-24 gap-2">
+          <div className="flex items-center justify-between h-16 sm:h-24 lg:h-28 gap-2">
             {/* Logo */}
             <Link
               href="/"
@@ -102,7 +102,7 @@ export function Header({ onSearchOpen }: HeaderProps) {
                 alt="Lubricantes Michelena"
                 width={280}
                 height={110}
-                className="w-auto h-[34px] sm:h-[54px] lg:h-[76px] object-contain drop-shadow-md"
+                className="w-auto h-[44px] sm:h-[68px] lg:h-[96px] object-contain drop-shadow-md"
                 priority
               />
             </Link>

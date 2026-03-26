@@ -197,6 +197,11 @@ export interface SiteConfig {
     terminos: string;
     devoluciones: string;
   };
+  bgImages: {
+    servicios: string;
+    catalogo: string;
+    contacto: string;
+  };
 }
 
 // ─── Cupones ───

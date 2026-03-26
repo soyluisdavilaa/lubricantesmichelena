@@ -1213,6 +1213,43 @@ export default function AdminPage() {
               </div>
             </section>
 
+            {/* Imágenes de Fondo */}
+            <section className="space-y-3">
+              <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Imágenes de Fondo</h3>
+              <div className="p-4 rounded-xl bg-card border border-border space-y-4">
+                <div>
+                  <label className={labelCls}>Sección Servicios</label>
+                  <ImageUploader
+                    value={cfgDraft.bgImages?.servicios || ""}
+                    onChange={(url) => setCfgDraft((d) => ({ ...d, bgImages: { ...d.bgImages, servicios: url } }))}
+                    folder="config"
+                    className="w-48 max-w-full"
+                    aspectRatio="aspect-video"
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Página Catálogo (hero)</label>
+                  <ImageUploader
+                    value={cfgDraft.bgImages?.catalogo || ""}
+                    onChange={(url) => setCfgDraft((d) => ({ ...d, bgImages: { ...d.bgImages, catalogo: url } }))}
+                    folder="config"
+                    className="w-48 max-w-full"
+                    aspectRatio="aspect-video"
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Página Contacto</label>
+                  <ImageUploader
+                    value={cfgDraft.bgImages?.contacto || ""}
+                    onChange={(url) => setCfgDraft((d) => ({ ...d, bgImages: { ...d.bgImages, contacto: url } }))}
+                    folder="config"
+                    className="w-48 max-w-full"
+                    aspectRatio="aspect-video"
+                  />
+                </div>
+              </div>
+            </section>
+
             <button
               onClick={handleSaveConfig}
               className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-brand text-brand-foreground font-medium hover:bg-brand-hover transition-colors"

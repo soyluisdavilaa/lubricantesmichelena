@@ -124,6 +124,11 @@ export const defaultConfig: SiteConfig = {
     titulo: "¿Listo para Cuidar Tu Motor?",
     descripcion: "Contáctanos ahora. Tu vehículo merece el mejor cuidado con productos premium.",
   },
+  bgImages: {
+    servicios: "",
+    catalogo: "",
+    contacto: "",
+  },
   legalPages: {
     privacidad: `1. Información que Recopilamos\nLubricantes Michelena C.A. puede recopilar información personal como nombre, teléfono y datos del vehículo cuando agendes una cita o solicites una cotización. Esta información se almacena localmente en tu dispositivo mediante tecnología IndexedDB.\n\n2. Uso de la Información\nUsamos la información exclusivamente para procesar tus solicitudes de servicio, comunicarnos respecto a tu cita, y mejorar nuestros servicios. No vendemos ni compartimos tu información con terceros.\n\n3. Almacenamiento Local\nLos datos de cotizaciones y preferencias se almacenan exclusivamente en tu navegador. Puedes borrar estos datos en cualquier momento limpiando los datos del sitio en la configuración de tu navegador.\n\n4. WhatsApp\nCuando envías una cotización por WhatsApp, la información se transmite directamente a la aplicación en tu dispositivo. No almacenamos el contenido de estos mensajes.\n\n5. Contacto\nSi tienes preguntas sobre esta política, puedes contactarnos a través de WhatsApp o visitarnos en Valencia, Venezuela.`,
     terminos: `1. Condiciones Generales de Uso\nEstos términos y condiciones rigen el uso de nuestro sitio web y los servicios que ofrecemos en Lubricantes Michelena C.A.\n\n2. Precios y Disponibilidad\nTodos los precios están sujetos a cambio sin previo aviso. La disponibilidad de los productos depende del stock actual.\n\n3. Servicios\nLos tiempos de servicio indicados son estimados. Nos reservamos el derecho de rechazar servicios que puedan comprometer la seguridad del vehículo o del personal.\n\n4. Responsabilidad\nLubricantes Michelena C.A. no se hace responsable por daños preexistentes en el vehículo no relacionados con el servicio solicitado.\n\n5. Aceptación\nAl utilizar nuestros servicios, aceptas estos términos y condiciones en su totalidad.`,

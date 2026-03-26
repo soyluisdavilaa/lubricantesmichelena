@@ -18,9 +18,19 @@ export function ServicesSection() {
   const [servicioSeleccionado, setServicioSeleccionado] = useState("");
 
   return (
-    <section className="py-20 relative">
-      {/* Subtle top wave from hero */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section
+      className="py-20 relative"
+      style={config.bgImages?.servicios ? {
+        backgroundImage: `url(${config.bgImages.servicios})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      } : undefined}
+    >
+      {config.bgImages?.servicios && (
+        <div className="absolute inset-0 bg-black/60" />
+      )}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <RevealOnScroll>
           <div className="text-center max-w-2xl mx-auto mb-14">

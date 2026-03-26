@@ -84,7 +84,7 @@ function ProductRow({
 }
 
 export default function CatalogoPage() {
-  const { products, isLoading } = useSiteConfig();
+  const { products, isLoading, config } = useSiteConfig();
   const [search, setSearch] = useState("");
   const [selectedCat, setSelectedCat] = useState("");
   const [selectedSub, setSelectedSub] = useState("");
@@ -121,9 +121,20 @@ export default function CatalogoPage() {
   return (
     <div className="min-h-screen">
       {/* Header con imagen de fondo */}
-      <section className="relative py-12 sm:py-20 border-b border-border overflow-hidden">
+      <section
+        className="relative py-12 sm:py-20 border-b border-border overflow-hidden"
+        style={config.bgImages?.catalogo ? {
+          backgroundImage: `url(${config.bgImages.catalogo})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundAttachment: "fixed",
+        } : undefined}
+      >
         {/* Dark gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-slate-900 to-gray-900" />
+        {config.bgImages?.catalogo && (
+          <div className="absolute inset-0 bg-black/50" />
+        )}
         {/* Brand glow accents */}
         <div className="absolute -top-24 -right-24 w-[500px] h-[500px] rounded-full bg-brand/10 blur-[80px] pointer-events-none" />
         <div className="absolute -bottom-16 -left-16 w-80 h-80 rounded-full bg-brand/5 blur-[60px] pointer-events-none" />
