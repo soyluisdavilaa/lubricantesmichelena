@@ -30,7 +30,7 @@ function getHorarios(fecha: string): string[] {
   if (!fecha) return [];
   const dow = new Date(fecha + "T12:00:00").getDay(); // 0=Dom,6=Sáb
   if (dow === 0) return [];
-  const fin = dow === 6 ? 13 : 17;
+  const fin = dow === 6 ? 16 : 17;
   const slots: string[] = [];
   for (let h = 8; h < fin; h++) {
     slots.push(`${String(h).padStart(2, "0")}:00`);
