@@ -2,7 +2,8 @@
 
 /* Barra de filtros — categoría, subcategoría, búsqueda, ordenar */
 
-import { Search, X, SlidersHorizontal, ChevronDown } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Search, X, SlidersHorizontal, ChevronDown, Check } from "lucide-react";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 
 interface FilterBarProps {
@@ -16,6 +17,12 @@ interface FilterBarProps {
   onSortChange: (val: string) => void;
 }
 
+const SORT_OPTIONS = [
+  { value: "default", label: "Orden predeterminado" },
+  { value: "name-asc", label: "Nombre A → Z" },
+  { value: "name-desc", label: "Nombre Z → A" },
+];
+
 export function FilterBar({
   search,
   onSearchChange,
@@ -27,6 +34,18 @@ export function FilterBar({
   onSortChange,
 }: FilterBarProps) {
   const { categorias } = useSiteConfig();
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (sortRef.current && !sortRef.current.contains(e.target as Node)) {
+        setSortOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   const activeCat = categorias.find((c) => c.id === selectedCat);
   const subs = activeCat?.subs ?? [];
@@ -70,22 +89,37 @@ export function FilterBar({
           </div>
         </div>
 
-        {/* Sort selector — styled wrapper */}
-        <div className="relative shrink-0">
-          <div className="flex items-center bg-card border border-border rounded-2xl shadow-sm overflow-hidden hover:border-brand/30 transition-colors">
-            <SlidersHorizontal className="w-4 h-4 text-muted-foreground ml-4 shrink-0" />
-            <select
-              value={sortBy}
-              onChange={(e) => onSortChange(e.target.value)}
-              className="appearance-none pl-2.5 pr-9 py-3.5 bg-transparent text-sm font-semibold
-                         focus:outline-none cursor-pointer text-foreground min-w-[160px]"
-            >
-              <option value="default">Orden predeterminado</option>
-              <option value="name-asc">Nombre A → Z</option>
-              <option value="name-desc">Nombre Z → A</option>
-            </select>
-            <ChevronDown className="w-4 h-4 text-muted-foreground absolute right-3 pointer-events-none" />
-          </div>
+        {/* Sort selector — custom dropdown */}
+        <div className="relative shrink-0" ref={sortRef}>
+          <button
+            type="button"
+            onClick={() => setSortOpen((o) => !o)}
+            className="flex items-center gap-2 pl-4 pr-3 py-3.5 bg-card border border-border rounded-2xl shadow-sm
+                       hover:border-brand/30 transition-colors text-sm font-semibold min-w-[200px] justify-between"
+          >
+            <span className="flex items-center gap-2">
+              <SlidersHorizontal className="w-4 h-4 text-muted-foreground shrink-0" />
+              {SORT_OPTIONS.find((o) => o.value === sortBy)?.label}
+            </span>
+            <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${sortOpen ? "rotate-180" : ""}`} />
+          </button>
+
+          {sortOpen && (
+            <div className="absolute right-0 top-full mt-2 w-full bg-card border border-border rounded-2xl shadow-xl z-50 overflow-hidden">
+              {SORT_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => { onSortChange(opt.value); setSortOpen(false); }}
+                  className={`w-full flex items-center justify-between px-4 py-3 text-sm transition-colors hover:bg-secondary
+                    ${sortBy === opt.value ? "text-brand font-bold" : "font-medium"}`}
+                >
+                  {opt.label}
+                  {sortBy === opt.value && <Check className="w-4 h-4 text-brand" />}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
