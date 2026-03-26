@@ -12,8 +12,18 @@ interface CitaModalProps {
   servicioInicial?: string;
 }
 
-const DIAS = ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"];
+// Lun–Sáb (sin domingo)
+const DIAS = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sa"];
 const MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
+// Convierte "HH:MM" → "H:MM AM/PM"
+function to12h(time: string): string {
+  const [hStr, mStr] = time.split(":");
+  const h = parseInt(hStr, 10);
+  const ampm = h < 12 ? "AM" : "PM";
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${h12}:${mStr} ${ampm}`;
+}
 
 // Horarios: Lun-Vie 8:00-17:00, Sáb 8:00-13:00
 function getHorarios(fecha: string): string[] {
@@ -38,10 +48,15 @@ function MiniCalendar({ value, onChange }: { value: string; onChange: (v: string
   const [viewMonth, setViewMonth] = useState(today.getMonth());
 
   const days = useMemo(() => {
-    const first = new Date(viewYear, viewMonth, 1).getDay();
+    // dow 0=Sun,1=Mon..6=Sat → map to Mon-first (0=Mon..5=Sat), skip Sun
+    const firstDow = new Date(viewYear, viewMonth, 1).getDay();
+    const offset = firstDow === 0 ? 6 : firstDow - 1; // Sun→6, Mon→0, Sat→5
     const total = new Date(viewYear, viewMonth + 1, 0).getDate();
-    const cells: (number | null)[] = Array(first).fill(null);
-    for (let d = 1; d <= total; d++) cells.push(d);
+    const cells: (number | null)[] = Array(offset).fill(null);
+    for (let d = 1; d <= total; d++) {
+      const dow = new Date(viewYear, viewMonth, d).getDay();
+      if (dow !== 0) cells.push(d); // skip Sundays entirely
+    }
     return cells;
   }, [viewYear, viewMonth]);
 
@@ -71,23 +86,22 @@ function MiniCalendar({ value, onChange }: { value: string; onChange: (v: string
       </div>
 
       {/* Weekday headers */}
-      <div className="grid grid-cols-7 mb-1">
+      <div className="grid grid-cols-6 mb-1">
         {DIAS.map(d => (
           <div key={d} className="text-center text-[10px] font-semibold text-muted-foreground py-1">{d}</div>
         ))}
       </div>
 
       {/* Days */}
-      <div className="grid grid-cols-7 gap-0.5">
+      <div className="grid grid-cols-6 gap-0.5">
         {days.map((d, i) => {
           if (!d) return <div key={`e-${i}`} />;
           const iso = toISO(d);
           const date = new Date(iso + "T12:00:00");
           const isPast = date < today;
-          const isSun = date.getDay() === 0;
           const isSelected = iso === value;
           const isToday = iso === today.toISOString().split("T")[0];
-          const disabled = isPast || isSun;
+          const disabled = isPast;
 
           return (
             <button
@@ -261,7 +275,7 @@ export function CitaModal({ open, onClose, servicioInicial = "" }: CitaModalProp
                     <div>
                       <label className="block text-sm font-medium mb-1.5">
                         Hora *
-                        {data.hora && <span className="ml-2 text-brand font-normal">{data.hora}</span>}
+                        {data.hora && <span className="ml-2 text-brand font-normal">{to12h(data.hora)}</span>}
                       </label>
                       {horarios.length === 0 ? (
                         <p className="text-sm text-muted-foreground">No hay turnos disponibles este día.</p>
@@ -279,7 +293,7 @@ export function CitaModal({ open, onClose, servicioInicial = "" }: CitaModalProp
                                   : "bg-background border-border hover:border-brand/50 hover:bg-brand/5"}
                               `}
                             >
-                              {h}
+                              {to12h(h)}
                             </button>
                           ))}
                         </div>
