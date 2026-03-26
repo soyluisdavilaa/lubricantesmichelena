@@ -57,23 +57,23 @@ export function StatsSection() {
   if (!stats.length) return null;
 
   return (
-    <section ref={sectionRef} className="py-16 bg-brand">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-4">
+    <section ref={sectionRef} className="py-8 sm:py-16 bg-brand">
+      <div className="max-w-5xl mx-auto px-2 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
           {stats.map((stat, i) => {
             const Icon = getIcon(stat.icono);
             return (
               <div
                 key={i}
-                className="flex flex-col items-center text-center gap-3 px-6 relative
-                           sm:[&:not(:last-child)]:after:absolute sm:[&:not(:last-child)]:after:right-0
-                           sm:[&:not(:last-child)]:after:top-1/4 sm:[&:not(:last-child)]:after:h-1/2
-                           sm:[&:not(:last-child)]:after:w-px sm:[&:not(:last-child)]:after:bg-white/30"
+                className="flex flex-col items-center text-center gap-1.5 sm:gap-3 px-1 sm:px-6 relative
+                           [&:not(:last-child)]:after:absolute [&:not(:last-child)]:after:right-0
+                           [&:not(:last-child)]:after:top-1/4 [&:not(:last-child)]:after:h-1/2
+                           [&:not(:last-child)]:after:w-px [&:not(:last-child)]:after:bg-white/30"
               >
-                <div className="w-14 h-14 rounded-full bg-white/15 flex items-center justify-center">
-                  <Icon className="w-7 h-7 text-white" />
+                <div className="w-9 h-9 sm:w-14 sm:h-14 rounded-full bg-white/15 flex items-center justify-center">
+                  <Icon className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
                 </div>
-                <p className="text-4xl sm:text-5xl font-extrabold text-white">
+                <p className="text-2xl sm:text-5xl font-extrabold text-white">
                   <CountUp
                     value={stat.valor}
                     prefix={stat.prefijo}
@@ -81,7 +81,7 @@ export function StatsSection() {
                     trigger={inView}
                   />
                 </p>
-                <p className="text-sm sm:text-base font-semibold text-white/80 uppercase tracking-wide">
+                <p className="text-[10px] sm:text-base font-semibold text-white/80 uppercase tracking-wide leading-tight">
                   {stat.etiqueta}
                 </p>
               </div>
