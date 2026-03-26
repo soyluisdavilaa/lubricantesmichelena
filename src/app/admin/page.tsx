@@ -1267,10 +1267,10 @@ export default function AdminPage() {
                         <label className={labelCls}>Número</label>
                         <input
                           type="number"
-                          value={stat.valor}
+                          value={stat.valor || ""}
                           onChange={(e) => {
                             const stats = [...(cfgDraft.stats ?? [])];
-                            stats[idx] = { ...stats[idx], valor: Number(e.target.value) };
+                            stats[idx] = { ...stats[idx], valor: isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber };
                             setCfgDraft((d) => ({ ...d, stats }));
                           }}
                           className={`w-full ${inputCls}`}
