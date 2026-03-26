@@ -2,6 +2,7 @@
 
 /* Modal de detalle de producto — rediseño premium */
 
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, MessageCircle, ShoppingCart, Package, Tag, Box } from "lucide-react";
 import type { Product } from "@/lib/types";
@@ -17,6 +18,9 @@ interface ProductModalProps {
 export function ProductModal({ product, onClose }: ProductModalProps) {
   const { config } = useSiteConfig();
   const { addToCart } = useCart();
+  const [activeImgIdx, setActiveImgIdx] = useState(0);
+
+  useEffect(() => { setActiveImgIdx(0); }, [product?.id]);
 
   return (
     <AnimatePresence>
@@ -48,9 +52,9 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
           >
             {/* ── Left: Image panel ── */}
             <div className="sm:w-[45%] relative bg-muted shrink-0 overflow-hidden h-[150px] sm:h-auto">
-              {product.imagen ? (
+              {(product.imagenes?.[activeImgIdx] || product.imagenes?.[0] || product.imagen) ? (
                 <img
-                  src={product.imagen}
+                  src={product.imagenes?.[activeImgIdx] || product.imagenes?.[0] || product.imagen}
                   alt={`${product.nombre} - ${product.marca} - ${product.categoria}`}
                   className="w-full h-full object-cover object-center absolute inset-0"
                 />
@@ -83,6 +87,22 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                   <span className="px-3 py-1.5 rounded-full bg-destructive/90 text-white text-xs font-bold">
                     Agotado
                   </span>
+                </div>
+              )}
+
+              {/* Thumbnail strip */}
+              {(product.imagenes?.length ?? 0) > 1 && (
+                <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+                  {product.imagenes!.filter(Boolean).map((img, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setActiveImgIdx(idx)}
+                      className={`w-10 h-10 rounded-lg overflow-hidden border-2 transition-all ${idx === activeImgIdx ? 'border-brand scale-110' : 'border-white/30 opacity-70'}`}
+                    >
+                      <img src={img} alt="" className="w-full h-full object-cover" />
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
@@ -149,6 +169,35 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                     </p>
                   </div>
                 </div>
+
+                {(product.viscosidad || product.tipo || product.aplicacion || product.especificaciones) && (
+                  <div className="grid grid-cols-2 gap-3 mt-3">
+                    {product.viscosidad && (
+                      <div className="p-4 rounded-2xl bg-secondary/60 border border-border/50 space-y-1">
+                        <p className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Viscosidad</p>
+                        <p className="font-bold text-sm">{product.viscosidad}</p>
+                      </div>
+                    )}
+                    {product.tipo && (
+                      <div className="p-4 rounded-2xl bg-secondary/60 border border-border/50 space-y-1">
+                        <p className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Tipo</p>
+                        <p className="font-bold text-sm">{product.tipo}</p>
+                      </div>
+                    )}
+                    {product.aplicacion && (
+                      <div className="col-span-2 p-4 rounded-2xl bg-secondary/60 border border-border/50 space-y-1">
+                        <p className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Aplicación</p>
+                        <p className="font-bold text-sm">{product.aplicacion}</p>
+                      </div>
+                    )}
+                    {product.especificaciones && (
+                      <div className="col-span-2 p-4 rounded-2xl bg-secondary/60 border border-border/50 space-y-1">
+                        <p className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Especificaciones</p>
+                        <p className="font-bold text-sm">{product.especificaciones}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* CTA Buttons */}

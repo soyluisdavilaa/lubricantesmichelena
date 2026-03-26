@@ -181,12 +181,20 @@ export default function AdminPage() {
     const p: Product = {
       id: generateId(), nombre: "Nuevo Producto", marca: "", categoria: "aceites",
       subcategoria: "", descripcion: "", presentacion: "",
-      imagen: "", disponible: true, badge: "",
+      imagen: "", imagenes: [], disponible: true, badge: "",
+      viscosidad: "", tipo: "", aplicacion: "", especificaciones: "",
     };
     setProductsDraft([p, ...productsDraft]);
   };
-  const updateProduct = (id: string, field: keyof Product, value: string | boolean) =>
+  const updateProduct = (id: string, field: keyof Product, value: string | boolean | string[]) =>
     setProductsDraft(productsDraft.map((p) => p.id === id ? { ...p, [field]: value } : p));
+  const updateProductImagen = (id: string, idx: number, url: string) =>
+    setProductsDraft(productsDraft.map((p) => {
+      if (p.id !== id) return p;
+      const imagenes = [...(p.imagenes ?? ["", "", ""])];
+      imagenes[idx] = url;
+      return { ...p, imagenes };
+    }));
   const deleteProduct = (id: string) => {
     if (confirm("¿Eliminar este producto?")) setProductsDraft(productsDraft.filter((p) => p.id !== id));
   };
@@ -380,14 +388,19 @@ export default function AdminPage() {
               {productsDraft.map((p) => (
                 <div key={p.id} className="p-4 rounded-xl bg-card border border-border">
                   <div className="flex gap-4">
-                    {/* Image */}
-                    <ImageUploader
-                      value={p.imagen}
-                      onChange={(url) => updateProduct(p.id, "imagen", url)}
-                      folder="products"
-                      className="w-24 shrink-0"
-                      aspectRatio="aspect-square"
-                    />
+                    {/* Images (up to 3) */}
+                    <div className="flex flex-col gap-1.5 shrink-0">
+                      {[0, 1, 2].map((idx) => (
+                        <ImageUploader
+                          key={idx}
+                          value={p.imagenes?.[idx] || (idx === 0 ? p.imagen : "") || ""}
+                          onChange={(url) => updateProductImagen(p.id, idx, url)}
+                          folder="products"
+                          className="w-[72px]"
+                          aspectRatio="aspect-square"
+                        />
+                      ))}
+                    </div>
 
                     {/* Fields */}
                     <div className="flex-1 space-y-2">
@@ -429,6 +442,25 @@ export default function AdminPage() {
                       <div>
                         <label className={labelCls}>Descripción</label>
                         <textarea value={p.descripcion} onChange={(e) => updateProduct(p.id, "descripcion", e.target.value)} rows={2} className={`w-full ${inputCls} resize-none`} placeholder="Descripción del producto" />
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <div>
+                          <label className={labelCls}>Viscosidad</label>
+                          <input value={p.viscosidad ?? ""} onChange={(e) => updateProduct(p.id, "viscosidad", e.target.value)} className={`w-full ${inputCls}`} placeholder="5W-30" />
+                        </div>
+                        <div>
+                          <label className={labelCls}>Tipo</label>
+                          <input value={p.tipo ?? ""} onChange={(e) => updateProduct(p.id, "tipo", e.target.value)} className={`w-full ${inputCls}`} placeholder="Sintético" />
+                        </div>
+                        <div>
+                          <label className={labelCls}>Aplicación</label>
+                          <input value={p.aplicacion ?? ""} onChange={(e) => updateProduct(p.id, "aplicacion", e.target.value)} className={`w-full ${inputCls}`} placeholder="Motor gasolina" />
+                        </div>
+                        <div>
+                          <label className={labelCls}>Especificaciones</label>
+                          <input value={p.especificaciones ?? ""} onChange={(e) => updateProduct(p.id, "especificaciones", e.target.value)} className={`w-full ${inputCls}`} placeholder="API SN, ACEA A3" />
+                        </div>
                       </div>
 
                       <div className="flex items-center gap-4 flex-wrap justify-between">

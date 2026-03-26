@@ -12,10 +12,15 @@ export interface Product {
   subcategoria?: string;
   descripcion: string;
   presentacion: string;
-  imagen: string;
+  imagen?: string;
+  imagenes?: string[];
   disponible: boolean;
   /** Etiqueta promo opcional: "Oferta", "Nuevo", "Popular", etc. */
   badge?: string;
+  viscosidad?: string;
+  tipo?: string;
+  aplicacion?: string;
+  especificaciones?: string;
 }
 
 // ─── Servicios ───

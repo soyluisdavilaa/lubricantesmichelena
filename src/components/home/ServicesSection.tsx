@@ -77,9 +77,12 @@ export function ServicesSection() {
                 <motion.div
                   whileHover={{ y: -4 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="group p-4 sm:p-6 rounded-2xl bg-card border border-border relative overflow-hidden
+                  className={`group p-4 sm:p-6 rounded-2xl relative overflow-hidden
                              hover:border-brand/30 hover:shadow-xl hover:shadow-brand/8
-                             transition-colors duration-300 cursor-default flex flex-col h-full"
+                             transition-colors duration-300 cursor-default flex flex-col h-full border
+                             ${config.bgImages?.servicios
+                               ? 'bg-white/8 backdrop-blur-md border-white/15 hover:bg-white/12'
+                               : 'bg-card border-border'}`}
                 >
                   {/* Gradient bg on hover */}
                   <div

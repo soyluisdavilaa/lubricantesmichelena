@@ -40,8 +40,8 @@ function ProductRow({
       onClick={() => onViewDetail(product)}
     >
       <div className="w-16 h-16 rounded-lg bg-muted overflow-hidden shrink-0">
-        {product.imagen ? (
-          <img src={product.imagen} alt={product.nombre} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+        {(product.imagenes?.[0] || product.imagen) ? (
+          <img src={(product.imagenes?.[0] || product.imagen)} alt={product.nombre} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <Package className="w-6 h-6 text-muted-foreground/30" />

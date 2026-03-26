@@ -59,9 +59,9 @@ export function ProductCard({ product, onViewDetail, index }: ProductCardProps) 
         className="aspect-square bg-muted relative overflow-hidden cursor-pointer"
         onClick={() => onViewDetail(product)}
       >
-        {product.imagen ? (
+        {(product.imagenes?.[0] || product.imagen) ? (
           <img
-            src={product.imagen}
+            src={(product.imagenes?.[0] || product.imagen)}
             alt={`${product.nombre} - ${product.marca} - ${product.categoria}`}
             className="w-full h-full object-cover origin-bottom transition-transform duration-700 ease-out group-hover:scale-[1.12]"
           />
