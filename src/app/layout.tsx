@@ -134,7 +134,7 @@ export default async function RootLayout({
         {/* Tema: aplica dark/light ANTES del primer paint */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('lm_theme');if(t==='light'){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}catch(e){}})()`,
+            __html: `document.documentElement.classList.add('dark')`,
           }}
         />
         {/* Geo-localización */}

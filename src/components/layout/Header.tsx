@@ -7,7 +7,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, MessageCircle, Search, ShoppingCart } from "lucide-react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
-import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 import { useCart } from "@/context/CartContext";
@@ -171,8 +170,6 @@ export function Header({ onSearchOpen }: HeaderProps) {
                   )}
                 </button>
               )}
-
-              <ThemeToggle />
 
               {/* WhatsApp button — solo en pantallas medianas+ */}
               <button
