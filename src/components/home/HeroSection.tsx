@@ -3,7 +3,7 @@
 /* Hero principal — animación palabra x palabra, shimmer buttons, partículas flotantes */
 
 import { useState, useEffect } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
 import { ArrowRight, MessageCircle, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -79,23 +79,30 @@ function HeroCarousel({ slides }: { slides: string[] }) {
     <>
       {/* Background images — slide left/right */}
       <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-        {slides.map((src, i) => (
+        <AnimatePresence initial={false} custom={direction}>
           <motion.div
-            key={src + i}
-            className="absolute inset-0"
-            initial={{ x: i === current ? `${direction * 100}%` : 0 }}
-            animate={{ x: i === current ? "0%" : `${(i < current ? -1 : 1) * 100}%` }}
+            key={current}
+            custom={direction}
+            variants={{
+              enter: (dir: number) => ({ x: dir > 0 ? "100%" : "-100%" }),
+              center: { x: "0%" },
+              exit: (dir: number) => ({ x: dir > 0 ? "-100%" : "100%" }),
+            }}
+            initial="enter"
+            animate="center"
+            exit="exit"
             transition={{ duration: 0.7, ease: [0.32, 0.72, 0, 1] }}
+            className="absolute inset-0"
           >
             <img
-              src={src}
+              src={slides[current]}
               alt=""
               aria-hidden="true"
               className="w-full h-full object-cover bg-ken-burns"
             />
             <div className="absolute inset-0 bg-black/60" />
           </motion.div>
-        ))}
+        </AnimatePresence>
       </div>
 
       {/* Controls — above everything */}
