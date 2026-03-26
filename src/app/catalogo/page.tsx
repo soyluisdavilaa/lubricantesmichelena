@@ -125,6 +125,10 @@ export default function CatalogoPage() {
       <section
         className="relative py-12 sm:py-20 border-b border-border overflow-hidden"
       >
+        {/* Dark gradient background — shown only when no bg image */}
+        {!config.bgImages?.catalogo && (
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-slate-900 to-gray-900" />
+        )}
         {config.bgImages?.catalogo && (
           <div className="absolute inset-0 overflow-hidden">
             <img
@@ -137,12 +141,8 @@ export default function CatalogoPage() {
               onLoad={() => setBgLoaded(true)}
               style={{ opacity: bgLoaded ? 1 : 0, transition: "opacity 0.6s ease" }}
             />
+            <div className="absolute inset-0 bg-black/55" />
           </div>
-        )}
-        {/* Dark gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-slate-900 to-gray-900" />
-        {config.bgImages?.catalogo && (
-          <div className="absolute inset-0 bg-black/50" />
         )}
         {/* Brand glow accents */}
         <div className="absolute -top-24 -right-24 w-[500px] h-[500px] rounded-full bg-brand/10 blur-[80px] pointer-events-none" />
