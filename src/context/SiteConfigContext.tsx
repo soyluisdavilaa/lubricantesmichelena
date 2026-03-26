@@ -89,9 +89,17 @@ const SiteConfigContext = createContext<SiteConfigContextType | undefined>(
   undefined
 );
 
-export function SiteConfigProvider({ children }: { children: ReactNode }) {
-  // Aplicar caché de localStorage de forma síncrona en el primer render
+export function SiteConfigProvider({ 
+  children,
+  initialConfig 
+}: { 
+  children: ReactNode;
+  initialConfig?: SiteConfig;
+}) {
+  // Aplicar caché de localStorage de forma síncrona en el primer render, 
+  // o usar initialConfig del servidor (SSR)
   const [config, setConfig] = useState<SiteConfig>(() => {
+    if (initialConfig) return initialConfig;
     const cached = getCachedConfig();
     return cached ? deepMerge(defaultConfig, cached) : defaultConfig;
   });
@@ -103,14 +111,14 @@ export function SiteConfigProvider({ children }: { children: ReactNode }) {
   const [categorias, setCategorias] = useState<Categoria[]>(defaultCategorias);
   const [reviews, setReviews] = useState<Review[]>(defaultReviews);
   const [citas, setCitas] = useState<Cita[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // Si tenemos initialConfig, ya tenemos la data principal (hero), así que no bloqueamos el UI
+  const [isLoading, setIsLoading] = useState(!initialConfig);
 
   // Cargar todo desde localforage al montar
   useEffect(() => {
     async function loadAll() {
       try {
         const [
-          savedConfig,
           savedProducts,
           savedServices,
           savedPromos,
@@ -120,7 +128,6 @@ export function SiteConfigProvider({ children }: { children: ReactNode }) {
           savedReviews,
           savedCitas,
         ] = await Promise.all([
-          getSavedConfig(),
           getSavedProducts(),
           getSavedServices(),
           getSavedPromos(),
@@ -131,12 +138,20 @@ export function SiteConfigProvider({ children }: { children: ReactNode }) {
           getSavedCitas(),
         ]);
 
-        // Deep merge config guardada sobre defaults
-        if (savedConfig) {
-          const merged = deepMerge(defaultConfig, savedConfig);
-          setConfig(merged);
-          setCachedConfig(merged);
+        // Si NO recibimos initialConfig del servidor (e.g. CSR route), 
+        // leemos de localforage. Si sí lo recibimos, la verdad absoluta es el servidor.
+        if (!initialConfig) {
+          const savedConfig = await getSavedConfig();
+          if (savedConfig) {
+            const merged = deepMerge(defaultConfig, savedConfig);
+            setConfig(merged);
+            setCachedConfig(merged);
+          }
+        } else {
+          // Asegurar que el caché del navegador se actualice con la nueva data del servidor
+          setCachedConfig(initialConfig);
         }
+
         if (savedProducts?.length) setProducts(savedProducts);
         if (savedServices?.length) setServices(savedServices);
         if (savedPromos?.length) setPromos(savedPromos);

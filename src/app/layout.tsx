@@ -149,7 +149,7 @@ export default async function RootLayout({
         />
       </head>
       <body className="min-h-screen flex flex-col font-sans antialiased">
-        <Providers>
+        <Providers initialConfig={cfg}>
           <AppShell>{children}</AppShell>
         </Providers>
       </body>
