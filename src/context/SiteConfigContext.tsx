@@ -154,6 +154,22 @@ export function SiteConfigProvider({ children }: { children: ReactNode }) {
     );
   }, [config.colores.primario]);
 
+  // Precargar imágenes de fondo en cuanto el config esté disponible
+  useEffect(() => {
+    if (isLoading) return;
+    const urls = [
+      config.bgImages?.servicios,
+      config.bgImages?.catalogo,
+      config.bgImages?.contacto,
+      config.hero?.imagen,
+      ...(config.hero?.slides ?? []),
+    ].filter(Boolean) as string[];
+    urls.forEach((url) => {
+      const img = new window.Image();
+      img.src = url;
+    });
+  }, [isLoading]);
+
   // Setters con optimistic UI (actualiza state inmediato + persiste en background)
   const saveConfig = useCallback((c: SiteConfig) => {
     setConfig(c);
