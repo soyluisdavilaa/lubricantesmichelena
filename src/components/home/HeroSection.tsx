@@ -163,6 +163,10 @@ export function HeroSection() {
   const shouldReduce = useReducedMotion();
   const words = hero.titulo.split(" ");
 
+  // Filter out any empty strings that might come from the admin panel's "+ Agregar slide" button
+  const validSlides = hero.slides?.filter(Boolean) || [];
+  const finalSlides = validSlides.length ? validSlides : hero.imagen ? [hero.imagen] : [];
+
   return (
     <section className="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden">
       {/* Deep background */}
@@ -170,7 +174,7 @@ export function HeroSection() {
 
       {/* Hero carousel / background image */}
       <HeroCarousel
-        slides={hero.slides?.length ? hero.slides : hero.imagen ? [hero.imagen] : []}
+        slides={finalSlides}
         isLoading={isLoading}
       />
       <div
