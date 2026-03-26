@@ -172,7 +172,7 @@
     overflow-x: hidden;
   }
   html {
-    @apply font-sans scroll-smooth;
+    @apply font-sans scroll-smooth bg-background;
     overflow-x: hidden;
   }
   /* Más espacio entre secciones */
