@@ -150,12 +150,16 @@ export function HeroSection() {
   const shouldReduce = useReducedMotion();
   const words = hero.titulo.split(" ");
 
-  // Filter out any empty strings that might come from the admin panel's "+ Agregar slide" button
-  const validSlides = hero.slides?.filter(Boolean) || [];
+  // Filter out any empty strings AND broken local defaults
+  const validSlides = hero.slides?.filter(src => {
+    if (!src) return false;
+    if (src.startsWith("/img/")) return false; // Default broken images
+    return true;
+  }) || [];
   const finalSlides = validSlides.length ? validSlides : hero.imagen ? [hero.imagen] : [];
 
   return (
-    <section className="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden">
+    <section className="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden z-0">
       {/* Background base (negro/transparente por defecto) */}
       <div className="absolute inset-0 bg-background -z-20" />
 
