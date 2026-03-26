@@ -37,6 +37,8 @@ import {
 } from "@/lib/defaults";
 import {
   getSavedConfig,
+  getCachedConfig,
+  setCachedConfig,
   saveConfig as persistConfig,
   getSavedProducts,
   saveProducts as persistProducts,
@@ -88,7 +90,11 @@ const SiteConfigContext = createContext<SiteConfigContextType | undefined>(
 );
 
 export function SiteConfigProvider({ children }: { children: ReactNode }) {
-  const [config, setConfig] = useState<SiteConfig>(defaultConfig);
+  // Aplicar caché de localStorage de forma síncrona en el primer render
+  const [config, setConfig] = useState<SiteConfig>(() => {
+    const cached = getCachedConfig();
+    return cached ? deepMerge(defaultConfig, cached) : defaultConfig;
+  });
   const [products, setProducts] = useState<Product[]>(defaultProducts);
   const [services, setServices] = useState<Service[]>(defaultServices);
   const [promos, setPromos] = useState<Promo[]>(defaultPromos);
@@ -127,7 +133,9 @@ export function SiteConfigProvider({ children }: { children: ReactNode }) {
 
         // Deep merge config guardada sobre defaults
         if (savedConfig) {
-          setConfig(deepMerge(defaultConfig, savedConfig));
+          const merged = deepMerge(defaultConfig, savedConfig);
+          setConfig(merged);
+          setCachedConfig(merged);
         }
         if (savedProducts?.length) setProducts(savedProducts);
         if (savedServices?.length) setServices(savedServices);
@@ -173,6 +181,7 @@ export function SiteConfigProvider({ children }: { children: ReactNode }) {
   // Setters con optimistic UI (actualiza state inmediato + persiste en background)
   const saveConfig = useCallback((c: SiteConfig) => {
     setConfig(c);
+    setCachedConfig(c);
     persistConfig(c);
   }, []);
 

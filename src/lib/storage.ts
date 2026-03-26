@@ -99,11 +99,33 @@ async function getItemDB<T>(key: string): Promise<T | null> {
 
 // ─── CONFIG ───
 
+const LS_CONFIG_KEY = "lm_cfg_v1";
+
+/** Lee el config cacheado en localStorage (síncrono, disponible antes del primer render) */
+export function getCachedConfig(): Partial<SiteConfig> | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(LS_CONFIG_KEY);
+    return raw ? (JSON.parse(raw) as Partial<SiteConfig>) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Guarda el config en localStorage para la próxima visita */
+export function setCachedConfig(config: SiteConfig): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(LS_CONFIG_KEY, JSON.stringify(config));
+  } catch {}
+}
+
 export async function getSavedConfig(): Promise<Partial<SiteConfig> | null> {
   return getItemDB<Partial<SiteConfig>>(KEYS.config);
 }
 
 export async function saveConfig(config: SiteConfig): Promise<void> {
+  setCachedConfig(config);
   await setItemDB(KEYS.config, config);
 }
 
