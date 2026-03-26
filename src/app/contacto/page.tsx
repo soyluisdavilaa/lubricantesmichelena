@@ -76,7 +76,6 @@ export default function ContactoPage() {
 
           {/* Info de contacto */}
           <RevealOnScroll direction="right">
-            <div className="bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-6 sm:p-8">
             <div>
               <h2 className="text-2xl font-bold mb-6">Información de Contacto</h2>
               <ul className="space-y-6">
@@ -149,12 +148,10 @@ export default function ContactoPage() {
                 </div>
               )}
             </div>
-            </div>
           </RevealOnScroll>
 
           {/* Formulario de mensaje */}
           <RevealOnScroll direction="left">
-            <div className="bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-6 sm:p-8">
             <div className="p-8 rounded-3xl bg-card border border-border shadow-lg">
               <h2 className="text-2xl font-bold mb-6">Envíanos un Mensaje</h2>
               {msgSuccess ? (
@@ -207,7 +204,6 @@ export default function ContactoPage() {
                   </button>
                 </form>
               )}
-            </div>
             </div>
           </RevealOnScroll>
         </div>

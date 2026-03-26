@@ -67,32 +67,26 @@ function HeroCarousel({ slides }: { slides: string[] }) {
 
   return (
     <>
-      {/* Track — todos los slides en línea, se mueve el contenedor entero */}
+      {/* Slides — cada una ocupa el espacio completo, se deslizan con translateX */}
       <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div
-          className="flex h-full"
-          style={{
-            width: `${slides.length * 100}%`,
-            transform: `translateX(${-current * (100 / slides.length)}%)`,
-            transition: "transform 0.75s cubic-bezier(0.32, 0.72, 0, 1)",
-          }}
-        >
-          {slides.map((src, i) => (
-            <div
-              key={src + i}
-              className="relative h-full"
-              style={{ width: `${100 / slides.length}%` }}
-            >
-              <img
-                src={src}
-                alt=""
-                aria-hidden="true"
-                className="w-full h-full object-cover bg-ken-burns"
-              />
-              <div className="absolute inset-0 bg-black/60" />
-            </div>
-          ))}
-        </div>
+        {slides.map((src, i) => (
+          <div
+            key={src + i}
+            className="absolute inset-0"
+            style={{
+              transform: `translateX(${(i - current) * 100}%)`,
+              transition: "transform 0.75s cubic-bezier(0.32, 0.72, 0, 1)",
+            }}
+          >
+            <img
+              src={src}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-cover bg-ken-burns"
+            />
+            <div className="absolute inset-0 bg-black/60" />
+          </div>
+        ))}
       </div>
 
       {/* Controls */}
