@@ -56,7 +56,7 @@ function HeroCarousel({ slides }: { slides: string[] }) {
 
   useEffect(() => {
     if (slides.length <= 1) return;
-    const id = setInterval(() => setCurrent(i => (i + 1) % slides.length), 5000);
+    const id = setInterval(() => setCurrent(i => (i + 1) % slides.length), 9000);
     return () => clearInterval(id);
   }, [slides.length]);
 
@@ -66,34 +66,37 @@ function HeroCarousel({ slides }: { slides: string[] }) {
   const next = () => setCurrent(i => (i + 1) % slides.length);
 
   return (
-    <div className="absolute inset-0 -z-10 pointer-events-none">
-      {slides.map((src, i) => (
-        <motion.div
-          key={src + i}
-          className="absolute inset-0 overflow-hidden"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: i === current ? 1 : 0 }}
-          transition={{ duration: 1.2, ease: "easeInOut" }}
-        >
-          <img
-            src={src}
-            alt=""
-            aria-hidden="true"
-            className="w-full h-full object-cover bg-ken-burns"
-          />
-          <div className="absolute inset-0 bg-black/60" />
-        </motion.div>
-      ))}
+    <>
+      {/* Background images — behind everything */}
+      <div className="absolute inset-0 -z-10 pointer-events-none">
+        {slides.map((src, i) => (
+          <motion.div
+            key={src + i}
+            className="absolute inset-0 overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: i === current ? 1 : 0 }}
+            transition={{ duration: 1.4, ease: "easeInOut" }}
+          >
+            <img
+              src={src}
+              alt=""
+              aria-hidden="true"
+              className="w-full h-full object-cover bg-ken-burns"
+            />
+            <div className="absolute inset-0 bg-black/60" />
+          </motion.div>
+        ))}
+      </div>
 
-      {/* Arrows — only show when multiple slides */}
+      {/* Controls — above everything */}
       {slides.length > 1 && (
-        <>
+        <div className="absolute inset-0 z-20 pointer-events-none">
           <button
             type="button"
             onClick={prev}
-            className="pointer-events-auto absolute left-3 top-1/2 -translate-y-1/2 z-10
-                       w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white
-                       flex items-center justify-center transition-all backdrop-blur-sm"
+            className="pointer-events-auto absolute left-3 sm:left-5 top-1/2 -translate-y-1/2
+                       w-11 h-11 rounded-full bg-black/40 hover:bg-black/70 text-white
+                       flex items-center justify-center transition-all backdrop-blur-sm border border-white/10"
             aria-label="Anterior"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5"><path d="M15 18l-6-6 6-6"/></svg>
@@ -101,15 +104,15 @@ function HeroCarousel({ slides }: { slides: string[] }) {
           <button
             type="button"
             onClick={next}
-            className="pointer-events-auto absolute right-3 top-1/2 -translate-y-1/2 z-10
-                       w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white
-                       flex items-center justify-center transition-all backdrop-blur-sm"
+            className="pointer-events-auto absolute right-3 sm:right-5 top-1/2 -translate-y-1/2
+                       w-11 h-11 rounded-full bg-black/40 hover:bg-black/70 text-white
+                       flex items-center justify-center transition-all backdrop-blur-sm border border-white/10"
             aria-label="Siguiente"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5"><path d="M9 18l6-6-6-6"/></svg>
           </button>
           {/* Dots */}
-          <div className="pointer-events-auto absolute bottom-16 left-1/2 -translate-x-1/2 z-10 flex gap-2">
+          <div className="pointer-events-auto absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-2">
             {slides.map((_, i) => (
               <button
                 key={i}
@@ -120,9 +123,9 @@ function HeroCarousel({ slides }: { slides: string[] }) {
               />
             ))}
           </div>
-        </>
+        </div>
       )}
-    </div>
+    </>
   );
 }
 
