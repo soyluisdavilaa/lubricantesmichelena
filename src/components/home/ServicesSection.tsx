@@ -2,17 +2,20 @@
 
 /* Grid de servicios con íconos animados y hover card premium */
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import * as Icons from "lucide-react";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 import { RevealOnScroll } from "@/components/shared/RevealOnScroll";
 import { openWhatsApp } from "@/lib/utils";
-import Link from "next/link";
+import { CitaModal } from "@/components/shared/CitaModal";
 import type { LucideProps } from "lucide-react";
 import type { ForwardRefExoticComponent, RefAttributes } from "react";
 
 export function ServicesSection() {
   const { services, config, isLoading } = useSiteConfig();
+  const [citaOpen, setCitaOpen] = useState(false);
+  const [servicioSeleccionado, setServicioSeleccionado] = useState("");
 
   return (
     <section className="py-20 relative">
@@ -124,15 +127,15 @@ export function ServicesSection() {
 
                   {/* Botones de acción */}
                   <div className="flex gap-1 sm:gap-2 mt-auto">
-                    <Link
-                      href="/contacto"
+                    <button
+                      onClick={() => { setServicioSeleccionado(service.nombre); setCitaOpen(true); }}
                       className="flex-1 flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-2 rounded-xl
                                  bg-brand/10 text-brand text-xs font-bold border border-brand/20
                                  hover:bg-brand hover:text-white transition-all duration-200"
                     >
                       <Icons.CalendarCheck className="w-3.5 h-3.5 shrink-0" />
                       <span className="hidden sm:inline">Agendar</span>
-                    </Link>
+                    </button>
                     <button
                       onClick={() => openWhatsApp(config.site.waNumber, waMsg)}
                       className="flex-1 flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-2 rounded-xl
@@ -149,6 +152,12 @@ export function ServicesSection() {
           })}
         </div>
       </div>
+
+      <CitaModal
+        open={citaOpen}
+        onClose={() => setCitaOpen(false)}
+        servicioInicial={servicioSeleccionado}
+      />
     </section>
   );
 }
