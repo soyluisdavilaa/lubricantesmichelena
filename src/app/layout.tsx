@@ -53,11 +53,15 @@ export async function generateMetadata(): Promise<Metadata> {
       title: cfg.seo.indexTitulo,
       description: cfg.seo.indexDesc,
       url: SITE_URL,
+      images: cfg.hero?.imagen
+        ? [{ url: cfg.hero.imagen, width: 1200, height: 630, alt: cfg.seo.indexTitulo }]
+        : [{ url: `${SITE_URL}/logo.png`, width: 512, height: 512, alt: cfg.site.nombre }],
     },
     twitter: {
       card: "summary_large_image",
       title: cfg.site.nombre,
       description: cfg.seo.indexDesc,
+      images: cfg.hero?.imagen ? [cfg.hero.imagen] : [`${SITE_URL}/logo.png`],
     },
     icons: {
       icon: cfg.site.logo || "/logo.png",

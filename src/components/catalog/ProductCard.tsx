@@ -62,7 +62,7 @@ export function ProductCard({ product, onViewDetail, index }: ProductCardProps) 
         {product.imagen ? (
           <img
             src={product.imagen}
-            alt={product.nombre}
+            alt={`${product.nombre} - ${product.marca} - ${product.categoria}`}
             className="w-full h-full object-cover origin-bottom transition-transform duration-700 ease-out group-hover:scale-[1.12]"
           />
         ) : (

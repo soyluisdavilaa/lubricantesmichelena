@@ -86,6 +86,16 @@ export interface Cita {
   estado: "pendiente" | "confirmada" | "completada";
 }
 
+// ─── Mensajes de Contacto ───
+export interface Mensaje {
+  id: number;
+  nombre: string;
+  email: string;
+  mensaje: string;
+  fecha: string;
+  leido: boolean;
+}
+
 // ─── Carrito de Cotización ───
 export interface CartItem {
   id: string;

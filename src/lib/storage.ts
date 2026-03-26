@@ -17,12 +17,13 @@ import type {
   Cita,
   CartItem,
   Subscriber,
+  Mensaje,
 } from "./types";
 
-import { 
-  getSiteData, 
-  saveSiteData, 
-  addCitaPublic, 
+import {
+  getSiteData,
+  saveSiteData,
+  addCitaPublic,
   addSubscriberPublic,
   verifyAdminHashAction,
   changeAdminHashAction
@@ -39,6 +40,7 @@ const KEYS = {
   categories: "categories",
   reviews: "reviews",
   citas: "citas",
+  mensajes: "mensajes",
   cart: "cart", // local only
   subscribers: "subscribers",
   adminHash: "adminHash", // local only
@@ -215,6 +217,12 @@ export async function addSubscriber(email: string): Promise<boolean> {
   } catch (e) {
     return false;
   }
+}
+
+// ─── MENSAJES ───
+
+export async function getSavedMensajes(): Promise<Mensaje[] | null> {
+  return getItemDB<Mensaje[]>(KEYS.mensajes);
 }
 
 // ─── ADMIN ───

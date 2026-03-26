@@ -98,6 +98,17 @@ export async function deleteSecureImage(publicUrl: string, adminHash: string): P
 }
 
 /**
+ * Añadir Mensaje de Contacto (Público)
+ */
+export async function addMensajePublic(mensaje: any) {
+  const { data } = await supabaseAdmin.from("site_data").select("data").eq("id", "mensajes").single();
+  const mensajes = data ? (data.data as any[]) : [];
+  mensajes.push(mensaje);
+  await supabaseAdmin.from("site_data").upsert({ id: "mensajes", data: mensajes, updated_at: new Date().toISOString() });
+  return true;
+}
+
+/**
  * Añadir Cita (Público)
  */
 export async function addCitaPublic(cita: any) {

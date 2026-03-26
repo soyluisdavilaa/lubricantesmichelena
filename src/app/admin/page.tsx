@@ -9,19 +9,19 @@ import { useState, useCallback, useEffect } from "react";
 import {
   Lock, LogOut, Package, Settings, Tag, Calendar, FileDown,
   Plus, Trash2, ShieldCheck, BookOpen, Star, Cog, Phone,
-  Eye, EyeOff, KeyRound, Folder, Mail, RefreshCw,
+  Eye, EyeOff, KeyRound, Folder, Mail, RefreshCw, MessageSquare,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 import { hashPassword, generateId } from "@/lib/utils";
-import { getAdminHash, setAdminHash, verifyAdminLogin, changeGlobalAdminHash, getSavedSubscribers } from "@/lib/storage";
+import { getAdminHash, setAdminHash, verifyAdminLogin, changeGlobalAdminHash, getSavedSubscribers, getSavedMensajes } from "@/lib/storage";
 import { ImageUploader } from "@/components/admin/ImageUploader";
-import type { Product, Service, Promo, BlogArticle, Cita, Subscriber } from "@/lib/types";
+import type { Product, Service, Promo, BlogArticle, Cita, Subscriber, Mensaje } from "@/lib/types";
 
 const DEFAULT_HASH =
   "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"; // "admin"
 
-type Tab = "products" | "services" | "config" | "categories" | "citas" | "suscriptores";
+type Tab = "products" | "services" | "config" | "categories" | "citas" | "suscriptores" | "mensajes";
 
 /* ─── Input / Textarea helpers ─── */
 const inputCls =
@@ -74,6 +74,21 @@ export default function AdminPage() {
   useEffect(() => {
     if (isAuth && activeTab === "suscriptores") loadSubscribers();
   }, [isAuth, activeTab, loadSubscribers]);
+
+  // mensajes
+  const [mensajes, setMensajes] = useState<Mensaje[]>([]);
+  const [mensajesLoading, setMensajesLoading] = useState(false);
+
+  const loadMensajes = useCallback(async () => {
+    setMensajesLoading(true);
+    const data = await getSavedMensajes();
+    setMensajes(data ?? []);
+    setMensajesLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (isAuth && activeTab === "mensajes") loadMensajes();
+  }, [isAuth, activeTab, loadMensajes]);
 
   // ─── LOGIN ───
   const handleLogin = useCallback(
@@ -284,6 +299,7 @@ export default function AdminPage() {
     { id: "services", label: "Servicios", icon: <Settings className="w-4 h-4" /> },
     { id: "categories", label: "Categorías", icon: <Folder className="w-4 h-4" /> },
     { id: "citas", label: "Citas", icon: <Calendar className="w-4 h-4" /> },
+    { id: "mensajes", label: "Mensajes", icon: <MessageSquare className="w-4 h-4" /> },
     { id: "suscriptores", label: "Suscriptores", icon: <Mail className="w-4 h-4" /> },
     { id: "config", label: "Configuración", icon: <Cog className="w-4 h-4" /> },
   ];
@@ -607,6 +623,50 @@ export default function AdminPage() {
                     }`}>
                       {cita.estado.toUpperCase()}
                     </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ═══ MENSAJES ═══ */}
+        {activeTab === "mensajes" && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold">{mensajes.length} Mensajes</h2>
+              <button
+                onClick={loadMensajes}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary text-sm hover:bg-secondary/80 transition-colors"
+              >
+                <RefreshCw className={`w-4 h-4 ${mensajesLoading ? "animate-spin" : ""}`} /> Actualizar
+              </button>
+            </div>
+            {mensajes.length === 0 ? (
+              <div className="text-center py-16 text-muted-foreground">
+                <MessageSquare className="w-10 h-10 mx-auto mb-3 opacity-30" />
+                <p className="text-sm">{mensajesLoading ? "Cargando..." : "No hay mensajes aún."}</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {[...mensajes].sort((a, b) => b.fecha.localeCompare(a.fecha)).map((msg) => (
+                  <div key={msg.id} className="p-4 rounded-xl bg-card border border-border space-y-2">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="font-semibold text-sm">{msg.nombre}</p>
+                        <p className="text-xs text-muted-foreground">{msg.email}</p>
+                      </div>
+                      <p className="text-xs text-muted-foreground shrink-0">
+                        {new Date(msg.fecha).toLocaleDateString("es-VE", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                      </p>
+                    </div>
+                    <p className="text-sm text-muted-foreground border-t border-border pt-2 whitespace-pre-wrap">{msg.mensaje}</p>
+                    <a
+                      href={`mailto:${msg.email}`}
+                      className="inline-flex items-center gap-1.5 text-xs font-medium text-brand hover:underline"
+                    >
+                      <Mail className="w-3.5 h-3.5" /> Responder por email
+                    </a>
                   </div>
                 ))}
               </div>

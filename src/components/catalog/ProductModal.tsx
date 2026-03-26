@@ -51,7 +51,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
               {product.imagen ? (
                 <img
                   src={product.imagen}
-                  alt={product.nombre}
+                  alt={`${product.nombre} - ${product.marca} - ${product.categoria}`}
                   className="w-full h-full object-cover object-center absolute inset-0"
                 />
               ) : (
