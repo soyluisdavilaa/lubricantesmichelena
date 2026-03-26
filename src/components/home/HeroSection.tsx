@@ -3,7 +3,7 @@
 /* Hero principal — animación palabra x palabra, shimmer buttons, partículas flotantes */
 
 import { useState, useEffect } from "react";
-import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, MessageCircle, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -53,59 +53,49 @@ const PARTICLES = [
 
 function HeroCarousel({ slides }: { slides: string[] }) {
   const [current, setCurrent] = useState(0);
-  const [direction, setDirection] = useState(1); // 1 = forward, -1 = backward
 
   useEffect(() => {
     if (slides.length <= 1) return;
-    const id = setInterval(() => {
-      setDirection(1);
-      setCurrent(i => (i + 1) % slides.length);
-    }, 15000);
+    const id = setInterval(() => setCurrent(i => (i + 1) % slides.length), 15000);
     return () => clearInterval(id);
   }, [slides.length]);
 
   if (!slides.length) return null;
 
-  const prev = () => {
-    setDirection(-1);
-    setCurrent(i => (i - 1 + slides.length) % slides.length);
-  };
-  const next = () => {
-    setDirection(1);
-    setCurrent(i => (i + 1) % slides.length);
-  };
+  const prev = () => setCurrent(i => (i - 1 + slides.length) % slides.length);
+  const next = () => setCurrent(i => (i + 1) % slides.length);
 
   return (
     <>
-      {/* Background images — slide left/right */}
+      {/* Track — todos los slides en línea, se mueve el contenedor entero */}
       <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-        <AnimatePresence initial={false} custom={direction}>
-          <motion.div
-            key={current}
-            custom={direction}
-            variants={{
-              enter: (dir: number) => ({ x: dir > 0 ? "100%" : "-100%" }),
-              center: { x: "0%" },
-              exit: (dir: number) => ({ x: dir > 0 ? "-100%" : "100%" }),
-            }}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ duration: 0.7, ease: [0.32, 0.72, 0, 1] }}
-            className="absolute inset-0"
-          >
-            <img
-              src={slides[current]}
-              alt=""
-              aria-hidden="true"
-              className="w-full h-full object-cover bg-ken-burns"
-            />
-            <div className="absolute inset-0 bg-black/60" />
-          </motion.div>
-        </AnimatePresence>
+        <div
+          className="absolute inset-0 flex"
+          style={{
+            width: `${slides.length * 100}%`,
+            transform: `translateX(${-current * (100 / slides.length)}%)`,
+            transition: "transform 0.75s cubic-bezier(0.32, 0.72, 0, 1)",
+          }}
+        >
+          {slides.map((src, i) => (
+            <div
+              key={src + i}
+              className="relative h-full"
+              style={{ width: `${100 / slides.length}%` }}
+            >
+              <img
+                src={src}
+                alt=""
+                aria-hidden="true"
+                className="w-full h-full object-cover bg-ken-burns"
+              />
+              <div className="absolute inset-0 bg-black/60" />
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Controls — above everything */}
+      {/* Controls */}
       {slides.length > 1 && (
         <div className="absolute inset-0 z-20 pointer-events-none">
           <button
@@ -128,13 +118,12 @@ function HeroCarousel({ slides }: { slides: string[] }) {
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5"><path d="M9 18l6-6-6-6"/></svg>
           </button>
-          {/* Dots */}
           <div className="pointer-events-auto absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-2">
             {slides.map((_, i) => (
               <button
                 key={i}
                 type="button"
-                onClick={() => { setDirection(i > current ? 1 : -1); setCurrent(i); }}
+                onClick={() => setCurrent(i)}
                 className={`rounded-full transition-all ${i === current ? "w-6 h-2 bg-brand" : "w-2 h-2 bg-white/50 hover:bg-white/80"}`}
                 aria-label={`Slide ${i + 1}`}
               />
