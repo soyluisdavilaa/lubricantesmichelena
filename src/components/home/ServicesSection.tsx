@@ -16,7 +16,6 @@ export function ServicesSection() {
   const { services, config, isLoading } = useSiteConfig();
   const [citaOpen, setCitaOpen] = useState(false);
   const [servicioSeleccionado, setServicioSeleccionado] = useState("");
-  const [bgLoaded, setBgLoaded] = useState(false);
 
   return (
     <section className="py-20 relative overflow-hidden">
@@ -30,8 +29,6 @@ export function ServicesSection() {
               aria-hidden="true"
               loading="eager"
               fetchPriority="high"
-              onLoad={() => setBgLoaded(true)}
-              style={{ opacity: bgLoaded ? 1 : 0, transition: "opacity 0.6s ease" }}
             />
           </div>
           <div className="absolute inset-0 bg-black/60" />

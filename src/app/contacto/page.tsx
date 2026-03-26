@@ -14,7 +14,6 @@ export default function ContactoPage() {
   const [msgLoading, setMsgLoading] = useState(false);
   const [msgSuccess, setMsgSuccess] = useState(false);
   const [citaOpen, setCitaOpen] = useState(false);
-  const [bgLoaded, setBgLoaded] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -52,8 +51,6 @@ export default function ContactoPage() {
             aria-hidden="true"
             loading="eager"
             fetchPriority="high"
-            onLoad={() => setBgLoaded(true)}
-            style={{ opacity: bgLoaded ? 1 : 0, transition: "opacity 0.6s ease" }}
           />
         </div>
       )}
