@@ -53,29 +53,39 @@ const PARTICLES = [
 
 function HeroCarousel({ slides }: { slides: string[] }) {
   const [current, setCurrent] = useState(0);
+  const [direction, setDirection] = useState(1); // 1 = forward, -1 = backward
 
   useEffect(() => {
     if (slides.length <= 1) return;
-    const id = setInterval(() => setCurrent(i => (i + 1) % slides.length), 9000);
+    const id = setInterval(() => {
+      setDirection(1);
+      setCurrent(i => (i + 1) % slides.length);
+    }, 15000);
     return () => clearInterval(id);
   }, [slides.length]);
 
   if (!slides.length) return null;
 
-  const prev = () => setCurrent(i => (i - 1 + slides.length) % slides.length);
-  const next = () => setCurrent(i => (i + 1) % slides.length);
+  const prev = () => {
+    setDirection(-1);
+    setCurrent(i => (i - 1 + slides.length) % slides.length);
+  };
+  const next = () => {
+    setDirection(1);
+    setCurrent(i => (i + 1) % slides.length);
+  };
 
   return (
     <>
-      {/* Background images — behind everything */}
-      <div className="absolute inset-0 -z-10 pointer-events-none">
+      {/* Background images — slide left/right */}
+      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         {slides.map((src, i) => (
           <motion.div
             key={src + i}
-            className="absolute inset-0 overflow-hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: i === current ? 1 : 0 }}
-            transition={{ duration: 1.4, ease: "easeInOut" }}
+            className="absolute inset-0"
+            initial={{ x: i === current ? `${direction * 100}%` : 0 }}
+            animate={{ x: i === current ? "0%" : `${(i < current ? -1 : 1) * 100}%` }}
+            transition={{ duration: 0.7, ease: [0.32, 0.72, 0, 1] }}
           >
             <img
               src={src}
@@ -117,7 +127,7 @@ function HeroCarousel({ slides }: { slides: string[] }) {
               <button
                 key={i}
                 type="button"
-                onClick={() => setCurrent(i)}
+                onClick={() => { setDirection(i > current ? 1 : -1); setCurrent(i); }}
                 className={`rounded-full transition-all ${i === current ? "w-6 h-2 bg-brand" : "w-2 h-2 bg-white/50 hover:bg-white/80"}`}
                 aria-label={`Slide ${i + 1}`}
               />
