@@ -68,25 +68,11 @@ function HeroCarousel({
   const prev = () => setCurrent(i => (i - 1 + slides.length) % slides.length);
   const next = () => setCurrent(i => (i + 1) % slides.length);
 
-  // Gradient placeholder — always rendered as the base layer so there's never a black flash
-  const gradientBase = (
-    <div
-      className="absolute inset-0 -z-10 pointer-events-none"
-      style={{
-        background:
-          "linear-gradient(135deg, #0f172a 0%, #1e1b2e 40%, #1a0f0a 100%)",
-      }}
-    />
-  );
-
-  // If still loading from server OR no slides configured → show only the gradient
-  if (isLoading || !slides.length) return gradientBase;
+  // Si está cargando o no hay slides, no renderizamos nada (transparente)
+  if (isLoading || !slides.length) return null;
 
   return (
     <>
-      {/* Gradient base — always behind in case images take a moment to paint */}
-      {gradientBase}
-
       {/* Slides track — rendered immediately, browser paints images as they load */}
       <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         <div
@@ -109,6 +95,7 @@ function HeroCarousel({
                 aria-hidden="true"
                 className="w-full h-full object-cover"
               />
+              {/* Capa oscura semitransparente sobre la imagen para que el texto sea legible */}
               <div className="absolute inset-0 bg-black/60" />
             </div>
           ))}
@@ -169,39 +156,13 @@ export function HeroSection() {
 
   return (
     <section className="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden">
-      {/* Deep background */}
+      {/* Background base (negro/transparente por defecto) */}
       <div className="absolute inset-0 bg-background -z-20" />
 
-      {/* Hero carousel / background image */}
+      {/* Hero carousel / background image — esta será la única capa gráfica de fondo */}
       <HeroCarousel
         slides={finalSlides}
         isLoading={isLoading}
-      />
-      <div
-        className="absolute top-0 right-0 w-[600px] h-[600px] opacity-30 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse at top right, rgba(249,115,22,0.25) 0%, transparent 65%)",
-        }}
-      />
-
-      {/* Radial glow bottom-left */}
-      <div
-        className="absolute bottom-0 left-0 w-[500px] h-[500px] opacity-20 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse at bottom left, rgba(34,197,94,0.2) 0%, transparent 65%)",
-        }}
-      />
-
-      {/* Grid texture */}
-      <div
-        className="absolute inset-0 opacity-[0.025] pointer-events-none"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
-        }}
       />
 
       {/* Floating particles */}
