@@ -81,7 +81,7 @@ export function ServicesSection() {
                              hover:border-brand/30 hover:shadow-xl hover:shadow-brand/8
                              transition-colors duration-300 cursor-default flex flex-col h-full border
                              ${config.bgImages?.servicios
-                               ? 'bg-gray-950/85 border-white/10 hover:border-brand/30'
+                               ? 'bg-[#141414]/90 border-white/10 hover:border-brand/30'
                                : 'bg-card border-border'}`}
                 >
                   {/* Gradient bg on hover */}
