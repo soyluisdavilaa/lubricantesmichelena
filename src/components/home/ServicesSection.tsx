@@ -18,17 +18,19 @@ export function ServicesSection() {
   const [servicioSeleccionado, setServicioSeleccionado] = useState("");
 
   return (
-    <section
-      className="py-20 relative"
-      style={config.bgImages?.servicios ? {
-        backgroundImage: `url(${config.bgImages.servicios})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed",
-      } : undefined}
-    >
+    <section className="py-20 relative overflow-hidden">
       {config.bgImages?.servicios && (
-        <div className="absolute inset-0 bg-black/60" />
+        <>
+          <div className="absolute inset-0 overflow-hidden">
+            <img
+              src={config.bgImages.servicios}
+              alt=""
+              className="w-full h-full object-cover bg-ken-burns"
+              aria-hidden="true"
+            />
+          </div>
+          <div className="absolute inset-0 bg-black/60" />
+        </>
       )}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}

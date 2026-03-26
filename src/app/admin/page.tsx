@@ -883,6 +883,44 @@ export default function AdminPage() {
                     aspectRatio="aspect-video"
                   />
                 </div>
+                <div>
+                  <label className={labelCls}>Slides del Carrusel (varios banners)</label>
+                  <p className="text-xs text-muted-foreground mb-3">Sube varias imágenes para el carrusel automático. Si no hay slides, se usa la imagen de fondo.</p>
+                  <div className="flex flex-wrap gap-3">
+                    {(cfgDraft.hero.slides ?? []).map((slide, idx) => (
+                      <div key={idx} className="relative group">
+                        <ImageUploader
+                          value={slide}
+                          onChange={(url) => {
+                            const slides = [...(cfgDraft.hero.slides ?? [])];
+                            slides[idx] = url;
+                            setCfgDraft((d) => ({ ...d, hero: { ...d.hero, slides } }));
+                          }}
+                          folder="config"
+                          className="w-40"
+                          aspectRatio="aspect-video"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const slides = (cfgDraft.hero.slides ?? []).filter((_, i) => i !== idx);
+                            setCfgDraft((d) => ({ ...d, hero: { ...d.hero, slides } }));
+                          }}
+                          className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-destructive text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => setCfgDraft((d) => ({ ...d, hero: { ...d.hero, slides: [...(d.hero.slides ?? []), ""] } }))}
+                      className="w-40 aspect-video rounded-xl border-2 border-dashed border-border hover:border-brand/50 flex items-center justify-center text-muted-foreground hover:text-brand transition-colors text-xs font-medium"
+                    >
+                      + Agregar slide
+                    </button>
+                  </div>
+                </div>
               </div>
             </section>
 

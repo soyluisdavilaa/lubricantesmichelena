@@ -352,6 +352,17 @@
   100% { transform: translateX(0); }
 }
 
+@keyframes kenBurns {
+  0%   { transform: scale(1)    translate(0, 0); }
+  33%  { transform: scale(1.07) translate(-1%, 0.5%); }
+  66%  { transform: scale(1.05) translate(1%, -0.5%); }
+  100% { transform: scale(1)    translate(0, 0); }
+}
+.bg-ken-burns {
+  animation: kenBurns 18s ease-in-out infinite;
+  will-change: transform;
+}
+
 @keyframes gradient-x {
   0%, 100% { background-position: 0% 50%; }
   50%       { background-position: 100% 50%; }

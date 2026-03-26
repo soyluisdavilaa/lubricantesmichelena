@@ -41,13 +41,17 @@ export default function ContactoPage() {
   return (
     <div
       className="min-h-screen pt-24 pb-12 relative"
-      style={config.bgImages?.contacto ? {
-        backgroundImage: `url(${config.bgImages.contacto})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed",
-      } : undefined}
     >
+      {config.bgImages?.contacto && (
+        <div className="absolute inset-0 overflow-hidden">
+          <img
+            src={config.bgImages.contacto}
+            alt=""
+            className="w-full h-full object-cover bg-ken-burns"
+            aria-hidden="true"
+          />
+        </div>
+      )}
       {config.bgImages?.contacto && (
         <div className="absolute inset-0 bg-black/60" />
       )}

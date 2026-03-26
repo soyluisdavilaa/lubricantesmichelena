@@ -123,13 +123,17 @@ export default function CatalogoPage() {
       {/* Header con imagen de fondo */}
       <section
         className="relative py-12 sm:py-20 border-b border-border overflow-hidden"
-        style={config.bgImages?.catalogo ? {
-          backgroundImage: `url(${config.bgImages.catalogo})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundAttachment: "fixed",
-        } : undefined}
       >
+        {config.bgImages?.catalogo && (
+          <div className="absolute inset-0 overflow-hidden">
+            <img
+              src={config.bgImages.catalogo}
+              alt=""
+              className="w-full h-full object-cover bg-ken-burns"
+              aria-hidden="true"
+            />
+          </div>
+        )}
         {/* Dark gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-slate-900 to-gray-900" />
         {config.bgImages?.catalogo && (

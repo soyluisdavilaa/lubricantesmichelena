@@ -2,7 +2,7 @@
 
 /* Hero principal — animación palabra x palabra, shimmer buttons, partículas flotantes */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, MessageCircle, ChevronDown } from "lucide-react";
 import Link from "next/link";
@@ -51,6 +51,81 @@ const PARTICLES = [
   { x: "60%", y: "45%", size: 6, delay: 1.2, duration: 3.2 },
 ];
 
+function HeroCarousel({ slides }: { slides: string[] }) {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    const id = setInterval(() => setCurrent(i => (i + 1) % slides.length), 5000);
+    return () => clearInterval(id);
+  }, [slides.length]);
+
+  if (!slides.length) return null;
+
+  const prev = () => setCurrent(i => (i - 1 + slides.length) % slides.length);
+  const next = () => setCurrent(i => (i + 1) % slides.length);
+
+  return (
+    <div className="absolute inset-0 -z-10 pointer-events-none">
+      {slides.map((src, i) => (
+        <motion.div
+          key={src + i}
+          className="absolute inset-0 overflow-hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: i === current ? 1 : 0 }}
+          transition={{ duration: 1.2, ease: "easeInOut" }}
+        >
+          <img
+            src={src}
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-cover bg-ken-burns"
+          />
+          <div className="absolute inset-0 bg-black/60" />
+        </motion.div>
+      ))}
+
+      {/* Arrows — only show when multiple slides */}
+      {slides.length > 1 && (
+        <>
+          <button
+            type="button"
+            onClick={prev}
+            className="pointer-events-auto absolute left-3 top-1/2 -translate-y-1/2 z-10
+                       w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white
+                       flex items-center justify-center transition-all backdrop-blur-sm"
+            aria-label="Anterior"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button
+            type="button"
+            onClick={next}
+            className="pointer-events-auto absolute right-3 top-1/2 -translate-y-1/2 z-10
+                       w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white
+                       flex items-center justify-center transition-all backdrop-blur-sm"
+            aria-label="Siguiente"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+          {/* Dots */}
+          <div className="pointer-events-auto absolute bottom-16 left-1/2 -translate-x-1/2 z-10 flex gap-2">
+            {slides.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setCurrent(i)}
+                className={`rounded-full transition-all ${i === current ? "w-6 h-2 bg-brand" : "w-2 h-2 bg-white/50 hover:bg-white/80"}`}
+                aria-label={`Slide ${i + 1}`}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export function HeroSection() {
   const { config } = useSiteConfig();
   const { hero, site } = config;
@@ -63,27 +138,8 @@ export function HeroSection() {
       {/* Deep background */}
       <div className="absolute inset-0 bg-background -z-20" />
 
-      {/* Hero background image, if configured */}
-      {hero.imagen && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          className="absolute inset-0 pointer-events-none -z-10"
-        >
-          <Image
-            src={hero.imagen}
-            alt="Hero Background"
-            fill
-            priority
-            unoptimized={true}
-            className="object-cover object-center"
-            sizes="100vw"
-          />
-          {/* Capa oscura (50-60%) sobre la foto para que el texto resalte */}
-          <div className="absolute inset-0 bg-black/60" />
-        </motion.div>
-      )}
+      {/* Hero carousel / background image */}
+      <HeroCarousel slides={hero.slides?.length ? hero.slides : hero.imagen ? [hero.imagen] : []} />
       <div
         className="absolute top-0 right-0 w-[600px] h-[600px] opacity-30 pointer-events-none"
         style={{

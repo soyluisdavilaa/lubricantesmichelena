@@ -37,6 +37,7 @@ export const defaultConfig: SiteConfig = {
       "Aceites premium, filtros de calidad y servicio experto para tu vehículo. Tu centro de lubricación de confianza en Valencia.",
     btnTexto: "Consultar Ahora",
     imagen: "",
+    slides: [],
     trustPills: [
       "✓ +53 años de experiencia",
       "✓ Atención personalizada",

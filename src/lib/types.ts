@@ -142,6 +142,7 @@ export interface SiteConfig {
     subtitulo: string;
     btnTexto: string;
     imagen?: string;
+    slides?: string[];
     trustPills?: string[];
   };
   banner: {
