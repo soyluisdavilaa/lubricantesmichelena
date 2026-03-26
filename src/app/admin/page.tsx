@@ -1251,6 +1251,81 @@ export default function AdminPage() {
               </div>
             </section>
 
+            {/* Estadísticas */}
+            <section className="space-y-3">
+              <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Estadísticas (banda naranja)</h3>
+              <div className="p-4 rounded-xl bg-card border border-border space-y-4">
+                {(cfgDraft.stats ?? []).map((stat, idx) => (
+                  <div key={idx} className="p-3 rounded-lg border border-border space-y-2 relative">
+                    <button
+                      type="button"
+                      onClick={() => setCfgDraft((d) => ({ ...d, stats: (d.stats ?? []).filter((_, i) => i !== idx) }))}
+                      className="absolute top-2 right-2 w-6 h-6 rounded-full bg-destructive/10 hover:bg-destructive/30 text-destructive text-xs flex items-center justify-center transition-colors"
+                    >×</button>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className={labelCls}>Número</label>
+                        <input
+                          type="number"
+                          value={stat.valor}
+                          onChange={(e) => {
+                            const stats = [...(cfgDraft.stats ?? [])];
+                            stats[idx] = { ...stats[idx], valor: Number(e.target.value) };
+                            setCfgDraft((d) => ({ ...d, stats }));
+                          }}
+                          className={`w-full ${inputCls}`}
+                        />
+                      </div>
+                      <div>
+                        <label className={labelCls}>Etiqueta</label>
+                        <input
+                          value={stat.etiqueta}
+                          onChange={(e) => {
+                            const stats = [...(cfgDraft.stats ?? [])];
+                            stats[idx] = { ...stats[idx], etiqueta: e.target.value };
+                            setCfgDraft((d) => ({ ...d, stats }));
+                          }}
+                          className={`w-full ${inputCls}`}
+                        />
+                      </div>
+                      <div>
+                        <label className={labelCls}>Prefijo (ej: +)</label>
+                        <input
+                          value={stat.prefijo}
+                          onChange={(e) => {
+                            const stats = [...(cfgDraft.stats ?? [])];
+                            stats[idx] = { ...stats[idx], prefijo: e.target.value };
+                            setCfgDraft((d) => ({ ...d, stats }));
+                          }}
+                          className={`w-full ${inputCls}`}
+                        />
+                      </div>
+                      <div>
+                        <label className={labelCls}>Ícono Lucide (ej: Trophy)</label>
+                        <input
+                          value={stat.icono}
+                          onChange={(e) => {
+                            const stats = [...(cfgDraft.stats ?? [])];
+                            stats[idx] = { ...stats[idx], icono: e.target.value };
+                            setCfgDraft((d) => ({ ...d, stats }));
+                          }}
+                          className={`w-full ${inputCls}`}
+                          placeholder="Trophy, Wrench, Users, Star..."
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setCfgDraft((d) => ({ ...d, stats: [...(d.stats ?? []), { valor: 0, etiqueta: "Nueva estadística", prefijo: "+", sufijo: "", icono: "Star" }] }))}
+                  className="w-full py-2 rounded-lg border-2 border-dashed border-border hover:border-brand/50 text-muted-foreground hover:text-brand transition-colors text-sm font-medium"
+                >
+                  + Agregar estadística
+                </button>
+              </div>
+            </section>
+
             {/* Imágenes de Fondo */}
             <section className="space-y-3">
               <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Imágenes de Fondo</h3>

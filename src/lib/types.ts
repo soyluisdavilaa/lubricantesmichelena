@@ -203,6 +203,15 @@ export interface SiteConfig {
     catalogo: string;
     contacto: string;
   };
+  stats: Stat[];
+}
+
+export interface Stat {
+  valor: number;
+  etiqueta: string;
+  prefijo: string;
+  sufijo: string;
+  icono: string;
 }
 
 // ─── Cupones ───

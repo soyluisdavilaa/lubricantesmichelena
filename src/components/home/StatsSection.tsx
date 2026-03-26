@@ -2,28 +2,40 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useInView } from "framer-motion";
+import * as LucideIcons from "lucide-react";
+import { useSiteConfig } from "@/context/SiteConfigContext";
 
-interface Stat {
-  prefix: string;
-  value: number;
-  suffix: string;
-  label: string;
-  icon: string;
+const STAGGER_MS = 350;
+
+function getIcon(name: string) {
+  const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[name];
+  return Icon ?? LucideIcons.Star;
 }
 
-const STATS: Stat[] = [
-  { prefix: "+", value: 53,     suffix: "",   label: "Años de Experiencia",    icon: "🏆" },
-  { prefix: "+", value: 400000, suffix: "",   label: "Servicios Realizados",   icon: "🔧" },
-  { prefix: "+", value: 5000,   suffix: "",   label: "Clientes Satisfechos",   icon: "😊" },
-];
-
-function CountUp({ value, prefix, suffix }: { value: number; prefix: string; suffix: string }) {
+function CountUp({
+  value,
+  prefix,
+  suffix,
+  delay,
+}: {
+  value: number;
+  prefix: string;
+  suffix: string;
+  delay: number;
+}) {
   const [display, setDisplay] = useState(0);
+  const [started, setStarted] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
 
   useEffect(() => {
     if (!inView) return;
+    const timer = setTimeout(() => setStarted(true), delay);
+    return () => clearTimeout(timer);
+  }, [inView, delay]);
+
+  useEffect(() => {
+    if (!started) return;
     const duration = 1800;
     const start = Date.now();
     let raf: number;
@@ -36,35 +48,51 @@ function CountUp({ value, prefix, suffix }: { value: number; prefix: string; suf
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [inView, value]);
+  }, [started, value]);
 
   return (
-    <span ref={ref}>
+    <span ref={ref} className="tabular-nums">
       {prefix}{display.toLocaleString("es")}{suffix}
     </span>
   );
 }
 
 export function StatsSection() {
+  const { config } = useSiteConfig();
+  const stats = config.stats?.length ? config.stats : [];
+  if (!stats.length) return null;
+
   return (
-    <section className="py-14 border-y border-border bg-card/50">
+    <section className="py-16 bg-brand">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-4">
-          {STATS.map((stat, i) => (
-            <div
-              key={i}
-              className="flex flex-col items-center text-center gap-2 px-6 relative
-                         sm:[&:not(:last-child)]:after:absolute sm:[&:not(:last-child)]:after:right-0
-                         sm:[&:not(:last-child)]:after:top-1/4 sm:[&:not(:last-child)]:after:h-1/2
-                         sm:[&:not(:last-child)]:after:w-px sm:[&:not(:last-child)]:after:bg-border"
-            >
-              <span className="text-3xl mb-1">{stat.icon}</span>
-              <p className="text-4xl sm:text-5xl font-extrabold text-brand tabular-nums">
-                <CountUp value={stat.value} prefix={stat.prefix} suffix={stat.suffix} />
-              </p>
-              <p className="text-sm sm:text-base font-medium text-muted-foreground">{stat.label}</p>
-            </div>
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-4">
+          {stats.map((stat, i) => {
+            const Icon = getIcon(stat.icono);
+            return (
+              <div
+                key={i}
+                className="flex flex-col items-center text-center gap-3 px-6 relative
+                           sm:[&:not(:last-child)]:after:absolute sm:[&:not(:last-child)]:after:right-0
+                           sm:[&:not(:last-child)]:after:top-1/4 sm:[&:not(:last-child)]:after:h-1/2
+                           sm:[&:not(:last-child)]:after:w-px sm:[&:not(:last-child)]:after:bg-white/30"
+              >
+                <div className="w-14 h-14 rounded-full bg-white/15 flex items-center justify-center">
+                  <Icon className="w-7 h-7 text-white" />
+                </div>
+                <p className="text-4xl sm:text-5xl font-extrabold text-white">
+                  <CountUp
+                    value={stat.valor}
+                    prefix={stat.prefijo}
+                    suffix={stat.sufijo}
+                    delay={i * STAGGER_MS}
+                  />
+                </p>
+                <p className="text-sm sm:text-base font-semibold text-white/80 uppercase tracking-wide">
+                  {stat.etiqueta}
+                </p>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

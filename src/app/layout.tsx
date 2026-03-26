@@ -129,7 +129,7 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang="es" className={`${inter.variable}`} suppressHydrationWarning>
+    <html lang="es" className={`${inter.variable} dark`} suppressHydrationWarning>
       <head>
         {/* Tema: aplica dark/light ANTES del primer paint */}
         <script
