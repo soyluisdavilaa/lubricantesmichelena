@@ -2,7 +2,7 @@
 
 /* Hero principal — animación palabra x palabra, shimmer buttons, partículas flotantes */
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, MessageCircle, ChevronDown } from "lucide-react";
 import Link from "next/link";
@@ -58,9 +58,6 @@ function HeroCarousel({
   isLoading: boolean;
 }) {
   const [current, setCurrent] = useState(0);
-  // Track whether images have actually loaded so we can crossfade
-  const [slidesReady, setSlidesReady] = useState(false);
-  const loadedCount = useRef(0);
 
   useEffect(() => {
     if (slides.length <= 1) return;
@@ -68,24 +65,11 @@ function HeroCarousel({
     return () => clearInterval(id);
   }, [slides.length]);
 
-  // Reset ready-state whenever slides array changes
-  useEffect(() => {
-    if (!slides.length) return;
-    setSlidesReady(false);
-    loadedCount.current = 0;
-  }, [slides.join(",")]);
-
-  const handleImageLoad = () => {
-    loadedCount.current += 1;
-    // Consider ready once the first slide has loaded
-    if (loadedCount.current >= 1) setSlidesReady(true);
-  };
-
   const prev = () => setCurrent(i => (i - 1 + slides.length) % slides.length);
   const next = () => setCurrent(i => (i + 1) % slides.length);
 
   // Gradient placeholder — always rendered as the base layer so there's never a black flash
-  const placeholder = (
+  const gradientBase = (
     <div
       className="absolute inset-0 -z-10 pointer-events-none"
       style={{
@@ -95,22 +79,16 @@ function HeroCarousel({
     />
   );
 
-  // If still loading from server OR no slides configured → keep the gradient
-  if (isLoading || !slides.length) return placeholder;
+  // If still loading from server OR no slides configured → show only the gradient
+  if (isLoading || !slides.length) return gradientBase;
 
   return (
     <>
-      {/* Gradient base — always visible; images crossfade on top once ready */}
-      {placeholder}
+      {/* Gradient base — always behind in case images take a moment to paint */}
+      {gradientBase}
 
-      {/* Slides track */}
-      <div
-        className="absolute inset-0 -z-10 overflow-hidden pointer-events-none"
-        style={{
-          opacity: slidesReady ? 1 : 0,
-          transition: "opacity 0.6s ease",
-        }}
-      >
+      {/* Slides track — rendered immediately, browser paints images as they load */}
+      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         <div
           className="flex h-full"
           style={{
@@ -130,7 +108,6 @@ function HeroCarousel({
                 alt=""
                 aria-hidden="true"
                 className="w-full h-full object-cover"
-                onLoad={handleImageLoad}
               />
               <div className="absolute inset-0 bg-black/60" />
             </div>
@@ -138,8 +115,8 @@ function HeroCarousel({
         </div>
       </div>
 
-      {/* Controls — only show once images are ready */}
-      {slidesReady && slides.length > 1 && (
+      {/* Controls */}
+      {slides.length > 1 && (
         <div className="absolute inset-0 z-20 pointer-events-none">
           <button
             type="button"
