@@ -2,11 +2,10 @@
 
 /* Hero principal — animación palabra x palabra, shimmer buttons, partículas flotantes */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, MessageCircle, ChevronDown } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 import { openWhatsApp } from "@/lib/utils";
 
@@ -51,8 +50,17 @@ const PARTICLES = [
   { x: "60%", y: "45%", size: 6, delay: 1.2, duration: 3.2 },
 ];
 
-function HeroCarousel({ slides }: { slides: string[] }) {
+function HeroCarousel({
+  slides,
+  isLoading,
+}: {
+  slides: string[];
+  isLoading: boolean;
+}) {
   const [current, setCurrent] = useState(0);
+  // Track whether images have actually loaded so we can crossfade
+  const [slidesReady, setSlidesReady] = useState(false);
+  const loadedCount = useRef(0);
 
   useEffect(() => {
     if (slides.length <= 1) return;
@@ -60,37 +68,78 @@ function HeroCarousel({ slides }: { slides: string[] }) {
     return () => clearInterval(id);
   }, [slides.length]);
 
-  if (!slides.length) return null;
+  // Reset ready-state whenever slides array changes
+  useEffect(() => {
+    if (!slides.length) return;
+    setSlidesReady(false);
+    loadedCount.current = 0;
+  }, [slides.join(",")]);
+
+  const handleImageLoad = () => {
+    loadedCount.current += 1;
+    // Consider ready once the first slide has loaded
+    if (loadedCount.current >= 1) setSlidesReady(true);
+  };
 
   const prev = () => setCurrent(i => (i - 1 + slides.length) % slides.length);
   const next = () => setCurrent(i => (i + 1) % slides.length);
 
+  // Gradient placeholder — always rendered as the base layer so there's never a black flash
+  const placeholder = (
+    <div
+      className="absolute inset-0 -z-10 pointer-events-none"
+      style={{
+        background:
+          "linear-gradient(135deg, #0f172a 0%, #1e1b2e 40%, #1a0f0a 100%)",
+      }}
+    />
+  );
+
+  // If still loading from server OR no slides configured → keep the gradient
+  if (isLoading || !slides.length) return placeholder;
+
   return (
     <>
-      {/* Slides — cada una ocupa el espacio completo, se deslizan con translateX */}
-      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-        {slides.map((src, i) => (
-          <div
-            key={src + i}
-            className="absolute inset-0"
-            style={{
-              transform: `translateX(${(i - current) * 100}%)`,
-              transition: "transform 0.75s cubic-bezier(0.32, 0.72, 0, 1)",
-            }}
-          >
-            <img
-              src={src}
-              alt=""
-              aria-hidden="true"
-              className="absolute inset-0 w-full h-full object-cover bg-ken-burns"
-            />
-            <div className="absolute inset-0 bg-black/60" />
-          </div>
-        ))}
+      {/* Gradient base — always visible; images crossfade on top once ready */}
+      {placeholder}
+
+      {/* Slides track */}
+      <div
+        className="absolute inset-0 -z-10 overflow-hidden pointer-events-none"
+        style={{
+          opacity: slidesReady ? 1 : 0,
+          transition: "opacity 0.6s ease",
+        }}
+      >
+        <div
+          className="flex h-full"
+          style={{
+            width: `${slides.length * 100}%`,
+            transform: `translateX(${-current * (100 / slides.length)}%)`,
+            transition: "transform 0.75s cubic-bezier(0.32, 0.72, 0, 1)",
+          }}
+        >
+          {slides.map((src, i) => (
+            <div
+              key={src + i}
+              className="relative h-full"
+              style={{ width: `${100 / slides.length}%` }}
+            >
+              <img
+                src={src}
+                alt=""
+                aria-hidden="true"
+                className="w-full h-full object-cover"
+                onLoad={handleImageLoad}
+              />
+              <div className="absolute inset-0 bg-black/60" />
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Controls */}
-      {slides.length > 1 && (
+      {/* Controls — only show once images are ready */}
+      {slidesReady && slides.length > 1 && (
         <div className="absolute inset-0 z-20 pointer-events-none">
           <button
             type="button"
@@ -118,7 +167,9 @@ function HeroCarousel({ slides }: { slides: string[] }) {
                 key={i}
                 type="button"
                 onClick={() => setCurrent(i)}
-                className={`rounded-full transition-all ${i === current ? "w-6 h-2 bg-brand" : "w-2 h-2 bg-white/50 hover:bg-white/80"}`}
+                className={`rounded-full transition-all ${
+                  i === current ? "w-6 h-2 bg-brand" : "w-2 h-2 bg-white/50 hover:bg-white/80"
+                }`}
                 aria-label={`Slide ${i + 1}`}
               />
             ))}
@@ -130,11 +181,10 @@ function HeroCarousel({ slides }: { slides: string[] }) {
 }
 
 export function HeroSection() {
-  const { config } = useSiteConfig();
+  const { config, isLoading } = useSiteConfig();
   const { hero, site } = config;
   const shouldReduce = useReducedMotion();
   const words = hero.titulo.split(" ");
-  const [imgLoaded, setImgLoaded] = useState(false);
 
   return (
     <section className="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden">
@@ -142,7 +192,10 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-background -z-20" />
 
       {/* Hero carousel / background image */}
-      <HeroCarousel slides={hero.slides?.length ? hero.slides : hero.imagen ? [hero.imagen] : []} />
+      <HeroCarousel
+        slides={hero.slides?.length ? hero.slides : hero.imagen ? [hero.imagen] : []}
+        isLoading={isLoading}
+      />
       <div
         className="absolute top-0 right-0 w-[600px] h-[600px] opacity-30 pointer-events-none"
         style={{
