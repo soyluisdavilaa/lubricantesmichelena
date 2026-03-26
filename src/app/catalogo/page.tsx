@@ -15,7 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { Product } from "@/lib/types";
 import { openWhatsApp, getProductWaMessage, cn } from "@/lib/utils";
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 14;
 
 /* ── List row view ── */
 function ProductRow({
@@ -117,7 +117,22 @@ export default function CatalogoPage() {
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  const goToPage = (n: number) => { setPage(n); window.scrollTo({ top: 0, behavior: "smooth" }); };
   const reset = (setter: (v: string) => void) => (v: string) => { setter(v); setPage(1); };
+
+  /* Smart page numbers: always show first, last, current ±2, with "…" gaps */
+  const pageNumbers = (): (number | "…")[] => {
+    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+    const delta = 2;
+    const range: number[] = [];
+    for (let i = Math.max(2, page - delta); i <= Math.min(totalPages - 1, page + delta); i++) range.push(i);
+    const result: (number | "…")[] = [1];
+    if (range[0] > 2) result.push("…");
+    result.push(...range);
+    if (range[range.length - 1] < totalPages - 1) result.push("…");
+    result.push(totalPages);
+    return result;
+  };
 
   return (
     <div className="min-h-screen">
@@ -285,36 +300,40 @@ export default function CatalogoPage() {
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-2 mt-10">
+                  <div className="flex items-center justify-center flex-wrap gap-1.5 mt-10">
                     <button
-                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      onClick={() => goToPage(Math.max(1, page - 1))}
                       disabled={page === 1}
                       className="px-4 py-2 rounded-lg bg-secondary text-sm font-medium
                                  hover:bg-secondary/80 transition-colors
                                  disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                       Anterior
+                      ← Anterior
                     </button>
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
-                      <button
-                        key={num}
-                        onClick={() => setPage(num)}
-                        className={cn(
-                          "w-10 h-10 rounded-lg text-sm font-medium transition-colors",
-                          num === page ? "bg-brand text-white" : "bg-secondary hover:bg-secondary/80"
-                        )}
-                      >
-                        {num}
-                      </button>
-                    ))}
+                    {pageNumbers().map((num, i) =>
+                      num === "…" ? (
+                        <span key={`ellipsis-${i}`} className="w-10 h-10 flex items-center justify-center text-muted-foreground text-sm">…</span>
+                      ) : (
+                        <button
+                          key={num}
+                          onClick={() => goToPage(num)}
+                          className={cn(
+                            "w-10 h-10 rounded-lg text-sm font-medium transition-colors",
+                            num === page ? "bg-brand text-white" : "bg-secondary hover:bg-secondary/80"
+                          )}
+                        >
+                          {num}
+                        </button>
+                      )
+                    )}
                     <button
-                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                      onClick={() => goToPage(Math.min(totalPages, page + 1))}
                       disabled={page === totalPages}
                       className="px-4 py-2 rounded-lg bg-secondary text-sm font-medium
                                  hover:bg-secondary/80 transition-colors
                                  disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                       Siguiente
+                      Siguiente →
                     </button>
                   </div>
                 )}

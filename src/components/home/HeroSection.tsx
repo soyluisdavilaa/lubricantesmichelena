@@ -70,7 +70,7 @@ function HeroCarousel({ slides }: { slides: string[] }) {
       {/* Track — todos los slides en línea, se mueve el contenedor entero */}
       <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         <div
-          className="absolute inset-0 flex"
+          className="flex h-full"
           style={{
             width: `${slides.length * 100}%`,
             transform: `translateX(${-current * (100 / slides.length)}%)`,
@@ -118,7 +118,7 @@ function HeroCarousel({ slides }: { slides: string[] }) {
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5"><path d="M9 18l6-6-6-6"/></svg>
           </button>
-          <div className="pointer-events-auto absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-2">
+          <div className="pointer-events-auto absolute bottom-16 left-1/2 -translate-x-1/2 hidden sm:flex gap-2">
             {slides.map((_, i) => (
               <button
                 key={i}
