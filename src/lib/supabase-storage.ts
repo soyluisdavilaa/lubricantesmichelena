@@ -68,7 +68,11 @@ async function compressImage(file: File, maxSizeKB: number): Promise<Blob> {
     const img = new Image();
     const reader = new FileReader();
 
+    reader.onerror = () => resolve(file);
+
     reader.onload = (e) => {
+      if (!e.target?.result) { resolve(file); return; }
+      img.onerror = () => resolve(file);
       img.onload = () => {
         const canvas = document.createElement("canvas");
         let { width, height } = img;

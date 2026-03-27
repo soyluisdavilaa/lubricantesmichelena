@@ -41,7 +41,7 @@ function ProductRow({
     >
       <div className="w-16 h-16 rounded-lg bg-muted overflow-hidden shrink-0">
         {(product.imagenes?.[0] || product.imagen) ? (
-          <img src={(product.imagenes?.[0] || product.imagen)} alt={product.nombre} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+          <img src={(product.imagenes?.[0] || product.imagen)} alt={product.nombre} loading="lazy" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <Package className="w-6 h-6 text-muted-foreground/30" />
@@ -120,7 +120,7 @@ export default function CatalogoPage() {
   const reset = (setter: (v: string) => void) => (v: string) => { setter(v); setPage(1); };
 
   /* Smart page numbers: always show first, last, current ±2, with "…" gaps */
-  const pageNumbers = (): (number | "…")[] => {
+  const pageNumbers = useMemo((): (number | "…")[] => {
     if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
     const delta = 2;
     const range: number[] = [];
@@ -131,7 +131,7 @@ export default function CatalogoPage() {
     if (range[range.length - 1] < totalPages - 1) result.push("…");
     result.push(totalPages);
     return result;
-  };
+  }, [page, totalPages]);
 
   return (
     <div className="min-h-screen">
@@ -307,7 +307,7 @@ export default function CatalogoPage() {
                     >
                       ← Anterior
                     </button>
-                    {pageNumbers().map((num, i) =>
+                    {pageNumbers.map((num, i) =>
                       num === "…" ? (
                         <span key={`ellipsis-${i}`} className="w-10 h-10 flex items-center justify-center text-muted-foreground text-sm">…</span>
                       ) : (

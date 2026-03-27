@@ -2,9 +2,9 @@
 
 /* Modal de detalle de producto — rediseño premium */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, MessageCircle, ShoppingCart, Package, Tag, Box } from "lucide-react";
+import { X, MessageCircle, ShoppingCart, Package, Tag, Box, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Product } from "@/lib/types";
 import { useSiteConfig } from "@/context/SiteConfigContext";
 import { useCart } from "@/context/CartContext";
@@ -20,7 +20,31 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
   const { addToCart } = useCart();
   const [activeImgIdx, setActiveImgIdx] = useState(0);
 
+  const images = product?.imagenes?.filter(Boolean) ?? [];
+  const totalImages = images.length;
+
+  const prevImg = useCallback(() =>
+    setActiveImgIdx((i) => (i === 0 ? totalImages - 1 : i - 1)),
+    [totalImages]
+  );
+  const nextImg = useCallback(() =>
+    setActiveImgIdx((i) => (i === totalImages - 1 ? 0 : i + 1)),
+    [totalImages]
+  );
+
   useEffect(() => { setActiveImgIdx(0); }, [product?.id]);
+
+  // Navegación con teclado
+  useEffect(() => {
+    if (!product || totalImages <= 1) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") prevImg();
+      if (e.key === "ArrowRight") nextImg();
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [product, totalImages, prevImg, nextImg, onClose]);
 
   return (
     <AnimatePresence>
@@ -51,12 +75,13 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
             aria-label={product.nombre}
           >
             {/* ── Left: Image panel ── */}
-            <div className="sm:w-[45%] relative bg-muted shrink-0 overflow-hidden h-[150px] sm:h-auto">
-              {(product.imagenes?.[activeImgIdx] || product.imagenes?.[0] || product.imagen) ? (
+            <div className="sm:w-[45%] relative bg-muted shrink-0 overflow-hidden h-[240px] sm:h-auto">
+              {(images[activeImgIdx] || product.imagen) ? (
                 <img
-                  src={product.imagenes?.[activeImgIdx] || product.imagenes?.[0] || product.imagen}
+                  src={images[activeImgIdx] || product.imagen}
                   alt={`${product.nombre} - ${product.marca} - ${product.categoria}`}
                   className="w-full h-full object-cover object-center absolute inset-0"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
@@ -75,12 +100,6 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                 </span>
               </div>
 
-              {/* Brand name — bottom left */}
-              <div className="absolute bottom-4 left-4 right-4 z-10">
-                <p className="text-white/60 text-xs font-medium uppercase tracking-widest mb-1">Marca</p>
-                <p className="text-white text-xl font-black tracking-tight drop-shadow-lg">{product.marca}</p>
-              </div>
-
               {/* Agotado badge */}
               {!product.disponible && (
                 <div className="absolute top-4 right-4 z-10">
@@ -90,15 +109,47 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                 </div>
               )}
 
-              {/* Thumbnail strip */}
-              {(product.imagenes?.length ?? 0) > 1 && (
-                <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-                  {product.imagenes!.filter(Boolean).map((img, idx) => (
+              {/* Arrow navigation — only when multiple images */}
+              {totalImages > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={prevImg}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 z-20
+                               w-8 h-8 rounded-full bg-black/50 hover:bg-black/70
+                               flex items-center justify-center text-white transition-colors"
+                    aria-label="Imagen anterior"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={nextImg}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 z-20
+                               w-8 h-8 rounded-full bg-black/50 hover:bg-black/70
+                               flex items-center justify-center text-white transition-colors"
+                    aria-label="Siguiente imagen"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </>
+              )}
+
+              {/* Brand name — bottom left */}
+              <div className="absolute bottom-4 left-4 right-4 z-10">
+                <p className="text-white/60 text-xs font-medium uppercase tracking-widest mb-1">Marca</p>
+                <p className="text-white text-xl font-black tracking-tight drop-shadow-lg">{product.marca}</p>
+              </div>
+
+              {/* Thumbnail strip + image counter */}
+              {totalImages > 1 && (
+                <div className="absolute bottom-[4.5rem] left-1/2 -translate-x-1/2 z-20 flex gap-1.5 max-w-[calc(100%-16px)] overflow-x-auto">
+                  {images.map((img, idx) => (
                     <button
                       key={idx}
                       type="button"
                       onClick={() => setActiveImgIdx(idx)}
-                      className={`w-10 h-10 rounded-lg overflow-hidden border-2 transition-all ${idx === activeImgIdx ? 'border-brand scale-110' : 'border-white/30 opacity-70'}`}
+                      className={`w-9 h-9 shrink-0 rounded-lg overflow-hidden border-2 transition-all ${idx === activeImgIdx ? 'border-brand scale-110' : 'border-white/30 opacity-60 hover:opacity-90'}`}
                     >
                       <img src={img} alt="" className="w-full h-full object-cover" />
                     </button>

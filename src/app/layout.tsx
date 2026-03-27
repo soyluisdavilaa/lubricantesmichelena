@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // Revalida cada 60s + on-demand vía revalidatePath al guardar config
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Providers } from "@/components/Providers";

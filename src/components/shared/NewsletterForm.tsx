@@ -8,7 +8,7 @@ import { addSubscriber } from "@/lib/storage";
 
 export function NewsletterForm() {
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "duplicate" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "duplicate" | "error" | "server-error">("idle");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +22,7 @@ export function NewsletterForm() {
       setStatus(added ? "success" : "duplicate");
       if (added) setEmail("");
     } catch {
-      setStatus("error");
+      setStatus("server-error");
     }
   };
 
@@ -66,6 +66,9 @@ export function NewsletterForm() {
       )}
       {status === "error" && (
         <p className="text-xs text-destructive">Email inválido. Intenta de nuevo.</p>
+      )}
+      {status === "server-error" && (
+        <p className="text-xs text-destructive">Error al conectar. Intenta en un momento.</p>
       )}
     </form>
   );

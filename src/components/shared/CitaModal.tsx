@@ -37,6 +37,17 @@ function getHorarios(fecha: string): string[] {
     slots.push(`${String(h).padStart(2, "0")}:30`);
   }
   slots.push(`${String(fin).padStart(2, "0")}:00`);
+
+  // Si es hoy, filtrar horas que ya pasaron (+ 30 min de margen)
+  const todayISO = new Date().toISOString().split("T")[0];
+  if (fecha === todayISO) {
+    const now = new Date();
+    const cutoff = now.getHours() * 60 + now.getMinutes() + 30;
+    return slots.filter((s) => {
+      const [h, m] = s.split(":").map(Number);
+      return h * 60 + m > cutoff;
+    });
+  }
   return slots;
 }
 
@@ -138,6 +149,7 @@ export function CitaModal({ open, onClose, servicioInicial = "" }: CitaModalProp
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
 
   const horarios = getHorarios(data.fecha);
 
@@ -149,6 +161,7 @@ export function CitaModal({ open, onClose, servicioInicial = "" }: CitaModalProp
     e.preventDefault();
     if (!data.fecha || !data.hora) return;
     setLoading(true);
+    setError("");
     try {
       await addCitaPublic({
         id: Date.now(),
@@ -157,6 +170,8 @@ export function CitaModal({ open, onClose, servicioInicial = "" }: CitaModalProp
         estado: "pendiente",
       });
       setSuccess(true);
+    } catch {
+      setError("No se pudo enviar la cita. Intenta nuevamente.");
     } finally {
       setLoading(false);
     }
@@ -166,6 +181,7 @@ export function CitaModal({ open, onClose, servicioInicial = "" }: CitaModalProp
     onClose();
     setTimeout(() => {
       setSuccess(false);
+      setError("");
       setData({ nombre: "", telefono: "", servicio: servicioInicial, fecha: "", hora: "", vehiculo: "", notas: "" });
     }, 300);
   };
@@ -312,6 +328,11 @@ export function CitaModal({ open, onClose, servicioInicial = "" }: CitaModalProp
                     <label className="block text-sm font-medium mb-1.5">Notas adicionales</label>
                     <textarea name="notas" rows={2} value={data.notas} onChange={handleChange} placeholder="Cualquier detalle..." className={`${inputCls} resize-none`} />
                   </div>
+
+                  {/* Error message */}
+                  {error && (
+                    <p className="text-sm text-destructive text-center">{error}</p>
+                  )}
 
                   {/* Submit */}
                   <button

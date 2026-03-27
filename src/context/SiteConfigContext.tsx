@@ -111,8 +111,8 @@ export function SiteConfigProvider({
   const [categorias, setCategorias] = useState<Categoria[]>(defaultCategorias);
   const [reviews, setReviews] = useState<Review[]>(defaultReviews);
   const [citas, setCitas] = useState<Cita[]>([]);
-  // Si tenemos initialConfig, ya tenemos la data principal (hero), así que no bloqueamos el UI
-  const [isLoading, setIsLoading] = useState(!initialConfig);
+  // Siempre arrancamos en loading=true hasta que los productos y datos reales carguen de Supabase
+  const [isLoading, setIsLoading] = useState(true);
 
   // Cargar todo desde localforage al montar
   useEffect(() => {
@@ -177,7 +177,7 @@ export function SiteConfigProvider({
     );
   }, [config.colores.primario]);
 
-  // Precargar imágenes de fondo en cuanto el config esté disponible
+  // Precargar imágenes de fondo solo cuando cambien las URLs
   useEffect(() => {
     if (isLoading) return;
     const urls = [
@@ -191,7 +191,16 @@ export function SiteConfigProvider({
       const img = new window.Image();
       img.src = url;
     });
-  }, [isLoading]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    isLoading,
+    config.bgImages?.servicios,
+    config.bgImages?.catalogo,
+    config.bgImages?.contacto,
+    config.hero?.imagen,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    config.hero?.slides?.join(","),
+  ]);
 
   // Setters con optimistic UI (actualiza state inmediato + persiste en background)
   const saveConfig = useCallback((c: SiteConfig) => {

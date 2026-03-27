@@ -187,9 +187,9 @@ export default function AdminPage() {
     setProductsDraft([p, ...productsDraft]);
   };
   const updateProduct = (id: string, field: keyof Product, value: string | boolean | string[]) =>
-    setProductsDraft(productsDraft.map((p) => p.id === id ? { ...p, [field]: value } : p));
+    setProductsDraft(prev => prev.map((p) => p.id === id ? { ...p, [field]: value } : p));
   const updateProductImagen = (id: string, idx: number, url: string) =>
-    setProductsDraft(productsDraft.map((p) => {
+    setProductsDraft(prev => prev.map((p) => {
       if (p.id !== id) return p;
       const imagenes = [...(p.imagenes ?? ["", "", ""])];
       imagenes[idx] = url;
@@ -226,7 +226,7 @@ export default function AdminPage() {
     setServicesDraft([s, ...servicesDraft]);
   };
   const updateService = (id: string, field: keyof Service, value: string) =>
-    setServicesDraft(servicesDraft.map((s) => s.id === id ? { ...s, [field]: value } : s));
+    setServicesDraft(prev => prev.map((s) => s.id === id ? { ...s, [field]: value } : s));
   const deleteService = (id: string) => {
     if (confirm("¿Eliminar este servicio?")) setServicesDraft(servicesDraft.filter((s) => s.id !== id));
   };
@@ -725,8 +725,8 @@ export default function AdminPage() {
               </div>
             ) : (
               <div className="space-y-2">
-                {[...subscribers].sort((a, b) => b.fecha.localeCompare(a.fecha)).map((sub, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-card border border-border">
+                {[...subscribers].sort((a, b) => b.fecha.localeCompare(a.fecha)).map((sub) => (
+                  <div key={sub.email + sub.fecha} className="flex items-center justify-between p-3 rounded-xl bg-card border border-border">
                     <div>
                       <p className="text-sm font-medium">{sub.email}</p>
                       <p className="text-xs text-muted-foreground">{new Date(sub.fecha).toLocaleDateString("es-VE", { day: "2-digit", month: "short", year: "numeric" })}</p>

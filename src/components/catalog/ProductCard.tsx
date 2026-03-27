@@ -63,6 +63,8 @@ export function ProductCard({ product, onViewDetail, index }: ProductCardProps) 
           <img
             src={(product.imagenes?.[0] || product.imagen)}
             alt={`${product.nombre} - ${product.marca} - ${product.categoria}`}
+            loading="lazy"
+            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
             className="w-full h-full object-cover origin-bottom transition-transform duration-700 ease-out group-hover:scale-[1.12]"
           />
         ) : (
